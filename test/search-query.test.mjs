@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {drawScene, getAudioEvents, getTiming, getVisibleQuery} from '../public/scene.js';
+import {parsePhrase} from '../public/phrase.js';
 
 function recordFrame(options) {
   const text = [];
@@ -33,6 +34,17 @@ test('an input without how to receives no added prefix', () => {
   assert.ok(visibleText.includes(query));
   assert.ok(!visibleText.includes('how to become great'));
   assert.equal(getVisibleQuery(getTiming(query).enter, query), query);
+});
+
+test('a trailing question mark reaches neither the typed intro nor the montage phrase', () => {
+  const {phrase: word, query, error} = parsePhrase('how to become great?');
+  assert.equal(error, '');
+  assert.equal(word, 'become great');
+  assert.equal(query, 'how to become great');
+  const visibleText = recordFrame({word, query, time: getTiming(query).enter});
+  assert.ok(visibleText.includes(query));
+  assert.ok(!visibleText.some(text => String(text).includes('?')));
+  assert.equal(getAudioEvents(query).typing.length, Array.from(query).length);
 });
 
 test('longer search text controls the intro boundary and keeps all fifty cuts at five seconds', () => {

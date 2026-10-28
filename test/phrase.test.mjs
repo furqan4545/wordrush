@@ -15,6 +15,12 @@ for (const [input, expected] of [
   ['How together works', 'How together works'],
   ['How to: how to focus', 'how to focus'],
   ['  Find me  clarity!  ', 'Find me  clarity!'],
+  ['how to become great?', 'become great'],
+  ['become great???  ', 'become great'],
+  ['How to: become great ? ? ', 'become great'],
+  ['Focus？', 'Focus'],
+  ['Focus؟', 'Focus'],
+  ['what? comes next?', 'what? comes next'],
 ]) {
   test(`input ${JSON.stringify(input)} renders ${JSON.stringify(expected)}`, () => {
     const parsed = parsePhrase(input);
@@ -40,13 +46,21 @@ test('nine words are rejected, never truncated', () => {
 });
 
 test('empty prefixes and multiline text are rejected', () => {
-  for (const input of ['', ' ', 'How to:', 'how to', 'HOW TO,']) assert.ok(parsePhrase(input).error);
+  for (const input of ['', ' ', 'How to:', 'how to', 'HOW TO,', '?', '???', 'how to?']) assert.ok(parsePhrase(input).error);
   assert.match(parsePhrase('How\nto: focus').error, /one line/u);
   assert.match(parsePhrase('find\nme wife').error, /one line/u);
 });
 
 test('canonical phrases are validated without stripping content a second time', () => {
   assert.equal(parsePhrase('how to focus', {stripPrefix: false}).phrase, 'how to focus');
+  assert.equal(parsePhrase('how to focus?', {stripPrefix: false}).phrase, 'how to focus');
+});
+
+test('the typed search query also omits trailing question marks and preserves interior punctuation', () => {
+  assert.equal(parsePhrase('how to become great?').query, 'how to become great');
+  assert.equal(parsePhrase('what? comes next??? ').query, 'what? comes next');
+  assert.equal(parsePhrase('focus!').query, 'focus!');
+  assert.equal(parsePhrase('focus?!').query, 'focus?!');
 });
 
 test('typing events spell only the final search phrase; montage stays five seconds', () => {
