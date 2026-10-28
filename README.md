@@ -57,3 +57,10 @@ The full-size preview uses an accessible native dialog with playback controls, a
 ## Search and sharing
 
 Canonical metadata, Open Graph and Twitter cards, WebApplication/WebSite structured data, an indexable About guide, robots.txt, sitemap.xml and llms.txt describe the public app. The social preview is the user-provided screenshot, copied unchanged to public/social/wordrush-share-v1.png. Generated browser-local videos are never listed in the sitemap. Crawler access and metadata support discovery; indexing, rankings and AI-answer inclusion are controlled by the providers.
+
+
+## Saved-library capacity
+
+The browser library accepts at most eight saved videos. The limit is checked before starting a renderer and enforced atomically in IndexedDB across tabs. Existing larger libraries are preserved and cannot add new files until below the limit. Each card has a trash icon beside its title; deletion releases the player/object URL and removes the committed record. A 12-second Undo keeps only that deleted file in memory and can restore it if storage has room. A successful new save dismisses the previous Undo.
+
+Storage estimates compare available origin space with the renderer’s duration and bitrate targets plus overhead before rendering. Real quota errors are also handled at save time. A completed file that could not be saved is retained temporarily for download/retry, clearly labeled unsaved instead of silently appearing in the saved gallery.

@@ -69,6 +69,14 @@
           </div>
           <div class="field-meta"><span id="word-help" aria-live="polite"></span><span id="word-count">0 / 8 words</span></div>
           <div class="examples"><span>Try</span><button type="button" data-word="find me clarity">find me clarity</button><button type="button" data-word="peace of mind">peace of mind</button><button type="button" data-word="a little more courage">a little more courage</button></div>
+          <div id="library-notice" class="library-notice" hidden role="alert">
+            <p id="library-notice-message"></p>
+            <div class="library-notice-actions">
+              <button id="manage-videos" class="library-manage" type="button">Manage videos</button>
+              <a id="download-pending-video" class="library-manage" hidden download>Download video</a>
+              <button id="discard-pending-video" class="library-discard" hidden type="button">Discard unsaved video</button>
+            </div>
+          </div>
           <p id="form-error" class="form-error" role="alert" hidden></p>
         </form>
         <div class="render-progress" id="render-progress" hidden aria-live="polite">
@@ -105,7 +113,7 @@
       </div>
     </section>
     <section id="videos-section" class="videos-section" hidden aria-labelledby="videos-heading">
-      <h2 id="videos-heading">Your videos</h2>
+      <div class="videos-section-heading"><h2 id="videos-heading">Your videos</h2><span id="library-count" class="library-count">0 / 8 videos</span></div>
       <p id="videos-status" class="sr-only" role="status" aria-live="polite"></p>
       <div id="videos-grid" class="videos-grid"></div>
     </section>
@@ -123,6 +131,11 @@
       <p id="video-preview-error" class="video-preview-error" role="alert" hidden></p>
     </div>
   </dialog>
+  <div id="delete-toast" class="delete-toast" hidden role="status" aria-live="polite">
+    <span id="delete-toast-message">Video deleted.</span>
+    <button id="undo-delete" class="undo-delete" type="button">Undo</button>
+    <button id="dismiss-delete-toast" class="dismiss-toast" type="button" aria-label="Dismiss deletion notice"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg></button>
+  </div>
   <footer><span>Wordrush</span><div class="footer-links"><a href="/about.html">About</a><span class="footer-mark" aria-hidden="true">✳</span></div></footer>
 </body>
 </html>

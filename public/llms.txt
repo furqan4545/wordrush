@@ -18,7 +18,7 @@ Videos use a phone-filmed browser image, typing and Enter sounds, and a wheel-sc
 
 ## Output and storage
 
-The output is a vertical 1080 × 1920 MP4 with H.264 video and AAC audio. Rendering runs in a dedicated Web Worker on the visitor’s device, using a compatible browser. The phrase and generated video are not uploaded to a rendering server. Saved videos are kept in that browser’s device-local storage and can be previewed and downloaded. Saved videos are not public pages or shareable website URLs.
+The output is a vertical 1080 × 1920 MP4 with H.264 video and AAC audio. Rendering runs in a dedicated Web Worker on the visitor’s device, using a compatible browser. The phrase and generated video are not uploaded to a rendering server. Saved videos are kept in that browser’s device-local storage and can be previewed, downloaded, and deleted. The saved library is limited to eight videos; users must delete a video before creating another when the library or browser storage is full. Saved videos are not public pages or shareable website URLs.
 
 ## Discovery
 
