@@ -1,0 +1,2080 @@
+{
+  "version": "placed-web-v3",
+  "description": "Real public pages for local keyword placement; screenshot collector validates usable body paragraphs.",
+  "sites": [
+    {
+      "url": "https://en.wikipedia.org/wiki/Plain_English",
+      "domain": "wikipedia.org",
+      "label": "Wikipedia",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://en.wikipedia.org/wiki/Plain_English",
+        "paragraphs": 25,
+        "longParagraphs": 23,
+        "maxParagraphChars": 802,
+        "title": "Plain English - Wikipedia"
+      }
+    },
+    {
+      "url": "https://www.dictionary.com/browse/clarity",
+      "domain": "dictionary.com",
+      "label": "Dictionary.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.dictionary.com/browse/clarity",
+        "paragraphs": 35,
+        "longParagraphs": 6,
+        "maxParagraphChars": 515,
+        "title": "CLARITY Definition & Meaning | Dictionary.com"
+      }
+    },
+    {
+      "url": "https://freedictionary.org/search/clarity",
+      "domain": "freedictionary.org",
+      "label": "clarity - definition, synonyms and pronunciation | Free Dictionary",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:46:15.420Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://freedictionary.org/search/clarity",
+        "paragraphs": 6,
+        "longParagraphs": 0,
+        "maxParagraphChars": 128,
+        "title": "clarity - definition, synonyms and pronunciation | Free Dictionary"
+      }
+    },
+    {
+      "url": "https://owl.purdue.edu/owl/research_and_citation/apa_style/apa_formatting_and_style_guide/apa_stylistics_basics.html",
+      "domain": "purdue.edu",
+      "label": "APA Stylistics: Basics - Purdue OWL® - Purdue University",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:46:23.261Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://owl.purdue.edu/owl/research_and_citation/apa_style/apa_formatting_and_style_guide/apa_stylistics_basics.html",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Purdue Universityplus_iconplus_iconplus_iconplus_icon"
+      }
+    },
+    {
+      "url": "https://writing.wisc.edu/handbook/grammarandstyle/",
+      "domain": "wisc.edu",
+      "label": "Grammar, Punctuation, and Style | Section 4 – The Writing Center – UW–Madison",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:46:26.473Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://writing.wisc.edu/handbook/grammarandstyle/",
+        "paragraphs": 5,
+        "longParagraphs": 4,
+        "maxParagraphChars": 322,
+        "title": "Grammar, Punctuation, and Style | Section 4 – The Writing Center – UW–Madisoncrest"
+      }
+    },
+    {
+      "url": "https://www.dictionary.net/dictionary/clarity",
+      "domain": "dictionary.net",
+      "label": "clarity Definition & Meaning - Dictionary.net",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:46:37.853Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.dictionary.net/dictionary/clarity",
+        "paragraphs": 13,
+        "longParagraphs": 1,
+        "maxParagraphChars": 545,
+        "title": "clarity Definition & Meaning - Dictionary.net"
+      }
+    },
+    {
+      "url": "https://www.betterup.com/blog/mental-clarity",
+      "domain": "betterup.com",
+      "label": "Can’t Think Straight? How to Achieve Mental Clarity",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:47:08.227Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.betterup.com/blog/mental-clarity",
+        "paragraphs": 83,
+        "longParagraphs": 28,
+        "maxParagraphChars": 379,
+        "title": "Can’t Think Straight? How to Achieve Mental Clarity"
+      }
+    },
+    {
+      "url": "https://www.skillsyouneed.com/write/clarity.html",
+      "domain": "skillsyouneed.com",
+      "label": "Clarity in Writing | SkillsYouNeed",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:47:12.604Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.skillsyouneed.com/write/clarity.html",
+        "paragraphs": 92,
+        "longParagraphs": 18,
+        "maxParagraphChars": 431,
+        "title": "Clarity in Writing | SkillsYouNeed"
+      }
+    },
+    {
+      "url": "https://www.definitions.net/definition/clarity",
+      "domain": "definitions.net",
+      "label": "What does clarity mean?",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:47:26.799Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.definitions.net/definition/clarity",
+        "paragraphs": 60,
+        "longParagraphs": 11,
+        "maxParagraphChars": 3784,
+        "title": "What does clarity mean?"
+      }
+    },
+    {
+      "url": "https://www.thesaurus.com/browse/clarity",
+      "domain": "thesaurus.com",
+      "label": "CLARITY Synonyms & Antonyms - 52 words | Thesaurus.com",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:47:30.731Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.thesaurus.com/browse/clarity",
+        "paragraphs": 27,
+        "longParagraphs": 3,
+        "maxParagraphChars": 211,
+        "title": "CLARITY Synonyms & Antonyms - 52 words | Thesaurus.com"
+      }
+    },
+    {
+      "url": "https://www.wordhippo.com/what-is/the-meaning-of-the-word/clarity.html",
+      "domain": "wordhippo.com",
+      "label": "What does clarity mean?",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:47:35.203Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.wordhippo.com/what-is/the-meaning-of-the-word/clarity.html",
+        "paragraphs": 1,
+        "longParagraphs": 0,
+        "maxParagraphChars": 107,
+        "title": "What does clarity mean?"
+      }
+    },
+    {
+      "url": "https://clarity.microsoft.com/insights?jigtm=1",
+      "domain": "microsoft.com",
+      "label": "Insights - Clarity",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:47:38.254Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://clarity.microsoft.com/insights?jigtm=1",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Insights - Clarity"
+      }
+    },
+    {
+      "url": "https://www.clarity.com/",
+      "domain": "clarity.com",
+      "label": "Clarity moves capital | Clarity",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:47:41.183Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.clarity.com/",
+        "paragraphs": 26,
+        "longParagraphs": 2,
+        "maxParagraphChars": 286,
+        "title": "Clarity moves capital | Clarity"
+      }
+    },
+    {
+      "url": "https://appraisals.clarity.co.uk/",
+      "domain": "clarity.co.uk",
+      "label": "Agilio Clarity",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:47:50.544Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://appraisals.clarity.co.uk/",
+        "paragraphs": 3,
+        "longParagraphs": 1,
+        "maxParagraphChars": 205,
+        "title": "Agilio Clarity"
+      }
+    },
+    {
+      "url": "https://www.nngroup.com/articles/ux-writing-study-guide/",
+      "domain": "nngroup.com",
+      "label": "UX Writing: Study Guide - NN/G",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:50:44.148Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.nngroup.com/articles/ux-writing-study-guide/",
+        "paragraphs": 305,
+        "longParagraphs": 10,
+        "maxParagraphChars": 431,
+        "title": "UX Writing: Study Guide - NN/GNielsen Norman GroupNielsen Norman Group"
+      }
+    },
+    {
+      "url": "https://alistapart.com/about/style-guide/",
+      "domain": "alistapart.com",
+      "label": "Style Guide – A List Apart",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:50:45.777Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://alistapart.com/about/style-guide/",
+        "paragraphs": 60,
+        "longParagraphs": 16,
+        "maxParagraphChars": 435,
+        "title": "Style Guide – A List Apart"
+      }
+    },
+    {
+      "url": "https://www.smashingmagazine.com/2024/06/website-improvement-after-launch/",
+      "domain": "smashingmagazine.com",
+      "label": "So Your Website Or App Is Live… Now What? — Smashing Magazine",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:50:48.023Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.smashingmagazine.com/2024/06/website-improvement-after-launch/",
+        "paragraphs": 42,
+        "longParagraphs": 24,
+        "maxParagraphChars": 368,
+        "title": "So Your Website Or App Is Live… Now What? — Smashing MagazineClear SearchBack to top"
+      }
+    },
+    {
+      "url": "https://www.oxfordlearnersdictionaries.com/definition/english/clarity",
+      "domain": "oxfordlearnersdictionaries.com",
+      "label": "clarity noun - Definition, pictures, pronunciation and usage notes | Oxford Advanced Learner's Dictionary at OxfordLearnersDictionaries.com",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:53:17.042Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.oxfordlearnersdictionaries.com/definition/english/clarity",
+        "paragraphs": 3,
+        "longParagraphs": 0,
+        "maxParagraphChars": 107,
+        "title": "clarity noun - Definition, pictures, pronunciation and usage notes | Oxford Advanced Learner's Dictionary at OxfordLearnersDictionaries.comOxford logo"
+      }
+    },
+    {
+      "url": "https://docs.python.org/3.11/whatsnew/changelog.html",
+      "domain": "python.org",
+      "label": "Changelog — Python 3.11.18 documentation",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:53:22.631Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://docs.python.org/3.11/whatsnew/changelog.html",
+        "paragraphs": 4347,
+        "longParagraphs": 783,
+        "maxParagraphChars": 797,
+        "title": "Changelog — Python 3.11.18 documentation"
+      }
+    },
+    {
+      "url": "https://ocw.mit.edu/courses/20-219-becoming-the-next-bill-nye-writing-and-hosting-the-educational-show-january-iap-2015/pages/instructor-insights/planning-backwards/",
+      "domain": "mit.edu",
+      "label": "Planning Backwards | Becoming the Next Bill Nye: Writing and Hosting the Educational Show | Biological Engineering | MIT OpenCourseWare",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:53:27.419Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://ocw.mit.edu/courses/20-219-becoming-the-next-bill-nye-writing-and-hosting-the-educational-show-january-iap-2015/pages/instructor-insights/planning-backwards/",
+        "paragraphs": 20,
+        "longParagraphs": 17,
+        "maxParagraphChars": 887,
+        "title": "Planning Backwards | Becoming the Next Bill Nye: Writing and Hosting the Educational Show | Biological Engineering | MIT OpenCourseWare"
+      }
+    },
+    {
+      "url": "https://web.dev/articles/choose-js-library-or-framework?hl=en",
+      "domain": "web.dev",
+      "label": "Choose a JavaScript library or framework  |  Articles  |  web.dev",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:53:33.575Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://web.dev/articles/choose-js-library-or-framework?hl=en",
+        "paragraphs": 46,
+        "longParagraphs": 25,
+        "maxParagraphChars": 479,
+        "title": "Choose a JavaScript library or framework  |  Articles  |  web.devXHomepage"
+      }
+    },
+    {
+      "url": "https://www.swift.org/documentation/api-design-guidelines/",
+      "domain": "swift.org",
+      "label": "API Design Guidelines | Swift.org",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:53:35.459Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.swift.org/documentation/api-design-guidelines/",
+        "paragraphs": 106,
+        "longParagraphs": 22,
+        "maxParagraphChars": 437,
+        "title": "API Design Guidelines | Swift.org"
+      }
+    },
+    {
+      "url": "https://en.wiktionary.org/wiki/courage",
+      "domain": "wiktionary.org",
+      "label": "courage - Wiktionary, the free dictionary",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:57:34.830Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://en.wiktionary.org/wiki/courage",
+        "paragraphs": 7,
+        "longParagraphs": 2,
+        "maxParagraphChars": 338,
+        "title": "courage - Wiktionary, the free dictionary"
+      }
+    },
+    {
+      "url": "https://www.vocabulary.com/dictionary/courage",
+      "domain": "vocabulary.com",
+      "label": "Courage - Definition, Meaning & Synonyms | Vocabulary.com",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:57:38.164Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.vocabulary.com/dictionary/courage",
+        "paragraphs": 6,
+        "longParagraphs": 4,
+        "maxParagraphChars": 494,
+        "title": "Courage - Definition, Meaning & Synonyms | Vocabulary.com"
+      }
+    },
+    {
+      "url": "https://www.wordnik.com/words/courage",
+      "domain": "wordnik.com",
+      "label": "courage - definition and meaning",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:58:34.152Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.wordnik.com/words/courage",
+        "paragraphs": 27,
+        "longParagraphs": 2,
+        "maxParagraphChars": 230,
+        "title": "courage - definition and meaning"
+      }
+    },
+    {
+      "url": "https://www.thefreedictionary.com/courage",
+      "domain": "thefreedictionary.com",
+      "label": "Courage - definition of courage by The Free Dictionary",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:58:35.969Z"
+      },
+      "httpVerification": {
+        "status": 403,
+        "error": "HTTP Error 403: Forbidden"
+      }
+    },
+    {
+      "url": "https://www.yourdictionary.com/courage",
+      "domain": "yourdictionary.com",
+      "label": "Courage Definition & Meaning | YourDictionary",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T18:58:53.634Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.yourdictionary.com/courage",
+        "paragraphs": 12,
+        "longParagraphs": 1,
+        "maxParagraphChars": 180,
+        "title": "Courage Definition & Meaning | YourDictionary"
+      }
+    },
+    {
+      "url": "https://staffweb.hkbu.edu.hk/ppp/tp4/top12.html",
+      "domain": "hkbu.edu.hk",
+      "label": "D1",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:05:32.594Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://staffweb.hkbu.edu.hk/ppp/tp4/top12.html",
+        "paragraphs": 102,
+        "longParagraphs": 54,
+        "maxParagraphChars": 1801,
+        "title": "D1"
+      }
+    },
+    {
+      "url": "https://neurolaunch.com/courage-definition-psychology/",
+      "domain": "neurolaunch.com",
+      "label": "Courage in Psychology: Understanding Bravery's Science",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:05:43.316Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://neurolaunch.com/courage-definition-psychology/",
+        "paragraphs": 73,
+        "longParagraphs": 44,
+        "maxParagraphChars": 617,
+        "title": "Courage in Psychology: Understanding Bravery's Science"
+      }
+    },
+    {
+      "url": "https://theconversation.com/what-courage-is-how-to-build-it-and-why-you-should-take-a-risk-280257",
+      "domain": "theconversation.com",
+      "label": "What courage is, how to build it and why you should take a risk",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:05:44.256Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://theconversation.com/what-courage-is-how-to-build-it-and-why-you-should-take-a-risk-280257",
+        "paragraphs": 36,
+        "longParagraphs": 22,
+        "maxParagraphChars": 566,
+        "title": "What courage is, how to build it and why you should take a risk"
+      }
+    },
+    {
+      "url": "https://www.psychologytoday.com/us/blog/darwins-subterranean-world/202407/the-cognitive-architecture-of-courage",
+      "domain": "psychologytoday.com",
+      "label": "The Cognitive Architecture of Courage | Psychology Today",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:05:49.896Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.psychologytoday.com/us/blog/darwins-subterranean-world/202407/the-cognitive-architecture-of-courage",
+        "paragraphs": 25,
+        "longParagraphs": 13,
+        "maxParagraphChars": 711,
+        "title": "The Cognitive Architecture of Courage | Psychology Today"
+      }
+    },
+    {
+      "url": "https://digitalphrases.com/writing-prompts/writing-prompts-by-genre/writing-prompts-about-courage-and-bravery/",
+      "domain": "digitalphrases.com",
+      "label": "32 Writing Prompts About Courage and Bravery",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:06:01.055Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://digitalphrases.com/writing-prompts/writing-prompts-by-genre/writing-prompts-about-courage-and-bravery/",
+        "paragraphs": 22,
+        "longParagraphs": 16,
+        "maxParagraphChars": 484,
+        "title": "32 Writing Prompts About Courage and BraveryExpandExpandExpandSearchToggle MenuContinueContinueContinueContinueContinueContinueFacebookPinterestSearchExpandExpa"
+      }
+    },
+    {
+      "url": "https://www.ccrawfordwriting.com/post/courage-in-writing",
+      "domain": "ccrawfordwriting.com",
+      "label": "Courage in Writing",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:06:01.165Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.ccrawfordwriting.com/post/courage-in-writing",
+        "paragraphs": 33,
+        "longParagraphs": 17,
+        "maxParagraphChars": 1394,
+        "title": "Courage in Writing"
+      }
+    },
+    {
+      "url": "https://www.hernarrative.com/blog/what-does-it-mean-to-have-courage-as-a-writer",
+      "domain": "hernarrative.com",
+      "label": "What Does It Mean to Have Courage as a Writer?",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:06:07.469Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.hernarrative.com/blog/what-does-it-mean-to-have-courage-as-a-writer",
+        "paragraphs": 22,
+        "longParagraphs": 10,
+        "maxParagraphChars": 632,
+        "title": "What Does It Mean to Have Courage as a Writer?"
+      }
+    },
+    {
+      "url": "https://pitchgrade.com/research/courage-essay-topics",
+      "domain": "pitchgrade.com",
+      "label": "150+ Courage Essay Topic Ideas & Examples - PitchGrade",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:06:11.576Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://pitchgrade.com/research/courage-essay-topics",
+        "paragraphs": 22,
+        "longParagraphs": 14,
+        "maxParagraphChars": 528,
+        "title": "150+ Courage Essay Topic Ideas & Examples - PitchGrade"
+      }
+    },
+    {
+      "url": "https://writers.com/course/writing-with-consistency-and-courage",
+      "domain": "writers.com",
+      "label": "Writing with Consistency and Courage | Writers.com",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:06:11.701Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://writers.com/course/writing-with-consistency-and-courage",
+        "paragraphs": 32,
+        "longParagraphs": 12,
+        "maxParagraphChars": 810,
+        "title": "Writing with Consistency and Courage | Writers.com"
+      }
+    },
+    {
+      "url": "https://www.newadvent.org/cathen/06147a.htm",
+      "domain": "newadvent.org",
+      "label": "CATHOLIC ENCYCLOPEDIA: Fortitude",
+      "verification": {
+        "status": 200,
+        "method": "previous actual browser capture",
+        "capturedAt": "2026-10-27T19:06:17.401Z"
+      },
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.newadvent.org/cathen/06147a.htm",
+        "paragraphs": 16,
+        "longParagraphs": 10,
+        "maxParagraphChars": 2756,
+        "title": "CATHOLIC ENCYCLOPEDIA: Fortitude"
+      }
+    },
+    {
+      "url": "https://react.dev/learn",
+      "domain": "react.dev",
+      "label": "react.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://react.dev/learn",
+        "paragraphs": 53,
+        "longParagraphs": 20,
+        "maxParagraphChars": 419,
+        "title": "Quick Start – React"
+      }
+    },
+    {
+      "url": "https://vuejs.org/guide/introduction.html",
+      "domain": "vuejs.org",
+      "label": "vuejs.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://vuejs.org/guide/introduction.html",
+        "paragraphs": 42,
+        "longParagraphs": 17,
+        "maxParagraphChars": 519,
+        "title": "Introduction | Vue.js"
+      }
+    },
+    {
+      "url": "https://angular.dev/overview",
+      "domain": "angular.dev",
+      "label": "angular.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://angular.dev/overview",
+        "paragraphs": 28,
+        "longParagraphs": 11,
+        "maxParagraphChars": 409,
+        "title": "What is Angular? • Angular"
+      }
+    },
+    {
+      "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+      "domain": "typescriptlang.org",
+      "label": "typescriptlang.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.typescriptlang.org/docs/handbook/intro.html",
+        "paragraphs": 22,
+        "longParagraphs": 11,
+        "maxParagraphChars": 732,
+        "title": "TypeScript: Handbook - The TypeScript Handbook"
+      }
+    },
+    {
+      "url": "https://www.ruby-lang.org/en/about/",
+      "domain": "ruby-lang.org",
+      "label": "ruby-lang.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.ruby-lang.org/en/about/",
+        "paragraphs": 38,
+        "longParagraphs": 17,
+        "maxParagraphChars": 401,
+        "title": "About Ruby | Ruby"
+      }
+    },
+    {
+      "url": "https://www.haskell.org/",
+      "domain": "haskell.org",
+      "label": "haskell.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.haskell.org/",
+        "paragraphs": 56,
+        "longParagraphs": 12,
+        "maxParagraphChars": 327,
+        "title": "Haskell Language"
+      }
+    },
+    {
+      "url": "https://www.scala-lang.org/",
+      "domain": "scala-lang.org",
+      "label": "scala-lang.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.scala-lang.org/",
+        "paragraphs": 44,
+        "longParagraphs": 10,
+        "maxParagraphChars": 436,
+        "title": "The Scala Programming Language"
+      }
+    },
+    {
+      "url": "https://dart.dev/overview",
+      "domain": "dart.dev",
+      "label": "dart.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://dart.dev/overview",
+        "paragraphs": 30,
+        "longParagraphs": 13,
+        "maxParagraphChars": 470,
+        "title": "Dart overview"
+      }
+    },
+    {
+      "url": "https://llvm.org/docs/GettingStarted.html",
+      "domain": "llvm.org",
+      "label": "llvm.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://llvm.org/docs/GettingStarted.html",
+        "paragraphs": 394,
+        "longParagraphs": 64,
+        "maxParagraphChars": 681,
+        "title": "Getting Started with the LLVM System - LLVMContentsMenuExpandLight modeDark modeAuto light/dark mode"
+      }
+    },
+    {
+      "url": "https://pandas.pydata.org/docs/getting_started/overview.html",
+      "domain": "pydata.org",
+      "label": "pydata.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://pandas.pydata.org/docs/getting_started/overview.html",
+        "paragraphs": 45,
+        "longParagraphs": 12,
+        "maxParagraphChars": 750,
+        "title": "Package overview — pandas 3.1.0 documentation"
+      }
+    },
+    {
+      "url": "https://numpy.org/doc/stable/user/whatisnumpy.html",
+      "domain": "numpy.org",
+      "label": "numpy.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://numpy.org/doc/stable/user/whatisnumpy.html",
+        "paragraphs": 18,
+        "longParagraphs": 13,
+        "maxParagraphChars": 639,
+        "title": "What is NumPy? — NumPy v2.5 Manual"
+      }
+    },
+    {
+      "url": "https://scikit-learn.org/stable/getting_started.html",
+      "domain": "scikit-learn.org",
+      "label": "scikit-learn.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://scikit-learn.org/stable/getting_started.html",
+        "paragraphs": 27,
+        "longParagraphs": 14,
+        "maxParagraphChars": 609,
+        "title": "Getting Started — scikit-learn 1.9.1 documentation"
+      }
+    },
+    {
+      "url": "https://www.gutenberg.org/files/11/11-h/11-h.htm",
+      "domain": "gutenberg.org",
+      "label": "gutenberg.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.gutenberg.org/files/11/11-h/11-h.htm",
+        "paragraphs": 772,
+        "longParagraphs": 260,
+        "maxParagraphChars": 1405,
+        "title": "Alice’s Adventures in Wonderland | Project Gutenberg"
+      }
+    },
+    {
+      "url": "https://www.nhm.ac.uk/discover/what-is-biodiversity.html",
+      "domain": "nhm.ac.uk",
+      "label": "nhm.ac.uk",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.nhm.ac.uk/discover/what-is-biodiversity.html",
+        "paragraphs": 51,
+        "longParagraphs": 21,
+        "maxParagraphChars": 417,
+        "title": "What is biodiversity and why does its loss matter? | Natural History Museum"
+      }
+    },
+    {
+      "url": "https://ourworldindata.org/biodiversity",
+      "domain": "ourworldindata.org",
+      "label": "ourworldindata.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://ourworldindata.org/biodiversity",
+        "paragraphs": 92,
+        "longParagraphs": 15,
+        "maxParagraphChars": 499,
+        "title": "Biodiversity | Our World in Data"
+      }
+    },
+    {
+      "url": "https://www.un.org/en/about-us",
+      "domain": "un.org",
+      "label": "un.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.un.org/en/about-us",
+        "paragraphs": 36,
+        "longParagraphs": 8,
+        "maxParagraphChars": 207,
+        "title": "About Us | United Nations"
+      }
+    },
+    {
+      "url": "https://www.wfp.org/overview",
+      "domain": "wfp.org",
+      "label": "wfp.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.wfp.org/who-we-are",
+        "paragraphs": 17,
+        "longParagraphs": 12,
+        "maxParagraphChars": 461,
+        "title": "Who we are | World Food Programme"
+      }
+    },
+    {
+      "url": "https://www.msf.org/who-we-are",
+      "domain": "msf.org",
+      "label": "msf.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.msf.org/who-we-are",
+        "paragraphs": 103,
+        "longParagraphs": 83,
+        "maxParagraphChars": 755,
+        "title": "Who we are | MSFClose buttonArrow iconMédecins Sans FrontièresClose buttonArrow iconXXBluesky butterfly logo"
+      }
+    },
+    {
+      "url": "https://www.w3.org/WAI/fundamentals/accessibility-intro/",
+      "domain": "w3.org",
+      "label": "w3.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.w3.org/WAI/fundamentals/accessibility-intro/",
+        "paragraphs": 30,
+        "longParagraphs": 15,
+        "maxParagraphChars": 478,
+        "title": "Introduction to Web Accessibility | Web Accessibility Initiative (WAI) | W3CW3C homepageWeb Accessibility Initiative (WAI) homepage"
+      }
+    },
+    {
+      "url": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/",
+      "domain": "css-tricks.com",
+      "label": "css-tricks.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/",
+        "paragraphs": 833,
+        "longParagraphs": 245,
+        "maxParagraphChars": 975,
+        "title": "A Complete Guide to CSS Flexbox | CSS-Tricksicon-account"
+      }
+    },
+    {
+      "url": "https://developers.google.com/tech-writing/one/clear-sentences",
+      "domain": "google.com",
+      "label": "google.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://developers.google.com/tech-writing/one/clear-sentences",
+        "paragraphs": 34,
+        "longParagraphs": 9,
+        "maxParagraphChars": 678,
+        "title": "Clear sentences  |  Technical Writing  |  Google for Developers"
+      }
+    },
+    {
+      "url": "https://docusaurus.io/docs",
+      "domain": "docusaurus.io",
+      "label": "docusaurus.io",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://docusaurus.io/docs",
+        "paragraphs": 40,
+        "longParagraphs": 15,
+        "maxParagraphChars": 390,
+        "title": "Introduction | Docusaurus"
+      }
+    },
+    {
+      "url": "https://vite.dev/guide/",
+      "domain": "vite.dev",
+      "label": "vite.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://vite.dev/guide/",
+        "paragraphs": 43,
+        "longParagraphs": 15,
+        "maxParagraphChars": 518,
+        "title": "Getting Started | Vite"
+      }
+    },
+    {
+      "url": "https://webpack.js.org/concepts/",
+      "domain": "js.org",
+      "label": "js.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://webpack.js.org/concepts/",
+        "paragraphs": 45,
+        "longParagraphs": 15,
+        "maxParagraphChars": 539,
+        "title": "Concepts | webpack"
+      }
+    },
+    {
+      "url": "https://eslint.org/docs/latest/use/core-concepts/",
+      "domain": "eslint.org",
+      "label": "eslint.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://eslint.org/docs/latest/use/core-concepts/",
+        "paragraphs": 33,
+        "longParagraphs": 10,
+        "maxParagraphChars": 308,
+        "title": "Core Concepts - ESLint - Pluggable JavaScript Linter"
+      }
+    },
+    {
+      "url": "https://jestjs.io/docs/getting-started",
+      "domain": "jestjs.io",
+      "label": "jestjs.io",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://jestjs.io/docs/getting-started",
+        "paragraphs": 36,
+        "longParagraphs": 8,
+        "maxParagraphChars": 311,
+        "title": "Getting Started · Jest"
+      }
+    },
+    {
+      "url": "https://www.atlassian.com/agile/project-management",
+      "domain": "atlassian.com",
+      "label": "atlassian.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.atlassian.com/agile/project-management",
+        "paragraphs": 148,
+        "longParagraphs": 20,
+        "maxParagraphChars": 339,
+        "title": "What is Agile Project Management? | AtlassianAtlassianTeamwork CollectionStrategy CollectionService CollectionSoftware CollectionProduct CollectionSoftware Coll"
+      }
+    },
+    {
+      "url": "https://www.fsf.org/about/",
+      "domain": "fsf.org",
+      "label": "fsf.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.fsf.org/about/",
+        "paragraphs": 18,
+        "longParagraphs": 10,
+        "maxParagraphChars": 720,
+        "title": "Free software is a matter of liberty, not price — Free Software Foundation — Working together for free software"
+      }
+    },
+    {
+      "url": "https://ubuntu.com/about",
+      "domain": "ubuntu.com",
+      "label": "ubuntu.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://ubuntu.com/about",
+        "paragraphs": 22,
+        "longParagraphs": 10,
+        "maxParagraphChars": 487,
+        "title": "About the Ubuntu project | Ubuntu"
+      }
+    },
+    {
+      "url": "https://www.r-project.org/about.html",
+      "domain": "r-project.org",
+      "label": "r-project.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.r-project.org/about.html",
+        "paragraphs": 11,
+        "longParagraphs": 7,
+        "maxParagraphChars": 429,
+        "title": "R: What is R?"
+      }
+    },
+    {
+      "url": "https://en.cppreference.com/w/cpp/language.html",
+      "domain": "cppreference.com",
+      "label": "cppreference.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://en.cppreference.com/cpp/language",
+        "paragraphs": 26,
+        "longParagraphs": 7,
+        "maxParagraphChars": 561,
+        "title": "C++ language - cppreference.com"
+      }
+    },
+    {
+      "url": "https://www.sqlite.org/about.html",
+      "domain": "sqlite.org",
+      "label": "sqlite.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.sqlite.org/about.html",
+        "paragraphs": 8,
+        "longParagraphs": 7,
+        "maxParagraphChars": 855,
+        "title": "About SQLite"
+      }
+    },
+    {
+      "url": "https://jamstack.org/what-is-jamstack/",
+      "domain": "jamstack.org",
+      "label": "jamstack.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://jamstack.org/what-is-jamstack/",
+        "paragraphs": 10,
+        "longParagraphs": 7,
+        "maxParagraphChars": 431,
+        "title": "What is the Jamstack? | Jamstack"
+      }
+    },
+    {
+      "url": "https://rollupjs.org/introduction/",
+      "domain": "rollupjs.org",
+      "label": "rollupjs.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://rollupjs.org/introduction/",
+        "paragraphs": 13,
+        "longParagraphs": 7,
+        "maxParagraphChars": 576,
+        "title": "Introduction | Rollup"
+      }
+    },
+    {
+      "url": "https://creativecommons.org/about/",
+      "domain": "creativecommons.org",
+      "label": "creativecommons.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://creativecommons.org/what-we-do/",
+        "paragraphs": 12,
+        "longParagraphs": 7,
+        "maxParagraphChars": 398,
+        "title": "Keeping the Internet Human - Creative Commons"
+      }
+    },
+    {
+      "url": "https://www.freebsd.org/about/",
+      "domain": "freebsd.org",
+      "label": "freebsd.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.freebsd.org/about/",
+        "paragraphs": 10,
+        "longParagraphs": 7,
+        "maxParagraphChars": 536,
+        "title": "About FreeBSD |\n    The FreeBSD Project"
+      }
+    },
+    {
+      "url": "https://www.netbsd.org/about/",
+      "domain": "netbsd.org",
+      "label": "netbsd.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.netbsd.org/about/",
+        "paragraphs": 13,
+        "longParagraphs": 7,
+        "maxParagraphChars": 368,
+        "title": "About NetBSD"
+      }
+    },
+    {
+      "url": "https://nodejs.org/en/learn/getting-started/introduction-to-nodejs",
+      "domain": "nodejs.org",
+      "label": "nodejs.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://nodejs.org/learn/getting-started/introduction-to-nodejs",
+        "paragraphs": 21,
+        "longParagraphs": 6,
+        "maxParagraphChars": 377,
+        "title": "Introduction to Node.js | Node.js Learn"
+      }
+    },
+    {
+      "url": "https://www.mongodb.com/docs/manual/introduction/",
+      "domain": "mongodb.com",
+      "label": "mongodb.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.mongodb.com/docs/manual/",
+        "paragraphs": 40,
+        "longParagraphs": 6,
+        "maxParagraphChars": 382,
+        "title": "What is MongoDB? - Database Manual - MongoDB Docsarrow-rightarrow-rightarrow-rightarrow-rightarrow-rightarrow-rightarrow-rightarrow-rightarrow-rightmenu-vertica"
+      }
+    },
+    {
+      "url": "https://www.who.int/about",
+      "domain": "who.int",
+      "label": "who.int",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.who.int/about",
+        "paragraphs": 11,
+        "longParagraphs": 6,
+        "maxParagraphChars": 343,
+        "title": "About WHO"
+      }
+    },
+    {
+      "url": "https://opensource.org/osd",
+      "domain": "opensource.org",
+      "label": "opensource.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://opensource.org/osd",
+        "paragraphs": 14,
+        "longParagraphs": 6,
+        "maxParagraphChars": 574,
+        "title": "The Open Source Definition – Open Source Initiative"
+      }
+    },
+    {
+      "url": "https://www.debian.org/intro/about",
+      "domain": "debian.org",
+      "label": "debian.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.debian.org/intro/about",
+        "paragraphs": 14,
+        "longParagraphs": 6,
+        "maxParagraphChars": 527,
+        "title": "Debian -- About Debian"
+      }
+    },
+    {
+      "url": "https://archlinux.org/about/",
+      "domain": "archlinux.org",
+      "label": "archlinux.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://archlinux.org/about/",
+        "paragraphs": 9,
+        "longParagraphs": 6,
+        "maxParagraphChars": 628,
+        "title": "Arch Linux - About"
+      }
+    },
+    {
+      "url": "https://plos.org/about/",
+      "domain": "plos.org",
+      "label": "plos.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://plos.org/about/",
+        "paragraphs": 12,
+        "longParagraphs": 5,
+        "maxParagraphChars": 425,
+        "title": "About PLOSBlueskyFacebookLinkedin"
+      }
+    },
+    {
+      "url": "https://arxiv.org/about",
+      "domain": "arxiv.org",
+      "label": "arxiv.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://info.arxiv.org/about/index.html",
+        "paragraphs": 5,
+        "longParagraphs": 5,
+        "maxParagraphChars": 621,
+        "title": "About arXiv - arXiv info | arXiv e-print repository"
+      }
+    },
+    {
+      "url": "https://vitest.dev/guide/",
+      "domain": "vitest.dev",
+      "label": "vitest.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://vitest.dev/guide/",
+        "paragraphs": 22,
+        "longParagraphs": 5,
+        "maxParagraphChars": 335,
+        "title": "Getting Started | Guide | Vitest"
+      }
+    },
+    {
+      "url": "https://www.gentoo.org/get-started/about/",
+      "domain": "gentoo.org",
+      "label": "gentoo.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.gentoo.org/get-started/about/",
+        "paragraphs": 10,
+        "longParagraphs": 5,
+        "maxParagraphChars": 418,
+        "title": "About Gentoo – Gentoo Linux"
+      }
+    },
+    {
+      "url": "https://www.rust-lang.org/learn",
+      "domain": "rust-lang.org",
+      "label": "rust-lang.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://rust-lang.org/learn/",
+        "paragraphs": 16,
+        "longParagraphs": 4,
+        "maxParagraphChars": 258,
+        "title": "Learn Rust - Rust Programming Language"
+      }
+    },
+    {
+      "url": "https://flask.palletsprojects.com/en/stable/",
+      "domain": "palletsprojects.com",
+      "label": "palletsprojects.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://flask.palletsprojects.com/en/stable/",
+        "paragraphs": 5,
+        "longParagraphs": 4,
+        "maxParagraphChars": 357,
+        "title": "Welcome to Flask — Flask Documentation (3.1.x)"
+      }
+    },
+    {
+      "url": "https://docs.flutter.dev/get-started/fundamentals",
+      "domain": "flutter.dev",
+      "label": "flutter.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://docs.flutter.dev/learn/pathway",
+        "paragraphs": 15,
+        "longParagraphs": 4,
+        "maxParagraphChars": 337,
+        "title": "Flutter learning pathway"
+      }
+    },
+    {
+      "url": "https://www.frontiersin.org/about/mission",
+      "domain": "frontiersin.org",
+      "label": "frontiersin.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.frontiersin.org/about/mission",
+        "paragraphs": 30,
+        "longParagraphs": 4,
+        "maxParagraphChars": 371,
+        "title": "Frontiers | Mission"
+      }
+    },
+    {
+      "url": "https://www.11ty.dev/docs/",
+      "domain": "11ty.dev",
+      "label": "11ty.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.11ty.dev/docs/",
+        "paragraphs": 33,
+        "longParagraphs": 4,
+        "maxParagraphChars": 359,
+        "title": "Getting Started — Eleventy"
+      }
+    },
+    {
+      "url": "https://www.selenium.dev/documentation/overview/",
+      "domain": "selenium.dev",
+      "label": "selenium.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.selenium.dev/documentation/overview/",
+        "paragraphs": 7,
+        "longParagraphs": 4,
+        "maxParagraphChars": 445,
+        "title": "Selenium Overview | SeleniumSelenium logo green"
+      }
+    },
+    {
+      "url": "https://testing-library.com/docs/",
+      "domain": "testing-library.com",
+      "label": "testing-library.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://testing-library.com/docs/",
+        "paragraphs": 8,
+        "longParagraphs": 4,
+        "maxParagraphChars": 449,
+        "title": "Introduction | Testing Library"
+      }
+    },
+    {
+      "url": "https://developer.android.com/guide",
+      "domain": "android.com",
+      "label": "android.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://developer.android.com/get-started/overview",
+        "paragraphs": 7,
+        "longParagraphs": 4,
+        "maxParagraphChars": 285,
+        "title": "Build your first app  |  Get started  |  Android Developers"
+      }
+    },
+    {
+      "url": "https://www.eff.org/about",
+      "domain": "eff.org",
+      "label": "eff.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.eff.org/about",
+        "paragraphs": 9,
+        "longParagraphs": 4,
+        "maxParagraphChars": 404,
+        "title": "About EFF | Electronic Frontier Foundation"
+      }
+    },
+    {
+      "url": "https://www.kernel.org/category/about.html",
+      "domain": "kernel.org",
+      "label": "kernel.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.kernel.org/category/about.html",
+        "paragraphs": 13,
+        "longParagraphs": 4,
+        "maxParagraphChars": 256,
+        "title": "The Linux Kernel Archives - About"
+      }
+    },
+    {
+      "url": "https://www.djangoproject.com/start/overview/",
+      "domain": "djangoproject.com",
+      "label": "djangoproject.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.djangoproject.com/start/overview/",
+        "paragraphs": 7,
+        "longParagraphs": 3,
+        "maxParagraphChars": 271,
+        "title": "Django overview | Django"
+      }
+    },
+    {
+      "url": "https://fastapi.tiangolo.com/",
+      "domain": "tiangolo.com",
+      "label": "tiangolo.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://fastapi.tiangolo.com/",
+        "paragraphs": 75,
+        "longParagraphs": 3,
+        "maxParagraphChars": 305,
+        "title": "FastAPI - FastAPI"
+      }
+    },
+    {
+      "url": "https://standardebooks.org/about",
+      "domain": "standardebooks.org",
+      "label": "standardebooks.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://standardebooks.org/about",
+        "paragraphs": 387,
+        "longParagraphs": 3,
+        "maxParagraphChars": 549,
+        "title": "About Standard Ebooks - Standard Ebooks: Free and liberated ebooks, carefully produced for the true book lover"
+      }
+    },
+    {
+      "url": "https://librivox.org/pages/about-librivox/",
+      "domain": "librivox.org",
+      "label": "librivox.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://librivox.org/pages/about-librivox/",
+        "paragraphs": 18,
+        "longParagraphs": 3,
+        "maxParagraphChars": 562,
+        "title": "About LibriVox |  LibriVox"
+      }
+    },
+    {
+      "url": "https://www.unicef.org/what-we-do",
+      "domain": "unicef.org",
+      "label": "unicef.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.unicef.org/what-we-do",
+        "paragraphs": 12,
+        "longParagraphs": 3,
+        "maxParagraphChars": 286,
+        "title": "What we do | UNICEF"
+      }
+    },
+    {
+      "url": "https://playwright.dev/docs/intro",
+      "domain": "playwright.dev",
+      "label": "playwright.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://playwright.dev/docs/intro",
+        "paragraphs": 18,
+        "longParagraphs": 3,
+        "maxParagraphChars": 334,
+        "title": "Installation | Playwright"
+      }
+    },
+    {
+      "url": "https://obsidian.md/about",
+      "domain": "obsidian.md",
+      "label": "obsidian.md",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://obsidian.md/about",
+        "paragraphs": 16,
+        "longParagraphs": 3,
+        "maxParagraphChars": 256,
+        "title": "About - Obsidian"
+      }
+    },
+    {
+      "url": "https://nextjs.org/docs",
+      "domain": "nextjs.org",
+      "label": "nextjs.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://nextjs.org/docs",
+        "paragraphs": 17,
+        "longParagraphs": 2,
+        "maxParagraphChars": 187,
+        "title": "Next.js Docs"
+      }
+    },
+    {
+      "url": "https://julialang.org/learning/",
+      "domain": "julialang.org",
+      "label": "julialang.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://julialang.org/learning/",
+        "paragraphs": 9,
+        "longParagraphs": 2,
+        "maxParagraphChars": 279,
+        "title": "Get started with Julia"
+      }
+    },
+    {
+      "url": "https://clojure.org/about/rationale",
+      "domain": "clojure.org",
+      "label": "clojure.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://clojure.org/about/rationale",
+        "paragraphs": 89,
+        "longParagraphs": 2,
+        "maxParagraphChars": 794,
+        "title": "Clojure - Rationale"
+      }
+    },
+    {
+      "url": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+      "domain": "cmake.org",
+      "label": "cmake.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://cmake.org/cmake/help/latest/guide/tutorial/index.html",
+        "paragraphs": 4,
+        "longParagraphs": 2,
+        "maxParagraphChars": 264,
+        "title": "CMake Tutorial — CMake 4.5.0-rc1 Documentation"
+      }
+    },
+    {
+      "url": "https://www.postgresql.org/docs/current/intro-whatis.html",
+      "domain": "postgresql.org",
+      "label": "postgresql.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.postgresql.org/docs/current/intro-whatis.html",
+        "paragraphs": 5,
+        "longParagraphs": 2,
+        "maxParagraphChars": 296,
+        "title": "PostgreSQL: Documentation: 18: 1.  What Is PostgreSQL?"
+      }
+    },
+    {
+      "url": "https://jupyter.org/",
+      "domain": "jupyter.org",
+      "label": "jupyter.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://jupyter.org/",
+        "paragraphs": 16,
+        "longParagraphs": 2,
+        "maxParagraphChars": 331,
+        "title": "Project Jupyter | Home"
+      }
+    },
+    {
+      "url": "https://www.redcross.org/about-us.html",
+      "domain": "redcross.org",
+      "label": "redcross.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.redcross.org/about-us.html",
+        "paragraphs": 42,
+        "longParagraphs": 2,
+        "maxParagraphChars": 246,
+        "title": "About Us | Our Mission | American Red Cross"
+      }
+    },
+    {
+      "url": "https://vercel.com/docs",
+      "domain": "vercel.com",
+      "label": "vercel.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://vercel.com/docs",
+        "paragraphs": 39,
+        "longParagraphs": 2,
+        "maxParagraphChars": 186,
+        "title": "Vercel Documentation"
+      }
+    },
+    {
+      "url": "https://babeljs.io/docs/",
+      "domain": "babeljs.io",
+      "label": "babeljs.io",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://babeljs.io/docs/",
+        "paragraphs": 14,
+        "longParagraphs": 2,
+        "maxParagraphChars": 230,
+        "title": "What is Babel? · Babel"
+      }
+    },
+    {
+      "url": "https://svelte.dev/docs/svelte/overview",
+      "domain": "svelte.dev",
+      "label": "svelte.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://svelte.dev/docs/svelte/overview",
+        "paragraphs": 6,
+        "longParagraphs": 1,
+        "maxParagraphChars": 188,
+        "title": "Overview • Svelte Docs"
+      }
+    },
+    {
+      "url": "https://docs.astro.build/en/getting-started/",
+      "domain": "astro.build",
+      "label": "astro.build",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://docs.astro.build/en/getting-started/",
+        "paragraphs": 12,
+        "longParagraphs": 1,
+        "maxParagraphChars": 195,
+        "title": "Getting started | Docs"
+      }
+    },
+    {
+      "url": "https://matplotlib.org/stable/users/getting_started/",
+      "domain": "matplotlib.org",
+      "label": "matplotlib.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://matplotlib.org/stable/users/getting_started/",
+        "paragraphs": 11,
+        "longParagraphs": 1,
+        "maxParagraphChars": 473,
+        "title": "Getting started — Matplotlib 3.11.2 documentation"
+      }
+    },
+    {
+      "url": "https://www.tensorflow.org/guide",
+      "domain": "tensorflow.org",
+      "label": "tensorflow.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.tensorflow.org/guide",
+        "paragraphs": 4,
+        "longParagraphs": 1,
+        "maxParagraphChars": 296,
+        "title": "Guide  |  TensorFlow Core"
+      }
+    },
+    {
+      "url": "https://www.gapminder.org/about/",
+      "domain": "gapminder.org",
+      "label": "gapminder.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.gapminder.org/about/",
+        "paragraphs": 3,
+        "longParagraphs": 1,
+        "maxParagraphChars": 203,
+        "title": "About | Gapminder"
+      }
+    },
+    {
+      "url": "https://www.worldbank.org/en/about",
+      "domain": "worldbank.org",
+      "label": "worldbank.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.worldbank.org/ext/en/who-we-are",
+        "paragraphs": 10,
+        "longParagraphs": 1,
+        "maxParagraphChars": 282,
+        "title": "Who We Are: Our Mission to End Poverty | World Bank Group"
+      }
+    },
+    {
+      "url": "https://elifesciences.org/about",
+      "domain": "elifesciences.org",
+      "label": "elifesciences.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://elifesciences.org/about/",
+        "paragraphs": 12,
+        "longParagraphs": 1,
+        "maxParagraphChars": 292,
+        "title": "About eLife · eLife"
+      }
+    },
+    {
+      "url": "https://jekyllrb.com/docs/",
+      "domain": "jekyllrb.com",
+      "label": "jekyllrb.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://jekyllrb.com/docs/",
+        "paragraphs": 7,
+        "longParagraphs": 1,
+        "maxParagraphChars": 222,
+        "title": "Quickstart | Jekyll • Simple, blog-aware, static sites"
+      }
+    },
+    {
+      "url": "https://esbuild.github.io/",
+      "domain": "github.io",
+      "label": "github.io",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://esbuild.github.io/",
+        "paragraphs": 3,
+        "longParagraphs": 1,
+        "maxParagraphChars": 230,
+        "title": "esbuild - An extremely fast bundler for the web"
+      }
+    },
+    {
+      "url": "https://prettier.io/docs/",
+      "domain": "prettier.io",
+      "label": "prettier.io",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://prettier.io/docs/",
+        "paragraphs": 8,
+        "longParagraphs": 1,
+        "maxParagraphChars": 310,
+        "title": "What is Prettier? · Prettier"
+      }
+    },
+    {
+      "url": "https://pptr.dev/guides/what-is-puppeteer",
+      "domain": "pptr.dev",
+      "label": "pptr.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://pptr.dev/guides/what-is-puppeteer",
+        "paragraphs": 2,
+        "longParagraphs": 1,
+        "maxParagraphChars": 262,
+        "title": "What is Puppeteer? | Puppeteer"
+      }
+    },
+    {
+      "url": "https://go.dev/doc/",
+      "domain": "go.dev",
+      "label": "go.dev",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://go.dev/doc/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Documentation - The Go Programming Language"
+      }
+    },
+    {
+      "url": "https://kotlinlang.org/docs/home.html",
+      "domain": "kotlinlang.org",
+      "label": "kotlinlang.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://kotlinlang.org/docs/home.html",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Kotlin Docs | Kotlin Documentation"
+      }
+    },
+    {
+      "url": "https://elixir-lang.org/getting-started/introduction.html",
+      "domain": "elixir-lang.org",
+      "label": "elixir-lang.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://elixir-lang.org/getting-started/introduction.html/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Redirecting to: https://hexdocs.pm/elixir/introduction.html"
+      }
+    },
+    {
+      "url": "https://cplusplus.com/doc/tutorial/introduction/",
+      "domain": "cplusplus.com",
+      "label": "cplusplus.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://cplusplus.com/doc/tutorial/introduction/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": ""
+      }
+    },
+    {
+      "url": "https://redis.io/docs/latest/develop/get-started/",
+      "domain": "redis.io",
+      "label": "redis.io",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://redis.io/docs/latest/develop/get-started/",
+        "paragraphs": 3,
+        "longParagraphs": 0,
+        "maxParagraphChars": 127,
+        "title": "Quick starts | Docs"
+      }
+    },
+    {
+      "url": "https://duckdb.org/docs/stable/",
+      "domain": "duckdb.org",
+      "label": "duckdb.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://duckdb.org/docs/stable/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Redirecting…"
+      }
+    },
+    {
+      "url": "https://scipy.org/",
+      "domain": "scipy.org",
+      "label": "scipy.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://scipy.org/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "SciPy"
+      }
+    },
+    {
+      "url": "https://pytorch.org/docs/stable/index.html",
+      "domain": "pytorch.org",
+      "label": "pytorch.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://docs.pytorch.org/docs/stable/index.html",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Redirecting…"
+      }
+    },
+    {
+      "url": "https://keras.io/about/",
+      "domain": "keras.io",
+      "label": "keras.io",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://keras.io/about/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": ""
+      }
+    },
+    {
+      "url": "https://www.openstax.org/about",
+      "domain": "openstax.org",
+      "label": "openstax.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://openstax.org/about",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "OpenStax"
+      }
+    },
+    {
+      "url": "https://archive.org/about/",
+      "domain": "archive.org",
+      "label": "archive.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://archive.org/about/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Internet Archive: Digital Library of Free & Borrowable Texts, Movies, Music & Wayback Machine"
+      }
+    },
+    {
+      "url": "https://www.unesco.org/en/education",
+      "domain": "unesco.org",
+      "label": "unesco.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.unesco.org/en/education",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": ""
+      }
+    },
+    {
+      "url": "https://www.ncbi.nlm.nih.gov/books/NBK21880/",
+      "domain": "nih.gov",
+      "label": "nih.gov",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.ncbi.nlm.nih.gov/books/NBK21880/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Checking your browser - reCAPTCHA"
+      }
+    },
+    {
+      "url": "https://whatwg.org/",
+      "domain": "whatwg.org",
+      "label": "whatwg.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://whatwg.org/",
+        "paragraphs": 4,
+        "longParagraphs": 0,
+        "maxParagraphChars": 50,
+        "title": "Web Hypertext Application Technology Working Group (WHATWG)"
+      }
+    },
+    {
+      "url": "https://www.w3schools.com/html/html_intro.asp",
+      "domain": "w3schools.com",
+      "label": "w3schools.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.w3schools.com/html/html_intro.asp",
+        "paragraphs": 16,
+        "longParagraphs": 0,
+        "maxParagraphChars": 177,
+        "title": "Introduction to HTML"
+      }
+    },
+    {
+      "url": "https://developer.chrome.com/docs/devtools/",
+      "domain": "chrome.com",
+      "label": "chrome.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://developer.chrome.com/docs/devtools/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Chrome DevTools  |  Chrome for Developers"
+      }
+    },
+    {
+      "url": "https://gohugo.io/about/",
+      "domain": "gohugo.io",
+      "label": "gohugo.io",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://gohugo.io/about/",
+        "paragraphs": 5,
+        "longParagraphs": 0,
+        "maxParagraphChars": 127,
+        "title": "About HugoAbout Hugo |\nHugo"
+      }
+    },
+    {
+      "url": "https://www.notion.com/help/guides/what-is-notion",
+      "domain": "notion.com",
+      "label": "notion.com",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.notion.com/help/guides/what-is-notion",
+        "paragraphs": 11,
+        "longParagraphs": 0,
+        "maxParagraphChars": 100,
+        "title": "What is Notion?"
+      }
+    },
+    {
+      "url": "https://signal.org/blog/phone-number-privacy-usernames/",
+      "domain": "signal.org",
+      "label": "signal.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://signal.org/blog/phone-number-privacy-usernames/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "Signal >> Blog >> Keep your phone number private with Signal usernames"
+      }
+    },
+    {
+      "url": "https://www.openbsd.org/",
+      "domain": "openbsd.org",
+      "label": "openbsd.org",
+      "httpVerification": {
+        "status": 200,
+        "finalUrl": "https://www.openbsd.org/",
+        "paragraphs": 0,
+        "longParagraphs": 0,
+        "maxParagraphChars": 0,
+        "title": "OpenBSD"
+      }
+    },
+    {
+      "url": "https://www.php.net/manual/en/intro-whatis.php",
+      "domain": "php.net",
+      "label": "php.net",
+      "httpVerification": {
+        "status": 404,
+        "error": "HTTP Error 404: Not Found"
+      }
+    },
+    {
+      "url": "https://www.gnu.org/software/make/manual/make.html",
+      "domain": "gnu.org",
+      "label": "gnu.org",
+      "httpVerification": {
+        "status": 403,
+        "error": "HTTP Error 403: Forbidden"
+      }
+    },
+    {
+      "url": "https://www.si.edu/about",
+      "domain": "si.edu",
+      "label": "si.edu",
+      "httpVerification": {
+        "status": 403,
+        "error": "HTTP Error 403: Forbidden"
+      }
+    },
+    {
+      "url": "https://www.noaa.gov/education/resource-collections/weather-atmosphere",
+      "domain": "noaa.gov",
+      "label": "noaa.gov",
+      "httpVerification": {
+        "status": 403,
+        "error": "HTTP Error 403: Forbidden"
+      }
+    },
+    {
+      "url": "https://www.usgs.gov/special-topics/water-science-school/science/water-cycle",
+      "domain": "usgs.gov",
+      "label": "usgs.gov",
+      "httpVerification": {
+        "status": 403,
+        "error": "HTTP Error 403: Forbidden"
+      }
+    },
+    {
+      "url": "https://developers.cloudflare.com/fundamentals/concepts/what-is-cloudflare/",
+      "domain": "cloudflare.com",
+      "label": "cloudflare.com",
+      "httpVerification": {
+        "status": 403,
+        "error": "HTTP Error 403: Forbidden"
+      }
+    },
+    {
+      "url": "https://asana.com/resources/what-is-project-management",
+      "domain": "asana.com",
+      "label": "asana.com",
+      "httpVerification": {
+        "status": 404,
+        "error": "HTTP Error 404: Not Found"
+      }
+    }
+  ],
+  "verifiedOn": "2026-10-28",
+  "httpSummary": {
+    "candidateSites": 148,
+    "http200": 140,
+    "http200WithLongProse": 115,
+    "previousBrowserCaptures": 35
+  }
+}

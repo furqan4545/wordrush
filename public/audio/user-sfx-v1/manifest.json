@@ -1,0 +1,218 @@
+{
+  "version": "user-sfx-v1",
+  "method": "Trim original user recordings; 3 ms squared-sine edge fades; fixed gain normalization only, no compressor, denoiser, or master normalization",
+  "sampleRate": 48000,
+  "channels": 2,
+  "sources": {
+    "press_key.mp3": {
+      "path": "originals/press_key.mp3",
+      "originalPath": "/Users/topg/Downloads/press_key.mp3",
+      "sha256": "64d9331804512e308f52ecbac75e0124b79b6ed46144ec740d9b6129a7880156",
+      "bytes": 20736
+    },
+    "typing.mp3": {
+      "path": "originals/typing.mp3",
+      "originalPath": "/Users/topg/Downloads/typing.mp3",
+      "sha256": "cd043f1b6a0f52388b2754e5b648f343baeda4b1af93cf5e35582839568eef4c",
+      "bytes": 259134
+    }
+  },
+  "assets": {
+    "enter": {
+      "file": "enter.wav",
+      "url": "/audio/user-sfx-v1/enter.wav",
+      "before": {
+        "samplePeakDbfs": -13.467,
+        "rmsDbfs": -33.908,
+        "duration": 0.148,
+        "frames": 7104
+      },
+      "after": {
+        "samplePeakDbfs": -3.5,
+        "rmsDbfs": -23.942,
+        "duration": 0.148,
+        "frames": 7104,
+        "truePeakEstimateDbtp4x": -3.047
+      },
+      "appliedGainDb": 9.967,
+      "edgeFadeMs": 3,
+      "pcmFormat": "stereo 48000 Hz signed 16-bit WAV, fmt chunk 16 bytes",
+      "source": "press_key.mp3",
+      "sourceTrimSeconds": [
+        0.152,
+        0.3
+      ],
+      "attackOffsetSeconds": 0.006,
+      "description": "One complete down/up keypress pair; silence before and after removed",
+      "normalizationTarget": "sample peak -3.5 dBFS, leaving true-peak headroom",
+      "sha256": "96a7619e02be8ce9273d63da683fd85a1de7461588d7e738c3473ee3222e9d97"
+    },
+    "typingKeys": [
+      {
+        "file": "typing-key-01.wav",
+        "url": "/audio/user-sfx-v1/typing-key-01.wav",
+        "before": {
+          "samplePeakDbfs": -9.128,
+          "rmsDbfs": -29.622,
+          "duration": 0.085,
+          "frames": 4080
+        },
+        "after": {
+          "samplePeakDbfs": -7.506,
+          "rmsDbfs": -28.0,
+          "duration": 0.085,
+          "frames": 4080,
+          "truePeakEstimateDbtp4x": -7.356
+        },
+        "appliedGainDb": 1.623,
+        "edgeFadeMs": 3,
+        "pcmFormat": "stereo 48000 Hz signed 16-bit WAV, fmt chunk 16 bytes",
+        "source": "typing.mp3",
+        "sourceTrimSeconds": [
+          0.431,
+          0.516
+        ],
+        "attackOffsetSeconds": 0.006,
+        "description": "User-recorded isolated keystroke variant; native attack and release retained",
+        "normalizationTarget": "RMS -28 dBFS with sample peak cap -7.5 dBFS",
+        "sha256": "a80936e11346a273a9b0e7f93fae439aad821cfaaf1cebf71c7dce66832dd0d1"
+      },
+      {
+        "file": "typing-key-02.wav",
+        "url": "/audio/user-sfx-v1/typing-key-02.wav",
+        "before": {
+          "samplePeakDbfs": -15.308,
+          "rmsDbfs": -37.005,
+          "duration": 0.075,
+          "frames": 3600
+        },
+        "after": {
+          "samplePeakDbfs": -7.5,
+          "rmsDbfs": -29.199,
+          "duration": 0.075,
+          "frames": 3600,
+          "truePeakEstimateDbtp4x": -7.5
+        },
+        "appliedGainDb": 7.808,
+        "edgeFadeMs": 3,
+        "pcmFormat": "stereo 48000 Hz signed 16-bit WAV, fmt chunk 16 bytes",
+        "source": "typing.mp3",
+        "sourceTrimSeconds": [
+          0.594,
+          0.669
+        ],
+        "attackOffsetSeconds": 0.008,
+        "description": "User-recorded isolated keystroke variant; native attack and release retained",
+        "normalizationTarget": "RMS -28 dBFS with sample peak cap -7.5 dBFS",
+        "sha256": "65d9511fee35340470b388026ec13896758fb73797b208e3885853597fbe1428"
+      },
+      {
+        "file": "typing-key-03.wav",
+        "url": "/audio/user-sfx-v1/typing-key-03.wav",
+        "before": {
+          "samplePeakDbfs": -14.353,
+          "rmsDbfs": -33.411,
+          "duration": 0.062,
+          "frames": 2976
+        },
+        "after": {
+          "samplePeakDbfs": -8.939,
+          "rmsDbfs": -28.0,
+          "duration": 0.062,
+          "frames": 2976,
+          "truePeakEstimateDbtp4x": -8.883
+        },
+        "appliedGainDb": 5.414,
+        "edgeFadeMs": 3,
+        "pcmFormat": "stereo 48000 Hz signed 16-bit WAV, fmt chunk 16 bytes",
+        "source": "typing.mp3",
+        "sourceTrimSeconds": [
+          0.711,
+          0.773
+        ],
+        "attackOffsetSeconds": 0.006,
+        "description": "User-recorded isolated keystroke variant; native attack and release retained",
+        "normalizationTarget": "RMS -28 dBFS with sample peak cap -7.5 dBFS",
+        "sha256": "e9ade5f5d64a5a7db838d708a2032508c60aa6e60a8360bb78311a234e532a37"
+      },
+      {
+        "file": "typing-key-04.wav",
+        "url": "/audio/user-sfx-v1/typing-key-04.wav",
+        "before": {
+          "samplePeakDbfs": -17.579,
+          "rmsDbfs": -35.985,
+          "duration": 0.066,
+          "frames": 3168
+        },
+        "after": {
+          "samplePeakDbfs": -9.592,
+          "rmsDbfs": -28.0,
+          "duration": 0.066,
+          "frames": 3168,
+          "truePeakEstimateDbtp4x": -9.591
+        },
+        "appliedGainDb": 7.987,
+        "edgeFadeMs": 3,
+        "pcmFormat": "stereo 48000 Hz signed 16-bit WAV, fmt chunk 16 bytes",
+        "source": "typing.mp3",
+        "sourceTrimSeconds": [
+          0.919,
+          0.985
+        ],
+        "attackOffsetSeconds": 0.007,
+        "description": "User-recorded isolated keystroke variant; native attack and release retained",
+        "normalizationTarget": "RMS -28 dBFS with sample peak cap -7.5 dBFS",
+        "sha256": "3adda0332eab4217a52332ef7937f9206a403122d34612f263552bce19e3b118"
+      }
+    ],
+    "typingBed": {
+      "file": "typing-bed.wav",
+      "url": "/audio/user-sfx-v1/typing-bed.wav",
+      "before": {
+        "samplePeakDbfs": -7.974,
+        "rmsDbfs": -36.572,
+        "duration": 6.634,
+        "frames": 318432
+      },
+      "after": {
+        "samplePeakDbfs": -6.5,
+        "rmsDbfs": -35.098,
+        "duration": 6.634,
+        "frames": 318432,
+        "truePeakEstimateDbtp4x": -6.261
+      },
+      "appliedGainDb": 1.474,
+      "edgeFadeMs": 3,
+      "pcmFormat": "stereo 48000 Hz signed 16-bit WAV, fmt chunk 16 bytes",
+      "source": "typing.mp3",
+      "sourceSegmentsSeconds": [
+        [
+          0.431,
+          3.475
+        ],
+        [
+          3.82,
+          7.41
+        ]
+      ],
+      "removedIdlePauseSeconds": [
+        3.475,
+        3.82
+      ],
+      "description": "Continuous original typing performance with leading/tail silence and clear idle pause removed",
+      "normalizationTarget": "sample peak -6.5 dBFS",
+      "sha256": "68f3404bdedca3ef8c1142de1b8c7fc7447a851ccdc49a5db3a984dda1b87066"
+    }
+  },
+  "verification": {
+    "originalDownloadFilesUnchanged": true,
+    "allWavHeadersSimplePcm": true,
+    "normalization": "fixed gain only; no compression or master-level processing",
+    "truePeakMeasurement": "4x oversampled peak via FFmpeg aresample=192000 and astats",
+    "enterFits200msWindow": true,
+    "typingKeyRmsRangeDbfs": [
+      -29.199,
+      -28.0
+    ]
+  }
+}

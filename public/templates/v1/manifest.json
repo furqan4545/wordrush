@@ -1,0 +1,2492 @@
+{
+  "version": "reusable-web-v1",
+  "mode": "reusable-template",
+  "preparedOnce": true,
+  "runtimeWebsiteRequests": 0,
+  "wordIndependent": true,
+  "targetCount": 50,
+  "sources": [
+    {
+      "id": "0a1ee24c73d0535aee",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "betterup.com",
+      "url": "https://www.betterup.com/blog/mental-clarity",
+      "sourceURL": "https://www.betterup.com/blog/mental-clarity",
+      "title": "Can’t Think Straight? How to Achieve Mental Clarity",
+      "image": "/templates/v1/0a1ee24c73d0535aee.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 626.609375,
+        "y": 1090.953125,
+        "width": 118.34375,
+        "height": 19
+      },
+      "fontSize": 18,
+      "template": {
+        "before": "These eight tips for how to improve mental clarity are all easy to incorporate into your daily life. They can help you lay down the",
+        "after": "sharp, active, and clear mind. And, if you are leading or working with someone who seems to be lacking mental clarity, encourage them to practice self-care and point them toward resources that can support these tips",
+        "paragraph": {
+          "x": 330,
+          "y": 1062.390625,
+          "width": 780,
+          "height": 102.25,
+          "fontFamily": "Sohne, Arial, sans-serif",
+          "fontSize": 18,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 25.56,
+          "letterSpacing": 0.36,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "These eight tips for how to improve mental clarity are all easy to incorporate into your daily life. They can help you lay down the find me clarity sharp, active, and clear mind. And, if you are leading or working with someone who seems to be lacking mental clarity, encourage them to practice self-care and point them toward resources that can support these tips",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:49:49.711Z"
+    },
+    {
+      "id": "adb926c317c013c9df",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "dictionary.net",
+      "url": "https://www.dictionary.net/dictionary/clarity",
+      "sourceURL": "https://www.dictionary.net/dictionary/clarity",
+      "title": "clarity Definition & Meaning - Dictionary.net",
+      "image": "/templates/v1/adb926c317c013c9df.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 749.765625,
+        "y": 1174.65625,
+        "width": 102.625,
+        "height": 19
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Picture a world shrouded in fog—a metaphorical landscape where ancient languages once dwelled. Greek seafarers, navigating hazy waters, spoke of 'klaros' when a break in the mist revealed the horizon. Transitioning to Latin with 'clarus', this concept of unveiling and revelation evolved, shedding light not only on physical visibility but also mental and emotional understanding. As the English language embraced clarity, it became a beacon in the tangled web",
+        "after": "thoughts and expressions with unparalleled precision.",
+        "paragraph": {
+          "x": 180,
+          "y": 1007.53125,
+          "width": 740,
+          "height": 217.5,
+          "fontFamily": "Georgia, \"Times New Roman\", \"Noto Serif\", serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(44, 62, 80)",
+          "lineHeight": 27.2,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Picture a world shrouded in fog—a metaphorical landscape where ancient languages once dwelled. Greek seafarers, navigating hazy waters, spoke of 'klaros' when a break in the mist revealed the horizon. Transitioning to Latin with 'clarus', this concept of unveiling and revelation evolved, shedding light not only on physical visibility but also mental and emotional understanding. As the English language embraced clarity, it became a beacon in the tangled web find me clarity thoughts and expressions with unparalleled precision.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:49:51.970Z"
+    },
+    {
+      "id": "f40fba3cf15539f3b4",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "definitions.net",
+      "url": "https://www.definitions.net/definition/clarity",
+      "sourceURL": "https://www.definitions.net/definition/clarity",
+      "title": "What does clarity mean?",
+      "image": "/templates/v1/f40fba3cf15539f3b4.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 1010.984375,
+        "y": 1091.40625,
+        "width": 88.9375,
+        "height": 17
+      },
+      "fontSize": 14,
+      "template": {
+        "before": "CLARITY is a method of making tissue transparent using acrylamide-based hydrogels built from within, and linked to, the tissue, and as defined in the initial paper, represents \"transformation of intact biological tissue into a hybrid form in which specific components are replaced with exogenous elements that provide new accessibility or functionality\". When accompanied with antibody or gene-based labeling, CLARITY enables highly detailed pictures of the protein and nucleic acid structure of organs, especially the brain. It was developed by Kwanghun Chung and Karl Deisseroth at the Stanford University School of Medicine.Several published papers have applied the CLARITY method to a wide",
+        "after": "and disease states such as immuno-oncology for human breast cancer, Alzheimer's disease human brains, mouse spinal cords, multiple sclerosis animal models, and plants. CLARITY has also been combined with other technologies to develop new microscopy methods including confocal expansion microscopy, SPIM light sheet microscopy, and CLARITY-optimized light sheet microscopy (COLM).",
+        "paragraph": {
+          "x": 622.15625,
+          "y": 913.40625,
+          "width": 522.328125,
+          "height": 308,
+          "fontFamily": "Oxygen, sans-serif",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(79, 71, 74)",
+          "lineHeight": 22,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 16,
+          "whiteSpace": "normal"
+        },
+        "originalText": "CLARITY is a method of making tissue transparent using acrylamide-based hydrogels built from within, and linked to, the tissue, and as defined in the initial paper, represents \"transformation of intact biological tissue into a hybrid form in which specific components are replaced with exogenous elements that provide new accessibility or functionality\". When accompanied with antibody or gene-based labeling, CLARITY enables highly detailed pictures of the protein and nucleic acid structure of organs, especially the brain. It was developed by Kwanghun Chung and Karl Deisseroth at the Stanford University School of Medicine.Several published papers have applied the CLARITY method to a wide find me clarity and disease states such as immuno-oncology for human breast cancer, Alzheimer's disease human brains, mouse spinal cords, multiple sclerosis animal models, and plants. CLARITY has also been combined with other technologies to develop new microscopy methods including confocal expansion microscopy, SPIM light sheet microscopy, and CLARITY-optimized light sheet microscopy (COLM).",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:49:54.557Z"
+    },
+    {
+      "id": "cbc11eff838901e69a",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "owl.purdue.edu",
+      "url": "https://owl.purdue.edu/owl/research_and_citation/apa_style/apa_formatting_and_style_guide/apa_stylistics_basics.html",
+      "sourceURL": "https://owl.purdue.edu/owl/research_and_citation/apa_style/apa_formatting_and_style_guide/apa_stylistics_basics.html",
+      "title": "APA Stylistics: Basics - Purdue OWL® - Purdue University",
+      "image": "/templates/v1/cbc11eff838901e69a.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 1105.265625,
+        "y": 1086.359375,
+        "width": 118.09375,
+        "height": 27
+      },
+      "fontSize": 19,
+      "template": {
+        "before": "You should even be careful in selecting certain words or terms. Within the social sciences, commonly used words take on different meanings and",
+        "after": "significant effect on how your readers interpret your reported findings or claims. To increase clarity, avoid bias, and control how your readers will receive your information, you should make certain substitutions:",
+        "paragraph": {
+          "x": 567,
+          "y": 1052.359375,
+          "width": 723,
+          "height": 160,
+          "fontFamily": "acumin-pro, \"Franklin Gothic\", sans-serif",
+          "fontSize": 19,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 32,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 23,
+          "whiteSpace": "normal"
+        },
+        "originalText": "You should even be careful in selecting certain words or terms. Within the social sciences, commonly used words take on different meanings and find me clarity significant effect on how your readers interpret your reported findings or claims. To increase clarity, avoid bias, and control how your readers will receive your information, you should make certain substitutions:",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:49:55.305Z"
+    },
+    {
+      "id": "65bea28b0267efb4e4",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "alistapart.com",
+      "url": "https://alistapart.com/about/style-guide/",
+      "sourceURL": "https://alistapart.com/about/style-guide/",
+      "title": "Style Guide – A List Apart",
+      "image": "/templates/v1/65bea28b0267efb4e4.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 489.25,
+        "y": 1447.046875,
+        "width": 115.453125,
+        "height": 21
+      },
+      "fontSize": 18,
+      "template": {
+        "before": "When a headline-style heading",
+        "after": "phrase, always capitalize the first element. Capitalize the second element unless it is an article, preposition, or any of the coordinating conjunctions noted above. Exception: if the first element is a prefix like pre- , post- , or anti- , or if the phrase is a written-out number, do not capitalize the second element.",
+        "paragraph": {
+          "x": 240,
+          "y": 1443.046875,
+          "width": 576,
+          "height": 183.5625,
+          "fontFamily": "Georgia, Times, \"Times New Roman\", serif",
+          "fontSize": 18,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(34, 34, 34)",
+          "lineHeight": 30.6,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 21,
+          "whiteSpace": "normal"
+        },
+        "originalText": "When a headline-style heading find me clarity phrase, always capitalize the first element. Capitalize the second element unless it is an article, preposition, or any of the coordinating conjunctions noted above. Exception: if the first element is a prefix like pre- , post- , or anti- , or if the phrase is a written-out number, do not capitalize the second element.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:49:56.878Z"
+    },
+    {
+      "id": "6aa19c376e7a5d791f",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "smashingmagazine.com",
+      "url": "https://www.smashingmagazine.com/2024/06/website-improvement-after-launch/",
+      "sourceURL": "https://www.smashingmagazine.com/2024/06/website-improvement-after-launch/",
+      "title": "So Your Website Or App Is Live… Now What? — Smashing Magazine",
+      "image": "/templates/v1/6aa19c376e7a5d791f.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 426.484375,
+        "y": 1088.234375,
+        "width": 123.9375,
+        "height": 24
+      },
+      "fontSize": 20.4086,
+      "template": {
+        "before": "Failing that, don’t be afraid to use friends and family as in most cases getting the exact demographic is less important than you might think. As long as people have comparable physical and cognitive",
+        "after": "have a problem. The only exception is if the content of your website or app is highly specialized.",
+        "paragraph": {
+          "x": 131.984375,
+          "y": 1017.234375,
+          "width": 700,
+          "height": 134,
+          "fontFamily": "Elena, -apple-system, \"system-ui\", Roboto, \"roboto slab\", \"droid serif\", \"segoe ui\", system-ui, Arial, sans-serif",
+          "fontSize": 20.4086,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(229, 229, 229)",
+          "lineHeight": 33.4929,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 22,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Failing that, don’t be afraid to use friends and family as in most cases getting the exact demographic is less important than you might think. As long as people have comparable physical and cognitive find me clarity have a problem. The only exception is if the content of your website or app is highly specialized.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:49:59.268Z"
+    },
+    {
+      "id": "1e8b19f23f5a80c4af",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "skillsyouneed.com",
+      "url": "https://www.skillsyouneed.com/write/clarity.html",
+      "sourceURL": "https://www.skillsyouneed.com/write/clarity.html",
+      "title": "Clarity in Writing | SkillsYouNeed",
+      "image": "/templates/v1/1e8b19f23f5a80c4af.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 821.75,
+        "y": 420.921875,
+        "width": 131.859375,
+        "height": 24
+      },
+      "fontSize": 21,
+      "template": {
+        "before": "Clarity in writing means the ability to write in a way that is easy to understand. It therefore enables you to make your point without ambiguity. Clarity is particularly important when you are writing for non-native speakers. These readers may be confused by convoluted sentences,",
+        "after": "or slang phrases. However, writing clearly is better for any audience because your meaning will be more obvious.",
+        "paragraph": {
+          "x": 495,
+          "y": 330.75,
+          "width": 775,
+          "height": 146.953125,
+          "fontFamily": "\"Open Sans\", \"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "fontSize": 21,
+          "fontWeight": "300",
+          "fontStyle": "normal",
+          "color": "rgb(42, 42, 42)",
+          "lineHeight": 29.4,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 22,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Clarity in writing means the ability to write in a way that is easy to understand. It therefore enables you to make your point without ambiguity. Clarity is particularly important when you are writing for non-native speakers. These readers may be confused by convoluted sentences, find me clarity or slang phrases. However, writing clearly is better for any audience because your meaning will be more obvious.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:00.221Z"
+    },
+    {
+      "id": "fbbdf452799068bca6",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "docs.python.org",
+      "url": "https://docs.python.org/3.11/whatsnew/changelog.html",
+      "sourceURL": "https://docs.python.org/3.11/whatsnew/changelog.html",
+      "title": "Changelog — Python 3.11.18 documentation",
+      "image": "/templates/v1/fbbdf452799068bca6.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 425.1875,
+        "y": 1090.578125,
+        "width": 102.65625,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "bpo-27099: Convert IDLE’s built-in ‘extensions’ to regular features. About 10 IDLE features were implemented as supposedly optional extensions. Their different behavior could be confusing or worse for",
+        "after": "not good for maintenance. Hence the conversion. The main difference for users is that user configurable key bindings for builtin features are now handled uniformly. Now, editing a binding in a keyset only affects its value in the keyset. All bindings are defined together in the system-specific default keysets in config-extensions.def. All custom keysets are saved as a whole in config-extension.cfg. All take effect as soon as one clicks Apply or Ok. The affected events are ‘<<force-open-completions>>’, ‘<<expand-word>>’, ‘<<force-open-calltip>>’, ‘<<flash-paren>>’, ‘<<format-paragraph>>’, ‘<<run-module>>’, ‘<<check-module>>’, and ‘<<zoom-height>>’. Any (global) customizations made before 3.6.3 will not affect their keyset-specific customization after 3.6.3. and vice versa. Initial patch by Charles Wohlganger.",
+        "paragraph": {
+          "x": 425.1875,
+          "y": 1036.390625,
+          "width": 760,
+          "height": 281.53125,
+          "fontFamily": "-apple-system, \"system-ui\", \"avenir next\", avenir, \"segoe ui\", \"helvetica neue\", helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgba(255, 255, 255, 0.87)",
+          "lineHeight": 25.6,
+          "letterSpacing": 0,
+          "textAlign": "left",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 18,
+          "whiteSpace": "normal"
+        },
+        "originalText": "bpo-27099: Convert IDLE’s built-in ‘extensions’ to regular features. About 10 IDLE features were implemented as supposedly optional extensions. Their different behavior could be confusing or worse for find me clarity not good for maintenance. Hence the conversion. The main difference for users is that user configurable key bindings for builtin features are now handled uniformly. Now, editing a binding in a keyset only affects its value in the keyset. All bindings are defined together in the system-specific default keysets in config-extensions.def. All custom keysets are saved as a whole in config-extension.cfg. All take effect as soon as one clicks Apply or Ok. The affected events are ‘<<force-open-completions>>’, ‘<<expand-word>>’, ‘<<force-open-calltip>>’, ‘<<flash-paren>>’, ‘<<format-paragraph>>’, ‘<<run-module>>’, ‘<<check-module>>’, and ‘<<zoom-height>>’. Any (global) customizations made before 3.6.3 will not affect their keyset-specific customization after 3.6.3. and vice versa. Initial patch by Charles Wohlganger.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:02.871Z"
+    },
+    {
+      "id": "8c24c2deae83b7dbfe",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "nngroup.com",
+      "url": "https://www.nngroup.com/articles/ux-writing-study-guide/",
+      "sourceURL": "https://www.nngroup.com/articles/ux-writing-study-guide/",
+      "title": "UX Writing: Study Guide - NN/G",
+      "image": "/templates/v1/8c24c2deae83b7dbfe.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 226.078125,
+        "y": 1086,
+        "width": 131,
+        "height": 28
+      },
+      "fontSize": 20,
+      "template": {
+        "before": "Consider the information you’re sharing and also how you say it. Conduct user research to understand how people feel when reading a message (e.g., confused, stressed) and what they need or expect to feel afterwards (e.g., clarity, comfort). Tone of voice has a measurable impact on users’ perceptions",
+        "after": ", so it’s important to properly set and consistently maintain it across all channels.",
+        "paragraph": {
+          "x": 60,
+          "y": 971,
+          "width": 868,
+          "height": 185,
+          "fontFamily": "\"Source Serif Pro Variable\", \"Times New Roman\", Times, serif",
+          "fontSize": 20,
+          "fontWeight": "350",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 37,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 25,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Consider the information you’re sharing and also how you say it. Conduct user research to understand how people feel when reading a message (e.g., confused, stressed) and what they need or expect to feel afterwards (e.g., clarity, comfort). Tone of voice has a measurable impact on users’ perceptions find me clarity, so it’s important to properly set and consistently maintain it across all channels.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:03.360Z"
+    },
+    {
+      "id": "6b0eb380fb63f0d626",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "swift.org",
+      "url": "https://www.swift.org/documentation/api-design-guidelines/",
+      "sourceURL": "https://www.swift.org/documentation/api-design-guidelines/",
+      "title": "API Design Guidelines | Swift.org",
+      "image": "/templates/v1/6b0eb380fb63f0d626.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 375,
+        "y": 1090.09375,
+        "width": 107.578125,
+        "height": 20
+      },
+      "fontSize": 17,
+      "template": {
+        "before": "Name Mutating/nonmutating method pairs consistently. A mutating method will often",
+        "after": "nonmutating variant with similar semantics, but that returns a new value rather than updating an instance in-place.",
+        "paragraph": {
+          "x": 375,
+          "y": 1059.90625,
+          "width": 770,
+          "height": 81.5625,
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif",
+          "fontSize": 17,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(255, 255, 255)",
+          "lineHeight": 27.2,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Name Mutating/nonmutating method pairs consistently. A mutating method will often find me clarity nonmutating variant with similar semantics, but that returns a new value rather than updating an instance in-place.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:05.615Z"
+    },
+    {
+      "id": "280003b761b2d0bf8b",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "ocw.mit.edu",
+      "url": "https://ocw.mit.edu/courses/20-219-becoming-the-next-bill-nye-writing-and-hosting-the-educational-show-january-iap-2015/pages/instructor-insights/planning-backwards/",
+      "sourceURL": "https://ocw.mit.edu/courses/20-219-becoming-the-next-bill-nye-writing-and-hosting-the-educational-show-january-iap-2015/pages/instructor-insights/planning-backwards/",
+      "title": "Planning Backwards | Becoming the Next Bill Nye: Writing and Hosting the Educational Show | Biological Engineering | MIT OpenCourseWare",
+      "image": "/templates/v1/280003b761b2d0bf8b.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 420.640625,
+        "y": 540.859375,
+        "width": 85.84375,
+        "height": 16
+      },
+      "fontSize": 14,
+      "template": {
+        "before": "In fact, initially, when I",
+        "after": ", I said I wanted students to become familiar with camera work. You replied, “That’s not really what you want, right?” When I reflected on my experiences making Science Out Loud, I realized camera work was only the tip of the iceberg of what I wanted students to learn. I was really more interested in having students become excited about communicating—and learning how hard it really is to communicate through video. These things have nothing to do with a camera. I realized that, at the end of the day, it wouldn’t be a big deal if students’ videos weren’t very good. We knew that we could help them with that part. The purpose of the class wasn’t really about making a flawless final video. It was about developing students’ digital media skills.",
+        "paragraph": {
+          "x": 280.828125,
+          "y": 538.859375,
+          "width": 803.984375,
+          "height": 147,
+          "fontFamily": "Helvetica",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(33, 37, 41)",
+          "lineHeight": 21,
+          "letterSpacing": 0,
+          "textAlign": "left",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 15,
+          "whiteSpace": "normal"
+        },
+        "originalText": "In fact, initially, when I find me clarity, I said I wanted students to become familiar with camera work. You replied, “That’s not really what you want, right?” When I reflected on my experiences making Science Out Loud, I realized camera work was only the tip of the iceberg of what I wanted students to learn. I was really more interested in having students become excited about communicating—and learning how hard it really is to communicate through video. These things have nothing to do with a camera. I realized that, at the end of the day, it wouldn’t be a big deal if students’ videos weren’t very good. We knew that we could help them with that part. The purpose of the class wasn’t really about making a flawless final video. It was about developing students’ digital media skills.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:07.446Z"
+    },
+    {
+      "id": "95a0e89208bb35544f",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "web.dev",
+      "url": "https://web.dev/articles/choose-js-library-or-framework?hl=en",
+      "sourceURL": "https://web.dev/articles/choose-js-library-or-framework?hl=en",
+      "title": "Choose a JavaScript library or framework  |  Articles  |  web.dev",
+      "image": "/templates/v1/95a0e89208bb35544f.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 928.265625,
+        "y": 1113,
+        "width": 101.96875,
+        "height": 20
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "It's normal to feel overwhelmed when picking a library or framework for the first time. Just like everything else, the more you learn and practice a task, the better you become. It might be helpful to refer to",
+        "after": "you next choose a library or framework to use. You can use the headings within this post as a checklist. For example: Is this library performant? Does this library meet my business standards for web accessibility?",
+        "paragraph": {
+          "x": 293,
+          "y": 1081,
+          "width": 854,
+          "height": 112,
+          "fontFamily": "\"Google Sans\", \"Noto Sans\", \"Noto Sans JP\", \"Noto Sans KR\", \"Noto Naskh Arabic\", \"Noto Sans Thai\", \"Noto Sans Hebrew\", \"Noto Sans Bengali\", sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(32, 33, 36)",
+          "lineHeight": 28,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "It's normal to feel overwhelmed when picking a library or framework for the first time. Just like everything else, the more you learn and practice a task, the better you become. It might be helpful to refer to find me clarity you next choose a library or framework to use. You can use the headings within this post as a checklist. For example: Is this library performant? Does this library meet my business standards for web accessibility?",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:08.047Z"
+    },
+    {
+      "id": "7117ec48de7ce080ce",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "en.wiktionary.org",
+      "url": "https://en.wiktionary.org/wiki/courage",
+      "sourceURL": "https://en.wiktionary.org/wiki/courage",
+      "title": "courage - Wiktionary, the free dictionary",
+      "image": "/templates/v1/7117ec48de7ce080ce.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 998.53125,
+        "y": 392.421875,
+        "width": 98.703125,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "From Middle English corage, from Old French corage (French courage), from Vulgar Latin *corāticum, from Latin cor (“heart”). Distantly related to cardiac (“of the heart”), which is from Greek, but",
+        "after": "same Proto-Indo-European root. Displaced Middle English elne, ellen, from Old English ellen (“courage, valor”).",
+        "paragraph": {
+          "x": 264,
+          "y": 362.421875,
+          "width": 912,
+          "height": 78,
+          "fontFamily": "sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(32, 33, 34)",
+          "lineHeight": 26,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 18,
+          "whiteSpace": "normal"
+        },
+        "originalText": "From Middle English corage, from Old French corage (French courage), from Vulgar Latin *corāticum, from Latin cor (“heart”). Distantly related to cardiac (“of the heart”), which is from Greek, but find me clarity same Proto-Indo-European root. Displaced Middle English elne, ellen, from Old English ellen (“courage, valor”).",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:16.367Z"
+    },
+    {
+      "id": "fe89a686d408b0646e",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "wordnik.com",
+      "url": "https://www.wordnik.com/words/courage",
+      "sourceURL": "https://www.wordnik.com/words/courage",
+      "title": "courage - definition and meaning",
+      "image": "/templates/v1/fe89a686d408b0646e.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 550,
+        "y": 1092.59375,
+        "width": 81.390625,
+        "height": 15
+      },
+      "fontSize": 12.96,
+      "template": {
+        "before": "There's a fiction meme (mostly on",
+        "after": "use words as a prompt for a short story snippet. I've been collecting the words that show up on these lists as prompts for creative writing...",
+        "paragraph": {
+          "x": 550,
+          "y": 1071.15625,
+          "width": 270,
+          "height": 97.1875,
+          "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, sans-serif",
+          "fontSize": 12.96,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(153, 153, 153)",
+          "lineHeight": 19.44,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 14,
+          "whiteSpace": "normal"
+        },
+        "originalText": "There's a fiction meme (mostly on find me clarity use words as a prompt for a short story snippet. I've been collecting the words that show up on these lists as prompts for creative writing...",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:16.611Z"
+    },
+    {
+      "id": "7c31472b62f7c4b8a1",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "neurolaunch.com",
+      "url": "https://neurolaunch.com/courage-definition-psychology/",
+      "sourceURL": "https://neurolaunch.com/courage-definition-psychology/",
+      "title": "Courage in Psychology: Understanding Bravery's Science",
+      "image": "/templates/v1/7c31472b62f7c4b8a1.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 977.484375,
+        "y": 1090.484375,
+        "width": 114.734375,
+        "height": 20
+      },
+      "fontSize": 17,
+      "template": {
+        "before": "On the personality side, traits like openness, conscientiousness,",
+        "after": "show up repeatedly in courage research, but none of them are prerequisites. On the environmental side, social support networks, cultural expectations, and the immediate severity of a situation all shift how likely someone is to act. A person surrounded by others who model standing up for what’s right is statistically more likely to do the same. Culture matters too: what one society calls heroic, another might read as reckless or even shameful.",
+        "paragraph": {
+          "x": 452,
+          "y": 1086.484375,
+          "width": 739.234375,
+          "height": 168,
+          "fontFamily": "Inter, sans-serif",
+          "fontSize": 17,
+          "fontWeight": "500",
+          "fontStyle": "normal",
+          "color": "rgb(51, 51, 51)",
+          "lineHeight": 28,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 20,
+          "whiteSpace": "normal"
+        },
+        "originalText": "On the personality side, traits like openness, conscientiousness, find me clarity show up repeatedly in courage research, but none of them are prerequisites. On the environmental side, social support networks, cultural expectations, and the immediate severity of a situation all shift how likely someone is to act. A person surrounded by others who model standing up for what’s right is statistically more likely to do the same. Culture matters too: what one society calls heroic, another might read as reckless or even shameful.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:19.577Z"
+    },
+    {
+      "id": "35ba5ad1954505f88d",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "theconversation.com",
+      "url": "https://theconversation.com/what-courage-is-how-to-build-it-and-why-you-should-take-a-risk-280257",
+      "sourceURL": "https://theconversation.com/what-courage-is-how-to-build-it-and-why-you-should-take-a-risk-280257",
+      "title": "What courage is, how to build it and why you should take a risk",
+      "image": "/templates/v1/35ba5ad1954505f88d.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 358,
+        "y": 1088.5625,
+        "width": 134.203125,
+        "height": 22
+      },
+      "fontSize": 18,
+      "template": {
+        "before": "I think the first component or ingredient of courage",
+        "after": "clarity of purpose. Courage isn’t just about action, it’s about a directive action. The second ingredient would be realistic awareness of that risk. You’re not trying to minimize risk nor exaggerate the danger; you’re trying to be balanced so as to understand the consequences of that decision. Finally, courage includes the willingness to act despite fear. We make these decisions, and it’s more about resolve. Fear is never absent in the face of courage.",
+        "paragraph": {
+          "x": 358,
+          "y": 1056.765625,
+          "width": 600,
+          "height": 259.171875,
+          "fontFamily": "\"Libre Baskerville\", serif",
+          "fontSize": 18,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 28.8,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 20,
+          "whiteSpace": "normal"
+        },
+        "originalText": "I think the first component or ingredient of courage find me clarity clarity of purpose. Courage isn’t just about action, it’s about a directive action. The second ingredient would be realistic awareness of that risk. You’re not trying to minimize risk nor exaggerate the danger; you’re trying to be balanced so as to understand the consequences of that decision. Finally, courage includes the willingness to act despite fear. We make these decisions, and it’s more about resolve. Fear is never absent in the face of courage.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:20.635Z"
+    },
+    {
+      "id": "0f815332bd2cb4cf6e",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "digitalphrases.com",
+      "url": "https://digitalphrases.com/writing-prompts/writing-prompts-by-genre/writing-prompts-about-courage-and-bravery/",
+      "sourceURL": "https://digitalphrases.com/writing-prompts/writing-prompts-by-genre/writing-prompts-about-courage-and-bravery/",
+      "title": "32 Writing Prompts About Courage and Bravery",
+      "image": "/templates/v1/0f815332bd2cb4cf6e.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 245.296875,
+        "y": 1085.59375,
+        "width": 144.703125,
+        "height": 28
+      },
+      "fontSize": 24,
+      "template": {
+        "before": "Reflection on Personal Trials: Consider an event in your life that tested your courage like never before. It could be a crisis, a significant life change, or an unexpected challenge. How did you react to it? Did it alter your perception of bravery? Explore your thoughts and feelings about this moment in",
+        "after": "on how it forced you to confront and demonstrate your bravery. Write a narrative recounting this event, examining your emotions, reactions, and the aftermath.",
+        "paragraph": {
+          "x": 131,
+          "y": 883.59375,
+          "width": 763.140625,
+          "height": 384,
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"",
+          "fontSize": 24,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(53, 53, 53)",
+          "lineHeight": 48,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 33,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Reflection on Personal Trials: Consider an event in your life that tested your courage like never before. It could be a crisis, a significant life change, or an unexpected challenge. How did you react to it? Did it alter your perception of bravery? Explore your thoughts and feelings about this moment in find me clarity on how it forced you to confront and demonstrate your bravery. Write a narrative recounting this event, examining your emotions, reactions, and the aftermath.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:23.980Z"
+    },
+    {
+      "id": "441530c4eb080b2d05",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "ccrawfordwriting.com",
+      "url": "https://www.ccrawfordwriting.com/post/courage-in-writing",
+      "sourceURL": "https://www.ccrawfordwriting.com/post/courage-in-writing",
+      "title": "Courage in Writing",
+      "image": "/templates/v1/441530c4eb080b2d05.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 350,
+        "y": 1087.625,
+        "width": 119.390625,
+        "height": 24
+      },
+      "fontSize": 18,
+      "template": {
+        "before": "If you’ve planned out your story well, then trust that, even when you hit the wall and want to give up. Trust your route, and keep going through it, step by step, until you’ve reached “home” and finished that story. If you realize you didn’t plan it well, then okay. Sit down, take a short breather, and rethink what route will best get you where you need to go. Call in a friend to look at your route or even to walk or run it with you (in the case of writing, these would be trusted beta-readers, fellow writers, or writing group friends). Even call for a ride and go home and try the run again another day, if you need to. In writing terms, this would be sending it to a friend for feedback while you set it aside for a while. Let your brain check out from the story for a few days while",
+        "after": "takes a turn in the driver’s seat. They might see paths you didn’t, and suggest a completely new route. This is all helpful. You can let them do the lifting for a bit, but make sure you have a clear timeline for when you’re going to take that feedback and get back to work on your story.",
+        "paragraph": {
+          "x": 350,
+          "y": 843.625,
+          "width": 740,
+          "height": 351,
+          "fontFamily": "\"open sans\", sans-serif",
+          "fontSize": 18,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 75, 125)",
+          "lineHeight": 27,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 20,
+          "whiteSpace": "break-spaces"
+        },
+        "originalText": "If you’ve planned out your story well, then trust that, even when you hit the wall and want to give up. Trust your route, and keep going through it, step by step, until you’ve reached “home” and finished that story. If you realize you didn’t plan it well, then okay. Sit down, take a short breather, and rethink what route will best get you where you need to go. Call in a friend to look at your route or even to walk or run it with you (in the case of writing, these would be trusted beta-readers, fellow writers, or writing group friends). Even call for a ride and go home and try the run again another day, if you need to. In writing terms, this would be sending it to a friend for feedback while you set it aside for a while. Let your brain check out from the story for a few days while find me clarity takes a turn in the driver’s seat. They might see paths you didn’t, and suggest a completely new route. This is all helpful. You can let them do the lifting for a bit, but make sure you have a clear timeline for when you’re going to take that feedback and get back to work on your story.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:24.879Z"
+    },
+    {
+      "id": "48be4b6fce9e48dc80",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "react.dev",
+      "url": "https://react.dev/learn",
+      "sourceURL": "https://react.dev/learn",
+      "title": "Quick Start – React",
+      "image": "/templates/v1/48be4b6fce9e48dc80.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 1082.078125,
+        "y": 1089.390625,
+        "width": 115.609375,
+        "height": 22
+      },
+      "fontSize": 17,
+      "template": {
+        "before": "When you click the button, the onClick handler fires. Each button’s onClick prop was set to the handleClick function inside MyApp, so the code inside of it runs. That code calls setCount(count + 1), incrementing the count state variable. The new count value is passed as a prop to each",
+        "after": "all show the new value. This is called “lifting state up”. By moving state up, you’ve shared it between components.",
+        "paragraph": {
+          "x": 368,
+          "y": 1023.390625,
+          "width": 896,
+          "height": 123,
+          "fontFamily": "\"Optimistic Text\", -apple-system, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+          "fontSize": 17,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(246, 247, 249)",
+          "lineHeight": 30,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 21,
+          "whiteSpace": "pre-wrap"
+        },
+        "originalText": "When you click the button, the onClick handler fires. Each button’s onClick prop was set to the handleClick function inside MyApp, so the code inside of it runs. That code calls setCount(count + 1), incrementing the count state variable. The new count value is passed as a prop to each find me clarity all show the new value. This is called “lifting state up”. By moving state up, you’ve shared it between components.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:30.190Z"
+    },
+    {
+      "id": "8a218243c307f4b9dd",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "newadvent.org",
+      "url": "https://www.newadvent.org/cathen/06147a.htm",
+      "sourceURL": "https://www.newadvent.org/cathen/06147a.htm",
+      "title": "CATHOLIC ENCYCLOPEDIA: Fortitude",
+      "image": "/templates/v1/8a218243c307f4b9dd.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 851.328125,
+        "y": 1091.390625,
+        "width": 101.25,
+        "height": 17
+      },
+      "fontSize": 14,
+      "template": {
+        "before": "(4) Fortitude as one of the gifts from the Holy Ghost is a supernatural virtue, and passes beyond the Aristotelian range. It is what, as Christians, we must always have in mind in order to make our actions acceptable for eternal life. But we still keep hold upon the natural principles of fortitude as those whereon grace has to build. In the spiritual life of the ordinary Christian much that Aristotle has said remains in its own degree true, though we have to depart especially from the master's insistence",
+        "after": "field of battle. Our exercise is mainly not in war strictly so-called, but in moral courage against the evil spirit of the times, against improper fashions, against human respect, against the common tendency to seek at least the comfortable, if not the voluptuous. We need courage also to be patient under poverty or privation, and to make laudable struggles to rise in the social scale. It requires fortitude to mount above the dead level of average Christianity into the region of magnanimity, and if opportunity allow it, of magnificence, which are the allied virtues of fortitude, while another is perseverance, which tolerates no occasional remissness, still less occasional bouts of dissipation to relieve the strain of high-toned morality and religion.",
+        "paragraph": {
+          "x": 221,
+          "y": 1016.390625,
+          "width": 998,
+          "height": 240,
+          "fontFamily": "verdana, arial, helvetica, sans-serif",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgba(0, 0, 0, 0.87)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 17,
+          "whiteSpace": "normal"
+        },
+        "originalText": "(4) Fortitude as one of the gifts from the Holy Ghost is a supernatural virtue, and passes beyond the Aristotelian range. It is what, as Christians, we must always have in mind in order to make our actions acceptable for eternal life. But we still keep hold upon the natural principles of fortitude as those whereon grace has to build. In the spiritual life of the ordinary Christian much that Aristotle has said remains in its own degree true, though we have to depart especially from the master's insistence find me clarity field of battle. Our exercise is mainly not in war strictly so-called, but in moral courage against the evil spirit of the times, against improper fashions, against human respect, against the common tendency to seek at least the comfortable, if not the voluptuous. We need courage also to be patient under poverty or privation, and to make laudable struggles to rise in the social scale. It requires fortitude to mount above the dead level of average Christianity into the region of magnanimity, and if opportunity allow it, of magnificence, which are the allied virtues of fortitude, while another is perseverance, which tolerates no occasional remissness, still less occasional bouts of dissipation to relieve the strain of high-toned morality and religion.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:30.610Z"
+    },
+    {
+      "id": "46aa98c3124502ad14",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "ruby-lang.org",
+      "url": "https://www.ruby-lang.org/en/about/",
+      "sourceURL": "https://www.ruby-lang.org/en/about/",
+      "title": "About Ruby | Ruby",
+      "image": "/templates/v1/46aa98c3124502ad14.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 931.0625,
+        "y": 1089.703125,
+        "width": 105.234375,
+        "height": 21
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Ruby’s block are also seen as a source of great flexibility. A programmer can attach",
+        "after": "any method, describing how that method should act. The closure is called a block and has become one of the most popular features for newcomers to Ruby from other imperative languages like PHP or Visual Basic.",
+        "paragraph": {
+          "x": 312,
+          "y": 1086.703125,
+          "width": 784,
+          "height": 112,
+          "fontFamily": "\"Plus Jakarta Sans\", -apple-system, \"system-ui\", sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(214, 211, 209)",
+          "lineHeight": 28,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 20,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Ruby’s block are also seen as a source of great flexibility. A programmer can attach find me clarity any method, describing how that method should act. The closure is called a block and has become one of the most popular features for newcomers to Ruby from other imperative languages like PHP or Visual Basic.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:32.667Z"
+    },
+    {
+      "id": "2196e2ccb765ef5e79",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "haskell.org",
+      "url": "https://www.haskell.org/",
+      "sourceURL": "https://www.haskell.org/",
+      "title": "Haskell Language",
+      "image": "/templates/v1/2196e2ccb765ef5e79.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 235.953125,
+        "y": 1089.375,
+        "width": 95.65625,
+        "height": 22
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Every expression in Haskell has a type which is determined at compile time. All the types composed together by function application have to match up. If they don't, the program",
+        "after": "by the compiler. Types become not only a form of guarantee, but a language for expressing the construction of programs.",
+        "paragraph": {
+          "x": 150,
+          "y": 1043.6875,
+          "width": 555,
+          "height": 91.375,
+          "fontFamily": "\"Source Sans 3\", Helvetica, Arial, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(51, 51, 51)",
+          "lineHeight": 22.8571,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 16,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Every expression in Haskell has a type which is determined at compile time. All the types composed together by function application have to match up. If they don't, the program find me clarity by the compiler. Types become not only a form of guarantee, but a language for expressing the construction of programs.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:35.068Z"
+    },
+    {
+      "id": "d27292e312d77ccfdc",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "typescriptlang.org",
+      "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+      "sourceURL": "https://www.typescriptlang.org/docs/handbook/intro.html",
+      "title": "TypeScript: Handbook - The TypeScript Handbook",
+      "image": "/templates/v1/d27292e312d77ccfdc.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 320,
+        "y": 429.859375,
+        "width": 100.28125,
+        "height": 21
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Over 20 years after its introduction to the programming community, JavaScript is now one of the most widespread cross-platform languages ever created. Starting as a small scripting language for adding trivial interactivity to webpages, JavaScript has grown to be a language of choice for both frontend and backend applications of every size. While the size, scope, and complexity of programs written in JavaScript has grown exponentially, the ability of the JavaScript language to express the relationships between different units of code has not. Combined with JavaScript’s rather peculiar runtime semantics, this mismatch between language and program complexity has made",
+        "after": "difficult task to manage at scale.",
+        "paragraph": {
+          "x": 320,
+          "y": 295.421875,
+          "width": 828,
+          "height": 156.84375,
+          "fontFamily": "\"Segoe UI Web (West European)\", \"Segoe UI\", -apple-system, \"system-ui\", Roboto, \"Helvetica Neue\", sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(255, 255, 255)",
+          "lineHeight": 22.4,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 17,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Over 20 years after its introduction to the programming community, JavaScript is now one of the most widespread cross-platform languages ever created. Starting as a small scripting language for adding trivial interactivity to webpages, JavaScript has grown to be a language of choice for both frontend and backend applications of every size. While the size, scope, and complexity of programs written in JavaScript has grown exponentially, the ability of the JavaScript language to express the relationships between different units of code has not. Combined with JavaScript’s rather peculiar runtime semantics, this mismatch between language and program complexity has made find me clarity difficult task to manage at scale.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:36.787Z"
+    },
+    {
+      "id": "fe74a0a7ec594f83cb",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "dart.dev",
+      "url": "https://dart.dev/overview",
+      "sourceURL": "https://dart.dev/overview",
+      "title": "Dart overview",
+      "image": "/templates/v1/fe74a0a7ec594f83cb.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 490.65625,
+        "y": 1090.46875,
+        "width": 105.640625,
+        "height": 20
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "When apps are ready to be",
+        "after": "production—whether you're publishing to an app store or deploying to a production backend—the Dart ahead-of-time (AOT) compiler can compile to native ARM or x64 machine code. Your AOT-compiled app launches with consistent, short startup time.",
+        "paragraph": {
+          "x": 288,
+          "y": 1088.46875,
+          "width": 880,
+          "height": 72,
+          "fontFamily": "\"Google Sans Flex\", Roboto, ui-sans, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(33, 33, 33)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 17,
+          "whiteSpace": "normal"
+        },
+        "originalText": "When apps are ready to be find me clarity production—whether you're publishing to an app store or deploying to a production backend—the Dart ahead-of-time (AOT) compiler can compile to native ARM or x64 machine code. Your AOT-compiled app launches with consistent, short startup time.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:38.312Z"
+    },
+    {
+      "id": "6fe2b06f6878fbab1d",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "writers.com",
+      "url": "https://writers.com/course/writing-with-consistency-and-courage",
+      "sourceURL": "https://writers.com/course/writing-with-consistency-and-courage",
+      "title": "Writing with Consistency and Courage | Writers.com",
+      "image": "/templates/v1/6fe2b06f6878fbab1d.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 160,
+        "y": 1087.9375,
+        "width": 119.75,
+        "height": 24
+      },
+      "fontSize": 18,
+      "template": {
+        "before": "In this workshop you’ll learn practical tools for cultivating consistency and courage. We’ll explore why and how these qualities count for more than talent or craft when",
+        "after": "starting, finishing, and polishing drafts. You will be guided to examine what they mean for your own writing. You’ll set achievable goals for making incremental progress, and identify ways of meeting those goals. You’ll learn several techniques for getting to and staying at the page, overcoming resistance, and tapping into and trusting your creative intuition.",
+        "paragraph": {
+          "x": 160,
+          "y": 1032.9375,
+          "width": 744,
+          "height": 189,
+          "fontFamily": "\"DM Sans\", sans-serif",
+          "fontSize": 18,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(51, 51, 51)",
+          "lineHeight": 27,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "In this workshop you’ll learn practical tools for cultivating consistency and courage. We’ll explore why and how these qualities count for more than talent or craft when find me clarity starting, finishing, and polishing drafts. You will be guided to examine what they mean for your own writing. You’ll set achievable goals for making incremental progress, and identify ways of meeting those goals. You’ll learn several techniques for getting to and staying at the page, overcoming resistance, and tapping into and trusting your creative intuition.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:38.566Z"
+    },
+    {
+      "id": "67e150818ee00f085a",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "numpy.org",
+      "url": "https://numpy.org/doc/stable/user/whatisnumpy.html",
+      "sourceURL": "https://numpy.org/doc/stable/user/whatisnumpy.html",
+      "title": "What is NumPy? — NumPy v2.5 Manual",
+      "image": "/templates/v1/67e150818ee00f085a.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 899.78125,
+        "y": 1699.25,
+        "width": 106.03125,
+        "height": 22
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Broadcasting is the term used to describe the implicit element-by-element behavior of operations; generally speaking, in NumPy all operations, not just arithmetic operations, but logical, bit-wise, functional, etc., behave in this implicit element-by-element fashion, i.e., they broadcast. Moreover, in the example above, a and b could be multidimensional arrays of the same shape, or a scalar and an array, or even two arrays with different shapes, provided that the smaller array is “expandable” to the shape of the larger in such a",
+        "after": "resulting broadcast is unambiguous. For detailed “rules” of broadcasting see Broadcasting.",
+        "paragraph": {
+          "x": 416,
+          "y": 1565.296875,
+          "width": 720,
+          "height": 184.734375,
+          "fontFamily": "\"Open Sans\", sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(34, 40, 50)",
+          "lineHeight": 26.4,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Broadcasting is the term used to describe the implicit element-by-element behavior of operations; generally speaking, in NumPy all operations, not just arithmetic operations, but logical, bit-wise, functional, etc., behave in this implicit element-by-element fashion, i.e., they broadcast. Moreover, in the example above, a and b could be multidimensional arrays of the same shape, or a scalar and an array, or even two arrays with different shapes, provided that the smaller array is “expandable” to the shape of the larger in such a find me clarity resulting broadcast is unambiguous. For detailed “rules” of broadcasting see Broadcasting.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:41.357Z"
+    },
+    {
+      "id": "15cbe425f2f2cf949f",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "llvm.org",
+      "url": "https://llvm.org/docs/GettingStarted.html",
+      "sourceURL": "https://llvm.org/docs/GettingStarted.html",
+      "title": "Getting Started with the LLVM System - LLVM",
+      "image": "/templates/v1/15cbe425f2f2cf949f.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 687.046875,
+        "y": 1090.90625,
+        "width": 102.65625,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "However, some Linux distributions and some other or older BSDs sometimes have extremely old versions of GCC. These steps attempt to help you upgrade your compiler even on such a system. However, if at all possible, we encourage you to use a recent version of a distribution",
+        "after": "system compiler that meets these requirements. Note that it is tempting to install a prior version of Clang and libc++ to be the host compiler; however, libc++ was not well tested or set up to build on Linux until relatively recently. As a consequence, this guide suggests just using libstdc++ and a modern GCC as the initial host in a bootstrap, and then using Clang (and potentially libc++).",
+        "paragraph": {
+          "x": 289,
+          "y": 1039.90625,
+          "width": 863,
+          "height": 144,
+          "fontFamily": "-apple-system, \"system-ui\", \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgba(255, 255, 255, 0.8)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 18,
+          "whiteSpace": "normal"
+        },
+        "originalText": "However, some Linux distributions and some other or older BSDs sometimes have extremely old versions of GCC. These steps attempt to help you upgrade your compiler even on such a system. However, if at all possible, we encourage you to use a recent version of a distribution find me clarity system compiler that meets these requirements. Note that it is tempting to install a prior version of Clang and libc++ to be the host compiler; however, libc++ was not well tested or set up to build on Linux until relatively recently. As a consequence, this guide suggests just using libstdc++ and a modern GCC as the initial host in a bootstrap, and then using Clang (and potentially libc++).",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:44.343Z"
+    },
+    {
+      "id": "c1b740a3926083eeab",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "pandas.pydata.org",
+      "url": "https://pandas.pydata.org/docs/getting_started/overview.html",
+      "sourceURL": "https://pandas.pydata.org/docs/getting_started/overview.html",
+      "title": "Package overview — pandas 3.1.0 documentation",
+      "image": "/templates/v1/c1b740a3926083eeab.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 626.890625,
+        "y": 1090.578125,
+        "width": 102.65625,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Also, we would like sensible default behaviors for the common API functions which take into account the typical orientation of time series and cross-sectional data sets. When using the N-dimensional array (ndarrays)",
+        "after": "2- and 3-dimensional data, a burden is placed on the user to consider the orientation of the data set when writing functions; axes are considered more or less equivalent (except when C- or Fortran-contiguousness matters for performance). In pandas, the axes are intended to lend more semantic meaning to the data; i.e., for a particular data set, there is likely to be a “right” way to orient the data. The goal, then, is to reduce the amount of mental effort required to code up data transformations in downstream functions.",
+        "paragraph": {
+          "x": 416,
+          "y": 1033.796875,
+          "width": 720,
+          "height": 211.125,
+          "fontFamily": "system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(206, 214, 221)",
+          "lineHeight": 26.4,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Also, we would like sensible default behaviors for the common API functions which take into account the typical orientation of time series and cross-sectional data sets. When using the N-dimensional array (ndarrays) find me clarity 2- and 3-dimensional data, a burden is placed on the user to consider the orientation of the data set when writing functions; axes are considered more or less equivalent (except when C- or Fortran-contiguousness matters for performance). In pandas, the axes are intended to lend more semantic meaning to the data; i.e., for a particular data set, there is likely to be a “right” way to orient the data. The goal, then, is to reduce the amount of mental effort required to code up data transformations in downstream functions.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:44.603Z"
+    },
+    {
+      "id": "0f388c7956e40d19e5",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "scikit-learn.org",
+      "url": "https://scikit-learn.org/stable/getting_started.html",
+      "sourceURL": "https://scikit-learn.org/stable/getting_started.html",
+      "title": "Getting Started — scikit-learn 1.9.1 documentation",
+      "image": "/templates/v1/0f388c7956e40d19e5.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 910.703125,
+        "y": 1505.421875,
+        "width": 102.65625,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "In practice, you almost always want to search over a pipeline, instead of a single estimator. One of the main reasons is that if you apply a pre-processing step to the whole dataset without using a pipeline, and",
+        "after": "kind of cross-validation, you would be breaking the fundamental assumption of independence between training and testing data. Indeed, since you pre-processed the data using the whole dataset, some information about the test sets are available to the train sets. This will lead to over-estimating the generalization power of the estimator (you can read more in this Kaggle post).",
+        "paragraph": {
+          "x": 186.984375,
+          "y": 1475.03125,
+          "width": 829.03125,
+          "height": 158.34375,
+          "fontFamily": "system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(206, 214, 221)",
+          "lineHeight": 26.4,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "In practice, you almost always want to search over a pipeline, instead of a single estimator. One of the main reasons is that if you apply a pre-processing step to the whole dataset without using a pipeline, and find me clarity kind of cross-validation, you would be breaking the fundamental assumption of independence between training and testing data. Indeed, since you pre-processed the data using the whole dataset, some information about the test sets are available to the train sets. This will lead to over-estimating the generalization power of the estimator (you can read more in this Kaggle post).",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:45.768Z"
+    },
+    {
+      "id": "6ad9078a96ceef7ffd",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "wfp.org",
+      "url": "https://www.wfp.org/who-we-are",
+      "sourceURL": "https://www.wfp.org/who-we-are",
+      "title": "Who we are | World Food Programme",
+      "image": "/templates/v1/6ad9078a96ceef7ffd.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 1005.34375,
+        "y": 1087.875,
+        "width": 119.28125,
+        "height": 24
+      },
+      "fontSize": 18,
+      "template": {
+        "before": "In a world of plenty, where enough food is produced to",
+        "after": "the planet, hunger should be a thing of the past. However, conflict, weather extremes, displacement, economic shocks and inequality mean 266 million people are acutely hungry and multiple famines are unfolding.",
+        "paragraph": {
+          "x": 540,
+          "y": 1086.875,
+          "width": 780,
+          "height": 108,
+          "fontFamily": "\"Open Sans\", -apple-system, system-ui, \"system-ui\", \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif",
+          "fontSize": 18,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(3, 28, 45)",
+          "lineHeight": 27,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 20,
+          "whiteSpace": "normal"
+        },
+        "originalText": "In a world of plenty, where enough food is produced to find me clarity the planet, hunger should be a thing of the past. However, conflict, weather extremes, displacement, economic shocks and inequality mean 266 million people are acutely hungry and multiple famines are unfolding.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:50.108Z"
+    },
+    {
+      "id": "2ffa55dcfd8f644abd",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "developers.google.com",
+      "url": "https://developers.google.com/tech-writing/one/clear-sentences",
+      "sourceURL": "https://developers.google.com/tech-writing/one/clear-sentences",
+      "title": "Clear sentences  |  Technical Writing  |  Google for Developers",
+      "image": "/templates/v1/2ffa55dcfd8f644abd.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 639.296875,
+        "y": 1090.84375,
+        "width": 100.265625,
+        "height": 19
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Adjectives and adverbs perform amazingly",
+        "after": "fiction and poetry. Thanks to adjectives, plain old grass becomes prodigal and verdant, while lifeless hair transforms into something lustrous and exuberant. Adverbs push horses to run madly and freely and dogs to bark loudly and ferociously. Unfortunately, adjectives and adverbs sometimes make technical readers bark loudly and ferociously. That's because adjectives and adverbs tend to be too loosely defined and subjective for technical readers. Worse, adjectives and adverbs can make technical documentation sound dangerously like marketing material. For example, consider the following passage from a technical document:",
+        "paragraph": {
+          "x": 333,
+          "y": 1088.84375,
+          "width": 656,
+          "height": 192,
+          "fontFamily": "Roboto, \"Noto Sans\", \"Noto Sans JP\", \"Noto Sans KR\", \"Noto Naskh Arabic\", \"Noto Sans Thai\", \"Noto Sans Hebrew\", \"Noto Sans Bengali\", sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(32, 33, 36)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 17,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Adjectives and adverbs perform amazingly find me clarity fiction and poetry. Thanks to adjectives, plain old grass becomes prodigal and verdant, while lifeless hair transforms into something lustrous and exuberant. Adverbs push horses to run madly and freely and dogs to bark loudly and ferociously. Unfortunately, adjectives and adverbs sometimes make technical readers bark loudly and ferociously. That's because adjectives and adverbs tend to be too loosely defined and subjective for technical readers. Worse, adjectives and adverbs can make technical documentation sound dangerously like marketing material. For example, consider the following passage from a technical document:",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:53.248Z"
+    },
+    {
+      "id": "9d72ab2a989ee76632",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "vite.dev",
+      "url": "https://vite.dev/guide/",
+      "sourceURL": "https://vite.dev/guide/",
+      "title": "Getting Started | Vite",
+      "image": "/templates/v1/9d72ab2a989ee76632.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 849.4375,
+        "y": 1043,
+        "width": 106.984375,
+        "height": 20
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "During development, Vite assumes that a modern browser is used. This means the browser supports most of the latest JavaScript and CSS features. For that reason, Vite sets esnext as the transform target. This prevents syntax lowering, letting",
+        "after": "as close as possible to the original source code. Vite injects some runtime code to make the development server work. This code uses features included in Baseline Newly Available at the time of each major release (2026-01-01 for this major).",
+        "paragraph": {
+          "x": 384,
+          "y": 982,
+          "width": 688,
+          "height": 169,
+          "fontFamily": "Inter, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(255, 255, 255)",
+          "lineHeight": 28,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 20,
+          "whiteSpace": "normal"
+        },
+        "originalText": "During development, Vite assumes that a modern browser is used. This means the browser supports most of the latest JavaScript and CSS features. For that reason, Vite sets esnext as the transform target. This prevents syntax lowering, letting find me clarity as close as possible to the original source code. Vite injects some runtime code to make the development server work. This code uses features included in Baseline Newly Available at the time of each major release (2026-01-01 for this major).",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:55.665Z"
+    },
+    {
+      "id": "731f123cc5f0002760",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "webpack.js.org",
+      "url": "https://webpack.js.org/concepts/",
+      "sourceURL": "https://webpack.js.org/concepts/",
+      "title": "Concepts | webpack",
+      "image": "/templates/v1/731f123cc5f0002760.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 709,
+        "y": 236,
+        "width": 95.65625,
+        "height": 20
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "At its core, webpack is a static module bundler for modern JavaScript applications. When webpack processes your application, it internally builds a dependency graph from one or more entry points and then combines every module",
+        "after": "into one or more bundles, which are static assets to serve your content from.",
+        "paragraph": {
+          "x": 512,
+          "y": 186,
+          "width": 696,
+          "height": 96,
+          "fontFamily": "\"Source Sans Pro\", -apple-system, \"system-ui\", \"Segoe UI\", Helvetica, Arial, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(43, 58, 66)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 18,
+          "whiteSpace": "normal"
+        },
+        "originalText": "At its core, webpack is a static module bundler for modern JavaScript applications. When webpack processes your application, it internally builds a dependency graph from one or more entry points and then combines every module find me clarity into one or more bundles, which are static assets to serve your content from.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:57.183Z"
+    },
+    {
+      "id": "45eb656842ffc9bf8f",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "docusaurus.io",
+      "url": "https://docusaurus.io/docs",
+      "sourceURL": "https://docusaurus.io/docs",
+      "title": "Introduction | Docusaurus",
+      "image": "/templates/v1/45eb656842ffc9bf8f.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 704.171875,
+        "y": 1091.28125,
+        "width": 102.65625,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Rspress is a fast static site generator based on Rspack, a Rust-based bundler. It supports content writing with MDX (Markdown with React components), integrated",
+        "after": "support (i18n), and extensibility through plugins. Designed for creating elegant documentation and static websites, Rspress produces static HTML files that are easy to deploy.",
+        "paragraph": {
+          "x": 316,
+          "y": 1060.890625,
+          "width": 823,
+          "height": 105.5625,
+          "fontFamily": "system-ui, -apple-system, \"Segoe UI\", Roboto, Ubuntu, Cantarell, \"Noto Sans\", sans-serif, \"system-ui\", \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(227, 227, 227)",
+          "lineHeight": 26.4,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Rspress is a fast static site generator based on Rspack, a Rust-based bundler. It supports content writing with MDX (Markdown with React components), integrated find me clarity support (i18n), and extensibility through plugins. Designed for creating elegant documentation and static websites, Rspress produces static HTML files that are easy to deploy.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:50:59.753Z"
+    },
+    {
+      "id": "7d4fb5f1286a7e00d3",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "css-tricks.com",
+      "url": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/",
+      "sourceURL": "https://css-tricks.com/snippets/css/a-guide-to-flexbox/",
+      "title": "A Complete Guide to CSS Flexbox | CSS-Tricks",
+      "image": "/templates/v1/7d4fb5f1286a7e00d3.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 796.78125,
+        "y": 1084.46875,
+        "width": 147.734375,
+        "height": 32
+      },
+      "fontSize": 23.04,
+      "template": {
+        "before": "This defines the default size of an element before the remaining space is distributed. It can be a length (e.g. 20%, 5rem, etc.) or a keyword. The auto keyword means “look at my width or height property” (which was temporarily done by the main-size keyword until deprecated). The content keyword means “size it based on the item’s content” –",
+        "after": "well supported yet, so it’s hard to test and harder to know what its brethren max-content, min-content, and fit-content do.",
+        "paragraph": {
+          "x": 796.78125,
+          "y": 777.34375,
+          "width": 483.859375,
+          "height": 456.1875,
+          "fontFamily": "\"Iowan Old Style\", \"Palatino Linotype\", \"URW Palladio L\", P052, serif",
+          "fontSize": 23.04,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 38.016,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 27,
+          "whiteSpace": "normal"
+        },
+        "originalText": "This defines the default size of an element before the remaining space is distributed. It can be a length (e.g. 20%, 5rem, etc.) or a keyword. The auto keyword means “look at my width or height property” (which was temporarily done by the main-size keyword until deprecated). The content keyword means “size it based on the item’s content” – find me clarity well supported yet, so it’s hard to test and harder to know what its brethren max-content, min-content, and fit-content do.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:00.096Z"
+    },
+    {
+      "id": "c65133890fdca47b0f",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "eslint.org",
+      "url": "https://eslint.org/docs/latest/use/core-concepts/",
+      "sourceURL": "https://eslint.org/docs/latest/use/core-concepts/",
+      "title": "Core Concepts - ESLint - Pluggable JavaScript Linter",
+      "image": "/templates/v1/c65133890fdca47b0f.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 868.21875,
+        "y": 1503.453125,
+        "width": 107.34375,
+        "height": 20
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "One of the things that makes ESLint such a useful tool is the",
+        "after": "that surrounds it. For example, many code editors have ESLint extensions that show you the ESLint results of your code in the file as you work so that you don’t need to use the ESLint CLI to see linting results.",
+        "paragraph": {
+          "x": 408.578125,
+          "y": 1501.453125,
+          "width": 687.609375,
+          "height": 96,
+          "fontFamily": "Inter, -apple-system, \"system-ui\", \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Twemoji Country Flags\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(208, 213, 221)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 18,
+          "whiteSpace": "normal"
+        },
+        "originalText": "One of the things that makes ESLint such a useful tool is the find me clarity that surrounds it. For example, many code editors have ESLint extensions that show you the ESLint results of your code in the file as you work so that you don’t need to use the ESLint CLI to see linting results.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:02.619Z"
+    },
+    {
+      "id": "ab73e2cf2ad886e015",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "fsf.org",
+      "url": "https://www.fsf.org/about/",
+      "sourceURL": "https://www.fsf.org/about/",
+      "title": "Free software is a matter of liberty, not price — Free Software Foundation — Working together for free software",
+      "image": "/templates/v1/ab73e2cf2ad886e015.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 987.796875,
+        "y": 850.75,
+        "width": 98.703125,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "The FSF holds copyright on a large proportion of the GNU operating system, and other free software. We hold these assets to defend free",
+        "after": "to turn free software proprietary. Every year we collect thousands of copyright assignments from individual software developers and corporations working on free software. We register these copyrights with the US copyright office and enforce the license under which we distribute free software — typically the GNU General Public License. We do this to ensure that free software distributors respect their obligations to pass on the freedom to all users, to share, study and modify the code. We do this work through our Free Software Licensing and Compliance Lab.",
+        "paragraph": {
+          "x": 8,
+          "y": 850.75,
+          "width": 1424,
+          "height": 72,
+          "fontFamily": "Roboto, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 19.2,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 14,
+          "whiteSpace": "normal"
+        },
+        "originalText": "The FSF holds copyright on a large proportion of the GNU operating system, and other free software. We hold these assets to defend free find me clarity to turn free software proprietary. Every year we collect thousands of copyright assignments from individual software developers and corporations working on free software. We register these copyrights with the US copyright office and enforce the license under which we distribute free software — typically the GNU General Public License. We do this to ensure that free software distributors respect their obligations to pass on the freedom to all users, to share, study and modify the code. We do this work through our Free Software Licensing and Compliance Lab.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:09.006Z"
+    },
+    {
+      "id": "f55b3940d79fe55c77",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "ubuntu.com",
+      "url": "https://ubuntu.com/about",
+      "sourceURL": "https://ubuntu.com/about",
+      "title": "About the Ubuntu project | Ubuntu",
+      "image": "/templates/v1/f55b3940d79fe55c77.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 1067.78125,
+        "y": 1090.828125,
+        "width": 102.0625,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "The mission for Ubuntu is both social and economic. First, we deliver the world’s free software, freely, to everybody on the same terms. Whether you are a student in India or a global bank, you can download and use Ubuntu free of charge. Second, we aim to cut the cost of professional services - support, management, maintenance, operations - for people who use",
+        "after": ", through a portfolio of services provided by Canonical which ultimately fund the improvement of the platform.",
+        "paragraph": {
+          "x": 736,
+          "y": 991.84125,
+          "width": 600,
+          "height": 167.986875,
+          "fontFamily": "\"Ubuntu variable\", Ubuntu, -apple-system, \"Segoe UI\", Roboto, Oxygen, Cantarell, \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 17.986875000000055,
+          "whiteSpace": "normal"
+        },
+        "originalText": "The mission for Ubuntu is both social and economic. First, we deliver the world’s free software, freely, to everybody on the same terms. Whether you are a student in India or a global bank, you can download and use Ubuntu free of charge. Second, we aim to cut the cost of professional services - support, management, maintenance, operations - for people who use find me clarity, through a portfolio of services provided by Canonical which ultimately fund the improvement of the platform.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:09.941Z"
+    },
+    {
+      "id": "3df3091bf04b4ae5e5",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "rollupjs.org",
+      "url": "https://rollupjs.org/introduction/",
+      "sourceURL": "https://rollupjs.org/introduction/",
+      "title": "Introduction | Rollup",
+      "image": "/templates/v1/3df3091bf04b4ae5e5.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 727.953125,
+        "y": 1090.390625,
+        "width": 106.984375,
+        "height": 20
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "This finally changed with the ES6 revision of JavaScript, which includes a syntax for importing and exporting functions and data so they can be shared between separate scripts. The specification is now fixed, but it is only implemented in modern browsers and not finalised in Node.js. Rollup allows you to write your code using the new module system, and will then compile it back down to existing",
+        "after": "as CommonJS modules, AMD modules, and IIFE-style scripts. This means that you get to write future-proof code, and you also get the tremendous benefits of…",
+        "paragraph": {
+          "x": 384,
+          "y": 974.390625,
+          "width": 688,
+          "height": 196,
+          "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(223, 223, 214)",
+          "lineHeight": 28,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 20,
+          "whiteSpace": "normal"
+        },
+        "originalText": "This finally changed with the ES6 revision of JavaScript, which includes a syntax for importing and exporting functions and data so they can be shared between separate scripts. The specification is now fixed, but it is only implemented in modern browsers and not finalised in Node.js. Rollup allows you to write your code using the new module system, and will then compile it back down to existing find me clarity as CommonJS modules, AMD modules, and IIFE-style scripts. This means that you get to write future-proof code, and you also get the tremendous benefits of…",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:10.903Z"
+    },
+    {
+      "id": "f461b6934745dcbcfe",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "jamstack.org",
+      "url": "https://jamstack.org/what-is-jamstack/",
+      "sourceURL": "https://jamstack.org/what-is-jamstack/",
+      "title": "What is the Jamstack? | Jamstack",
+      "image": "/templates/v1/f461b6934745dcbcfe.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 1039.03125,
+        "y": 1461,
+        "width": 102.65625,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "The name \"Jamstack\" came about because as Matt Biilmann and Chris Bach were creating modern web development workflows and capabilities at Netlify, they found there was no easy way to refer to the architectural approach in conversation. Jamstack embraces many existing fundamentals of web",
+        "after": "they created the term Jamstack to help us talk about it more succinctly.",
+        "paragraph": {
+          "x": 439,
+          "y": 1405,
+          "width": 832,
+          "height": 104,
+          "fontFamily": "ui-sans-serif, system-ui, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(226, 232, 240)",
+          "lineHeight": 26,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "The name \"Jamstack\" came about because as Matt Biilmann and Chris Bach were creating modern web development workflows and capabilities at Netlify, they found there was no easy way to refer to the architectural approach in conversation. Jamstack embraces many existing fundamentals of web find me clarity they created the term Jamstack to help us talk about it more succinctly.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:11.103Z"
+    },
+    {
+      "id": "8469fea6a2402fdc2d",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "freebsd.org",
+      "url": "https://www.freebsd.org/about/",
+      "sourceURL": "https://www.freebsd.org/about/",
+      "title": "About FreeBSD | The FreeBSD Project",
+      "image": "/templates/v1/8469fea6a2402fdc2d.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 1096.359375,
+        "y": 1108.859375,
+        "width": 102.65625,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "It is easy to contribute to FreeBSD. All you need to do is find a part of FreeBSD which you think could be improved and make those changes (carefully and cleanly) and submit that back to the Project by means of a bug report or a committer, if you know one. This could be anything",
+        "after": "artwork to source code. See the Contributing to FreeBSD article for more information.",
+        "paragraph": {
+          "x": 248,
+          "y": 1081.859375,
+          "width": 1176,
+          "height": 72,
+          "fontFamily": "-apple-system, \"system-ui\", \"avenir next\", avenir, \"segoe ui\", \"helvetica neue\", helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(238, 239, 241)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 18,
+          "whiteSpace": "normal"
+        },
+        "originalText": "It is easy to contribute to FreeBSD. All you need to do is find a part of FreeBSD which you think could be improved and make those changes (carefully and cleanly) and submit that back to the Project by means of a bug report or a committer, if you know one. This could be anything find me clarity artwork to source code. See the Contributing to FreeBSD article for more information.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:12.699Z"
+    },
+    {
+      "id": "7ceb377365c28aeab2",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "netbsd.org",
+      "url": "https://www.netbsd.org/about/",
+      "sourceURL": "https://www.netbsd.org/about/",
+      "title": "About NetBSD",
+      "image": "/templates/v1/7ceb377365c28aeab2.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 606.75,
+        "y": 1983.84375,
+        "width": 98.703125,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "The NetBSD Foundation is incorporated in the",
+        "after": "a tax-exempt corporation (under Section 501(c)(3) of the US Internal Revenue Code) that devotes itself to the traditional goals and spirit of the NetBSD Project and owns the trademark of the word “NetBSD”.",
+        "paragraph": {
+          "x": 275,
+          "y": 1982.84375,
+          "width": 950,
+          "height": 62.390625,
+          "fontFamily": "sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(52, 73, 94)",
+          "lineHeight": 20.8,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 15,
+          "whiteSpace": "normal"
+        },
+        "originalText": "The NetBSD Foundation is incorporated in the find me clarity a tax-exempt corporation (under Section 501(c)(3) of the US Internal Revenue Code) that devotes itself to the traditional goals and spirit of the NetBSD Project and owns the trademark of the word “NetBSD”.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:16.555Z"
+    },
+    {
+      "id": "fb90b4040ffcf6a55e",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "sqlite.org",
+      "url": "https://www.sqlite.org/about.html",
+      "sourceURL": "https://www.sqlite.org/about.html",
+      "title": "About SQLite",
+      "image": "/templates/v1/fb90b4040ffcf6a55e.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 719.21875,
+        "y": 313.0625,
+        "width": 115.703125,
+        "height": 19
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "SQLite is an embedded SQL database engine. Unlike most other SQL databases, SQLite",
+        "after": "have a separate server process. SQLite reads and writes directly to ordinary disk files. A complete SQL database with multiple tables, indices, triggers, and views, is contained in a single disk file. The database file format is cross-platform - you can freely copy a database between 32-bit and 64-bit systems or between big-endian and little-endian architectures. These features make SQLite a popular choice as an Application File Format. SQLite database files are a recommended storage format by the US Library of Congress. Think of SQLite not as a replacement for Oracle but as a replacement for fopen()",
+        "paragraph": {
+          "x": 8,
+          "y": 313.0625,
+          "width": 1424,
+          "height": 114,
+          "fontFamily": "Verdana, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 19.2,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 16,
+          "whiteSpace": "normal"
+        },
+        "originalText": "SQLite is an embedded SQL database engine. Unlike most other SQL databases, SQLite find me clarity have a separate server process. SQLite reads and writes directly to ordinary disk files. A complete SQL database with multiple tables, indices, triggers, and views, is contained in a single disk file. The database file format is cross-platform - you can freely copy a database between 32-bit and 64-bit systems or between big-endian and little-endian architectures. These features make SQLite a popular choice as an Application File Format. SQLite database files are a recommended storage format by the US Library of Congress. Think of SQLite not as a replacement for Oracle but as a replacement for fopen()",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:16.773Z"
+    },
+    {
+      "id": "6884bda5db97e33a24",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "en.wikipedia.org",
+      "url": "https://en.wikipedia.org/wiki/Plain_English",
+      "sourceURL": "https://en.wikipedia.org/wiki/Plain_English",
+      "title": "Plain English - Wikipedia",
+      "image": "/templates/v1/6884bda5db97e33a24.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 873.234375,
+        "y": 1090.671875,
+        "width": 98.703125,
+        "height": 18
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "In April 2004, the Institute of Medicine (IOM) and the Agency for Healthcare Research",
+        "after": ") released health literacy reports citing the 1992 National Adult Literacy Survey (NALS) results as a cause for concern. The 1992 NALS indicated that nearly half of Americans demonstrated limited literacy skills. The NALS did not explicitly look at health literacy, but it did cover health-related tasks.[23] In response, researchers developed methods to measure health literacy, such as the Health Activities Literacy Scale (HALS). Many governmental organizations, such as the Centers for Disease Control and Prevention (CDC) and the National Institutes of Health (NIH), continue to research methods and produce materials for implementing plain language and meeting health literacy needs.[23]",
+        "paragraph": {
+          "x": 264,
+          "y": 1086.671875,
+          "width": 912,
+          "height": 182,
+          "fontFamily": "sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(32, 33, 34)",
+          "lineHeight": 26,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 18,
+          "whiteSpace": "normal"
+        },
+        "originalText": "In April 2004, the Institute of Medicine (IOM) and the Agency for Healthcare Research find me clarity) released health literacy reports citing the 1992 National Adult Literacy Survey (NALS) results as a cause for concern. The 1992 NALS indicated that nearly half of Americans demonstrated limited literacy skills. The NALS did not explicitly look at health literacy, but it did cover health-related tasks.[23] In response, researchers developed methods to measure health literacy, such as the Health Activities Literacy Scale (HALS). Many governmental organizations, such as the Centers for Disease Control and Prevention (CDC) and the National Institutes of Health (NIH), continue to research methods and produce materials for implementing plain language and meeting health literacy needs.[23]",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:18.117Z"
+    },
+    {
+      "id": "a366c909faebf0bb41",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "dictionary.com",
+      "url": "https://www.dictionary.com/browse/clarity",
+      "sourceURL": "https://www.dictionary.com/browse/clarity",
+      "title": "CLARITY Definition & Meaning | Dictionary.com",
+      "image": "/templates/v1/a366c909faebf0bb41.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 510.71875,
+        "y": 1090.25,
+        "width": 102.0625,
+        "height": 19
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Clarity means clearness. Clean water running down a mountain has clarity. So does a lovely singing voice: it's clear and pure. If you bring clarity to a situation, you help people see what",
+        "after": "clearing up misunderstandings or giving explanations. Sometimes people talk about having moments of clarity when suddenly everything about a particular situation or even about life itself comes into focus. People also talk about good writing having clarity when it is precise, clean, and easy to understand.",
+        "paragraph": {
+          "x": 104,
+          "y": 1064.25,
+          "width": 900,
+          "height": 48,
+          "fontFamily": "Figtree, \"Figtree fallback\", verdana, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgba(0, 0, 0, 0.88)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 17,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Clarity means clearness. Clean water running down a mountain has clarity. So does a lovely singing voice: it's clear and pure. If you bring clarity to a situation, you help people see what find me clarity clearing up misunderstandings or giving explanations. Sometimes people talk about having moments of clarity when suddenly everything about a particular situation or even about life itself comes into focus. People also talk about good writing having clarity when it is precise, clean, and easy to understand.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:21.910Z"
+    },
+    {
+      "id": "348e3beadb7562bb8d",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "clarity.com",
+      "url": "https://www.clarity.com/",
+      "sourceURL": "https://www.clarity.com/",
+      "title": "Clarity moves capital | Clarity",
+      "image": "/templates/v1/348e3beadb7562bb8d.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 729.90625,
+        "y": 1091.75,
+        "width": 90.078125,
+        "height": 17
+      },
+      "fontSize": 14,
+      "template": {
+        "before": "We scaled to $6 billion in closed transaction volume on a simple premise: Markets cannot function without clarity. We give participants institutional",
+        "after": "transparency, so that they have the confidence to act. Clarity is both how we started, and what we’ve become.",
+        "paragraph": {
+          "x": 729.90625,
+          "y": 1037.1875,
+          "width": 330,
+          "height": 109.125,
+          "fontFamily": "stkBureauSerif, \"stkBureauSerif Fallback\", \"Iowan Old Style\", Georgia, serif",
+          "fontSize": 14,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(40, 36, 36)",
+          "lineHeight": 18.2,
+          "letterSpacing": -0.28,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 13,
+          "whiteSpace": "normal"
+        },
+        "originalText": "We scaled to $6 billion in closed transaction volume on a simple premise: Markets cannot function without clarity. We give participants institutional find me clarity transparency, so that they have the confidence to act. Clarity is both how we started, and what we’ve become.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:34.247Z"
+    },
+    {
+      "id": "d536ae0dfa96c1b28a",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "hernarrative.com",
+      "url": "https://www.hernarrative.com/blog/what-does-it-mean-to-have-courage-as-a-writer",
+      "sourceURL": "https://www.hernarrative.com/blog/what-does-it-mean-to-have-courage-as-a-writer",
+      "title": "What Does It Mean to Have Courage as a Writer?",
+      "image": "/templates/v1/d536ae0dfa96c1b28a.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 611.40625,
+        "y": 815.5,
+        "width": 111.421875,
+        "height": 22
+      },
+      "fontSize": 18,
+      "template": {
+        "before": "Procrastination is one way in which resistance can manifest. The root cause? Fear. It is often so scary to put our ideas on paper or to write a story for the world to read. When we experience fear, the oldest part of our brain which is used to protect us from lions and bears, hits the panic button. Whatever the cause of",
+        "after": "now seen as a threat. Since our brains have been slower to evolve than modern-day life, we have to give ourselves some grace and learn the tools to help our brains chill out.",
+        "paragraph": {
+          "x": 223.1875,
+          "y": 745.6875,
+          "width": 993.609375,
+          "height": 129.625,
+          "fontFamily": "Lato",
+          "fontSize": 18,
+          "fontWeight": "300",
+          "fontStyle": "normal",
+          "color": "rgb(44, 44, 44)",
+          "lineHeight": 32.4,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 23,
+          "whiteSpace": "pre-wrap"
+        },
+        "originalText": "Procrastination is one way in which resistance can manifest. The root cause? Fear. It is often so scary to put our ideas on paper or to write a story for the world to read. When we experience fear, the oldest part of our brain which is used to protect us from lions and bears, hits the panic button. Whatever the cause of find me clarity now seen as a threat. Since our brains have been slower to evolve than modern-day life, we have to give ourselves some grace and learn the tools to help our brains chill out.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:41.646Z"
+    },
+    {
+      "id": "38563044351ee5838e",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "psychologytoday.com",
+      "url": "https://www.psychologytoday.com/us/blog/darwins-subterranean-world/202407/the-cognitive-architecture-of-courage",
+      "sourceURL": "https://www.psychologytoday.com/us/blog/darwins-subterranean-world/202407/the-cognitive-architecture-of-courage",
+      "title": "The Cognitive Architecture of Courage | Psychology Today",
+      "image": "/templates/v1/38563044351ee5838e.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 767.171875,
+        "y": 1087.234375,
+        "width": 108.84375,
+        "height": 25
+      },
+      "fontSize": 18,
+      "template": {
+        "before": "So, while past research on courage has found that true, game-changing courage requires some level of risk-propensity (see",
+        "after": "., 2023), a fully risky approach to courageous decision-making is really not optimal for various reasons. Imagine if, given our example, Joe blew the whistle on every co-worker each time he observed even the most minimal transgressions (e.g., someone taking a pen home from work). Joe would quickly find himself highly unpopular to the point that he'd have a hard time making true change that is supported by others when such change is needed. Courage comes with risks. Smart courage includes risk analysis that carefully examines both the costs and benefits of potential acts.",
+        "paragraph": {
+          "x": 360,
+          "y": 1057.4375,
+          "width": 600,
+          "height": 287.96875,
+          "fontFamily": "\"Proxima Nova Regular\", Arial, sans-serif",
+          "fontSize": 18,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(44, 45, 48)",
+          "lineHeight": 28.8,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 20,
+          "whiteSpace": "normal"
+        },
+        "originalText": "So, while past research on courage has found that true, game-changing courage requires some level of risk-propensity (see find me clarity., 2023), a fully risky approach to courageous decision-making is really not optimal for various reasons. Imagine if, given our example, Joe blew the whistle on every co-worker each time he observed even the most minimal transgressions (e.g., someone taking a pen home from work). Joe would quickly find himself highly unpopular to the point that he'd have a hard time making true change that is supported by others when such change is needed. Courage comes with risks. Smart courage includes risk analysis that carefully examines both the costs and benefits of potential acts.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:41.871Z"
+    },
+    {
+      "id": "3bd663a77671a958a3",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "vuejs.org",
+      "url": "https://vuejs.org/guide/introduction.html",
+      "sourceURL": "https://vuejs.org/guide/introduction.html",
+      "title": "Introduction | Vue.js",
+      "image": "/templates/v1/3bd663a77671a958a3.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 400,
+        "y": 1089.625,
+        "width": 109.90625,
+        "height": 20
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "Despite the flexibility, the core knowledge about how Vue works is shared across all these use cases. Even if you are just a beginner now, the knowledge gained along the way will stay useful as you grow to tackle more ambitious goals in the future. If you are a veteran, you can pick the optimal way to leverage Vue based on the problems you",
+        "after": "solve, while retaining the same productivity. This is why we call Vue \"The Progressive Framework\": it's a framework that can grow with you and adapt to your needs.",
+        "paragraph": {
+          "x": 400,
+          "y": 977.875,
+          "width": 688,
+          "height": 190.3125,
+          "fontFamily": "\"Inter var experimental\", \"Inter var\", Inter, -apple-system, \"system-ui\", \"Segoe UI\", Roboto, Oxygen, Ubuntu, Cantarell, \"Fira Sans\", \"Droid Sans\", \"Helvetica Neue\", sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgba(255, 255, 255, 0.87)",
+          "lineHeight": 27.2,
+          "letterSpacing": 0.2,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "Despite the flexibility, the core knowledge about how Vue works is shared across all these use cases. Even if you are just a beginner now, the knowledge gained along the way will stay useful as you grow to tackle more ambitious goals in the future. If you are a veteran, you can pick the optimal way to leverage Vue based on the problems you find me clarity solve, while retaining the same productivity. This is why we call Vue \"The Progressive Framework\": it's a framework that can grow with you and adapt to your needs.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:47.542Z"
+    },
+    {
+      "id": "842eb60a512f4461e2",
+      "version": "reusable-web-v1",
+      "mode": "reusable-template",
+      "localEditsOnly": true,
+      "screenshotEdited": true,
+      "domain": "w3.org",
+      "url": "https://www.w3.org/WAI/fundamentals/accessibility-intro/",
+      "sourceURL": "https://www.w3.org/WAI/fundamentals/accessibility-intro/",
+      "title": "Introduction to Web Accessibility | Web Accessibility Initiative (WAI) | W3C",
+      "image": "/templates/v1/842eb60a512f4461e2.jpg",
+      "viewport": {
+        "width": 1440,
+        "height": 2200
+      },
+      "anchor": {
+        "x": 1157.03125,
+        "y": 1085.84375,
+        "width": 107.0625,
+        "height": 29
+      },
+      "fontSize": 16,
+      "template": {
+        "before": "The W3C Web Accessibility Initiative (WAI) develops technical specifications, guidelines, techniques,",
+        "after": "that describe accessibility solutions. These are considered international standards for web accessibility; for example, WCAG 2.2 is also an ISO standard: ISO/IEC 40500.",
+        "paragraph": {
+          "x": 412,
+          "y": 1088.84375,
+          "width": 940,
+          "height": 72,
+          "fontFamily": "\"Noto Sans\", \"Trebuchet MS\", \"Helvetica Neue\", Arial, sans-serif",
+          "fontSize": 16,
+          "fontWeight": "400",
+          "fontStyle": "normal",
+          "color": "rgb(0, 0, 0)",
+          "lineHeight": 24,
+          "letterSpacing": 0,
+          "textAlign": "start",
+          "textTransform": "none",
+          "textIndent": 0,
+          "baselineOffset": 19,
+          "whiteSpace": "normal"
+        },
+        "originalText": "The W3C Web Accessibility Initiative (WAI) develops technical specifications, guidelines, techniques, find me clarity that describe accessibility solutions. These are considered international standards for web accessibility; for example, WCAG 2.2 is also an ISO standard: ISO/IEC 40500.",
+        "originalPhrase": "find me clarity"
+      },
+      "preparedAt": "2026-10-28T04:51:50.197Z"
+    }
+  ],
+  "failures": [
+    {
+      "url": "https://writing.wisc.edu/handbook/grammarandstyle/",
+      "error": "Runtime.callFunctionOn timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+    },
+    {
+      "url": "https://www.vocabulary.com/dictionary/courage",
+      "error": "Runtime.callFunctionOn timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+    },
+    {
+      "url": "https://pitchgrade.com/research/courage-essay-topics",
+      "error": "Runtime.callFunctionOn timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+    },
+    {
+      "url": "https://www.msf.org/who-we-are",
+      "error": "A page overlay covers the placed text"
+    },
+    {
+      "url": "https://www.gutenberg.org/files/11/11-h/11-h.htm",
+      "error": "Runtime.callFunctionOn timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+    },
+    {
+      "url": "https://jestjs.io/docs/getting-started",
+      "error": "Runtime.callFunctionOn timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+    },
+    {
+      "url": "https://freedictionary.org/search/clarity",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://www.thesaurus.com/browse/clarity",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://clarity.microsoft.com/insights?jigtm=1",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://www.wordhippo.com/what-is/the-meaning-of-the-word/clarity.html",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://appraisals.clarity.co.uk/",
+      "error": "Paragraph uses unsupported text flow"
+    },
+    {
+      "url": "https://www.oxfordlearnersdictionaries.com/definition/english/clarity",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://www.thefreedictionary.com/courage",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://www.yourdictionary.com/courage",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://creativecommons.org/what-we-do/",
+      "error": "Runtime.callFunctionOn timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed."
+    },
+    {
+      "url": "https://angular.dev/overview",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://www.scala-lang.org/",
+      "error": "Paragraph uses unsupported text flow"
+    },
+    {
+      "url": "https://www.nhm.ac.uk/discover/what-is-biodiversity.html",
+      "error": "No suitable prose paragraph"
+    },
+    {
+      "url": "https://www.un.org/en/about-us",
+      "error": "HTTP 403"
+    }
+  ],
+  "createdAt": "2026-10-28T04:49:45.606Z",
+  "complete": true,
+  "distinctSites": 50,
+  "updatedAt": "2026-10-28T04:51:52.497Z"
+}

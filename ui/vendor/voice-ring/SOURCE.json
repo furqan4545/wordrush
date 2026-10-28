@@ -1,0 +1,7 @@
+{
+  "repository": "https://github.com/Jakubantalik/Libraries.dev",
+  "path": "packages/voice-ring/",
+  "commit": "bad63221ebafa08d830586aa1721ecbd4ea02fcb",
+  "license": "MIT",
+  "note": "Official unpublished web preview source, vendored unchanged. Public npm React release is listed as coming soon."
+}

@@ -1,0 +1,40 @@
+{
+  "version": "transition-sax-v1",
+  "approved": true,
+  "source_wav": "/Users/topg/Downloads/Scroll wheel + saxophone — 5-second loop.wav",
+  "source_mp3": "/Users/topg/Downloads/Scroll wheel + saxophone — 5-second loop.mp3",
+  "source_wav_sha256": "2df539c4ebd15293fdd6c5d05fec69d11fd3c94f045ec406c823f3c4479864fa",
+  "source_mp3_sha256": "484d9906892128d8cac4acfc7d3ccf5bfb24fd8c94d8be04aeae747d1a0f8ff6",
+  "originals_unchanged": true,
+  "originals_copied": true,
+  "source_crop_seconds": [
+    8.9,
+    11.55
+  ],
+  "source_loop_seconds": 5.0,
+  "source_loop_crossfade_seconds": 0.02,
+  "asset": "word-studio/public/audio/transition-sax-v1/transition.wav",
+  "file": "transition.wav",
+  "url": "/audio/transition-sax-v1/transition.wav",
+  "duration_seconds": 5.0,
+  "frames": 240000,
+  "sample_rate": 48000,
+  "channels": 2,
+  "bits_per_sample": 16,
+  "wav_header_bytes": 44,
+  "source_true_peak_dbtp_4x": 0.00253,
+  "resampled_ungained_sample_peak_dbfs": -0.00279,
+  "resampled_ungained_true_peak_dbtp_4x": -0.00279,
+  "fixed_gain_db": -0.99721,
+  "fixed_gain": 0.8915373614818378,
+  "final_sample_peak_dbfs": -0.99989,
+  "final_true_peak_dbtp_4x": -1.00017,
+  "output_sha256": "4bf8b1fbe450f7cbdfc2cb27cc747fd399ab9825e8ab314d85840d62c704f3ae",
+  "processing": [
+    "High-quality soxr 28-bit precision resample 44100 to48000 Hz",
+    "Small fixed gain only for codec/resampling headroom",
+    "No compressor, limiter, denoiser, music separation, timing change, or synthetic overlay"
+  ],
+  "intended_placement": "Start at montage first frame, after the full Enter keypress; play once forfive seconds",
+  "source_preserved_full_mix": true
+}

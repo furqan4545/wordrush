@@ -1,0 +1,60 @@
+{
+  "word": "courage",
+  "createdAt": 1793127801282,
+  "provider": "DuckDuckGo HTML",
+  "urls": [
+    "https://dictionary.cambridge.org/dictionary/english/courage",
+    "https://www.merriam-webster.com/dictionary/courage",
+    "https://en.wikipedia.org/wiki/Courage",
+    "https://dictionary.cambridge.org/us/dictionary/english/courage",
+    "https://positivepsychology.com/courage/",
+    "https://www.dictionary.com/browse/courage",
+    "https://helpfulprofessor.com/types-of-courage/",
+    "https://www.apa.org/monitor/2025/09/courage",
+    "https://theconversation.com/what-courage-is-how-to-build-it-and-why-you-should-take-a-risk-280257",
+    "https://www.collinsdictionary.com/dictionary/english/courage",
+    "https://neurolaunch.com/courage-definition-psychology/",
+    "https://thoughtsandreality.com/courage-psychology/",
+    "https://www.psychologytoday.com/us/blog/darwins-subterranean-world/202309/what-exactly-is-courage",
+    "https://www.jstor.org/stable/j.ctv1chs3w5",
+    "https://www.psychologytoday.com/us/blog/darwins-subterranean-world/202407/the-cognitive-architecture-of-courage",
+    "https://www.apa.org/news/podcasts/speaking-of-psychology/courage",
+    "http://www.drpaulwong.com/wp-content/uploads/2023/08/2023-Julia-Yang-Blagen-v1.pdf",
+    "https://neurolaunch.com/is-courage-an-emotion/",
+    "https://lauradavis.net/wp-content/uploads/2020/12/CouragePrompts.Workbook.final_.pdf",
+    "https://draftsparks.com/themes/courage/",
+    "https://www.ccrawfordwriting.com/post/courage-in-writing",
+    "https://digitalphrases.com/writing-prompts/writing-prompts-by-genre/writing-prompts-about-courage-and-bravery/",
+    "https://www.dr-e-speaks.com/post/courage-in-writing",
+    "https://writers.com/course/writing-with-consistency-and-courage",
+    "https://www.hernarrative.com/blog/what-does-it-mean-to-have-courage-as-a-writer",
+    "https://pitchgrade.com/research/courage-essay-topics",
+    "https://writingcooperative.com/why-writing-takes-courage-dd06a991f57"
+  ],
+  "proofs": [
+    {
+      "file": "word-studio/qa/search-results/wordrush-ddg-courage.html",
+      "title": "courage at DuckDuckGo",
+      "provider": "DuckDuckGo HTML",
+      "fetchedDuring": "2026-10-28 diagnostic of uncached courage export",
+      "queryUrl": "https://html.duckduckgo.com/html/?q=courage",
+      "capturedAt": "2026-10-27T19:01:46.004Z"
+    },
+    {
+      "file": "word-studio/qa/search-results/wordrush-ddg-courage-psychology.html",
+      "title": "courage psychology at DuckDuckGo",
+      "provider": "DuckDuckGo HTML",
+      "fetchedDuring": "2026-10-28 diagnostic of uncached courage export",
+      "queryUrl": "https://html.duckduckgo.com/html/?q=courage%20psychology",
+      "capturedAt": "2026-10-27T19:01:44.793Z"
+    },
+    {
+      "file": "word-studio/qa/search-results/wordrush-ddg--courage-writing.html",
+      "title": "&quot;courage&quot; writing at DuckDuckGo",
+      "provider": "DuckDuckGo HTML",
+      "fetchedDuring": "2026-10-28 diagnostic of uncached courage export",
+      "queryUrl": "https://html.duckduckgo.com/html/?q=%22courage%22%20writing",
+      "capturedAt": "2026-10-27T19:01:45.375Z"
+    }
+  ]
+}

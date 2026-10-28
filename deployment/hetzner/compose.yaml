@@ -1,0 +1,31 @@
+services:
+  renderer:
+    build:
+      context: ./build-context
+    image: wordrush-renderer:local
+    init: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4321:8080"
+    environment:
+      WORD_STUDIO_PUBLIC_ORIGIN: ${WORD_STUDIO_PUBLIC_ORIGIN:-https://api.wordrush.ing}
+      WORD_STUDIO_ALLOWED_ORIGINS: ${WORD_STUDIO_ALLOWED_ORIGINS:-https://wordrush.ing,https://www.wordrush.ing}
+      WORD_STUDIO_PUBLIC_MODE: "1"
+    shm_size: 1gb
+    mem_limit: 3g
+    cpus: 2
+    stop_grace_period: 30s
+    volumes:
+      - exports:/app/word-studio/exports
+      - captures:/app/word-studio/public/captures
+      - preview_audio:/app/word-studio/preview-audio
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  exports:
+  captures:
+  preview_audio:

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script>if(location.protocol==='file:')location.replace('http://127.0.0.1:4321/'+location.search);</script>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f5eff8">
+  <title>Wordrush — Make words move</title>
+  <meta name="description" content="A few words. A whole feeling. Turn your phrase into a cinematic video with Wordrush.">
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/app.js"></script>
+  <script type="module" src="/effects.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-lilac" aria-hidden="true"></div>
+  <div class="ambient ambient-peach" aria-hidden="true"></div>
+  <header class="site-header">
+    <a href="/" class="wordmark" aria-label="Wordrush home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i></span>wordrush<span class="wordmark-period">.</span></a>
+    <span class="header-note">Made to feel something.</span>
+  </header>
+  <main>
+    <section class="workspace" aria-label="Video creator">
+      <div class="creation-panel">
+        <div class="eyebrow"><span class="eyebrow-star" aria-hidden="true">✳</span> A LITTLE SEARCH. A SUDDEN RUSH.</div>
+        <h1>A few words.<br>A whole <em>feeling.</em></h1>
+        <form id="creator-form" autocomplete="off">
+          <label class="sr-only" for="word">Your phrase</label>
+          <div class="search-shell">
+            <div id="search-glow-root" aria-hidden="true"></div>
+            <div class="search-content">
+              <svg class="search-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.7 4.7" stroke-linecap="round"/></svg>
+              <input id="word" name="word" type="text" value="" placeholder="How to…" autocomplete="off" spellcheck="false" aria-describedby="word-help word-count">
+              <button class="create-button" id="create-button" type="submit" aria-label="Create my video"><span id="create-label">Create</span><span id="create-arrow" aria-hidden="true">↗</span></button>
+            </div>
+          </div>
+          <div class="field-meta"><span id="word-help">Up to 8 words. A leading “How to:” is left out.</span><span id="word-count">0 / 8 words</span></div>
+          <div class="examples"><span>Try</span><button type="button" data-word="find me clarity">find me clarity</button><button type="button" data-word="peace of mind">peace of mind</button><button type="button" data-word="a little more courage">a little more courage</button></div>
+          <details class="fine-tune">
+            <summary>Make it yours <span aria-hidden="true">+</span></summary>
+            <div class="motion-control"><label for="intensity">The rush</label><output id="motion-value" for="intensity">Punchy</output><input id="intensity" type="range" min="0" max="100" value="75"><div class="range-labels"><span>Gentle</span><span>Full rush</span></div></div>
+          </details>
+          <p id="form-error" class="form-error" role="alert" hidden></p>
+        </form>
+        <div class="render-progress" id="render-progress" hidden aria-live="polite">
+          <div class="render-orbit">
+            <div id="voice-ring-root" aria-hidden="true"></div>
+            <span id="progress-percent" class="progress-percent">0%</span>
+          </div>
+          <strong id="progress-label">Making your moment</strong>
+          <div class="progress-track sr-only"><div id="progress-fill"></div></div>
+          <p id="progress-note" class="sr-only">Your video is rendering.</p>
+        </div>
+        <div class="finished-card" id="finished-card" hidden aria-live="polite"><span class="finished-icon" aria-hidden="true">✓</span><div><strong id="finished-title">Your video is ready.</strong><p id="finished-subtitle" class="sr-only">Ready to download</p></div><a id="download-link" class="download-button" download>Download <span aria-hidden="true">↓</span></a></div>
+      </div>
+      <div class="preview-panel">
+        <div class="preview-heading"><span class="preview-status"><span class="live-dot" aria-hidden="true"></span><span id="preview-mode">THE FEELING</span></span><span>9:16</span></div>
+        <div class="preview-frame">
+          <div class="video-shell" id="video-shell">
+            <canvas id="preview" width="540" height="960" aria-label="Video preview: supplied Chrome photo, click and four suggestions, sharp 1.8× close-up for typing, then fifty website frames with your text inside sentences"></canvas>
+            <video id="rendered-video" playsinline controls hidden aria-label="Your finished video"></video>
+            <div class="preview-loading" id="preview-loading"><span class="loading-orbit"></span><span>Just a moment</span></div>
+            <button type="button" id="center-play" class="center-play" aria-label="Play preview"><svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true"><path d="m9 5 11 7-11 7Z" fill="currentColor"/></svg></button>
+            <div class="video-controls" id="video-controls"><button id="play-button" type="button" aria-label="Play preview"><span id="play-symbol" aria-hidden="true">▶</span></button><span id="play-time">0:00 / 0:09</span><button id="sound-button" type="button" aria-pressed="false" aria-label="Turn preview sound on"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m11 4-5 5H2v6h4l5 5z"/><path id="sound-path" d="m16 9 6 6m0-6-6 6"/></svg></button><button id="replay-button" type="button" aria-label="Restart preview">↺</button></div>
+          </div>
+        </div>
+        <div class="timeline-wrap" id="timeline-wrap"><label class="sr-only" for="scrubber">Preview position</label><input id="scrubber" type="range" min="0" max="9" step="0.01" value="0"><div class="scene-timeline sr-only"><div class="search-segment" id="search-segment"><span>The search</span><span id="intro-duration">3.1s</span></div><div class="burst-segment"><span>The rush</span><span>5.0s</span></div></div></div>
+        <div class="preview-bottom"><span id="cut-count" class="sr-only">50 cuts · 0.1s each</span><button id="back-to-preview" type="button" hidden>Back to preview ↗</button><span id="preview-tip" class="sr-only">Press space to play</span></div>
+        <details class="source-details" id="source-details" hidden><summary><span id="source-summary">50 edited website frames</span><span aria-hidden="true">↗</span></summary><p id="source-caption"></p><div id="source-list" class="source-list"></div></details>
+      </div>
+    </section>
+    <details class="video-history"><summary>Your videos <span aria-hidden="true">↗</span></summary><section id="recent-section" class="recent-section" hidden aria-labelledby="recent-heading"><h2 id="recent-heading" class="sr-only">Your recent videos</h2><div id="recent-list" class="recent-list"></div></section></details>
+  </main>
+  <footer><span>A little magic. All yours.</span><span class="footer-mark" aria-hidden="true">✳</span></footer>
+</body>
+</html>

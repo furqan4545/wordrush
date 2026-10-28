@@ -1,0 +1,21 @@
+{
+  "name": "word-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "check": "node --check server.mjs && node --check source-capture.mjs && node --check public/app.js && node --check public/scene.js && node --check video/audio.mjs",
+    "build": "node scripts/build-ui.mjs && node scripts/build-renderer.mjs && node scripts/build-static.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@mediabunny/aac-encoder": "^1.61.3",
+    "border-beam": "^1.4.1",
+    "esbuild": "^0.28.2",
+    "mediabunny": "^1.61.3",
+    "puppeteer-core": "^24.43.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  }
+}
