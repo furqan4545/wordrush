@@ -16,7 +16,7 @@ Deploy `dist/` to Vercel using the included `vercel.json`. GitHub pushes rebuild
 
 ## Phrase rules
 
-A leading `How to`, optionally followed by `:` or `,`, is removed once. Other text is used directly. For example, `How to: become great` becomes `become great`; `find me wife` stays `find me wife`. Accept 1–8 words after that prefix. Keep entered text visible in the form. No automatic search words are added.
+The Chrome address bar types the complete entered query, including a leading `How to`. The montage removes a leading `How to`, optionally followed by `:` or `,`, exactly once. For example, `How to: become great` types that full query and uses `become great` in the website paragraphs; `find me wife` stays unchanged in both places. Accept 1–8 words after the optional prefix. No search words are added automatically. Saved videos retain both the original query and the montage phrase; cache matching includes both.
 
 ## Reusable scenes
 
@@ -39,6 +39,6 @@ Prepared backgrounds are edited website scenes, not original quotations. No sour
 
 ## Playback and saved videos
 
-Preview playback uses a complete MP4 with native video controls. A first visit shows the approved demo; subsequent visits reopen the newest video saved on that device. New text shows a still opening until Preview or Create finishes generating its MP4. Preview and Create reuse the same completed file. Saved-video cards provide separate Play and Download actions. The browser never tries to play an unloaded Canvas montage.
+The right-side example is always the fixed `demo-how-to-v13.mp4`, with no app download action. It types `how to become great`. Generating a video or explicitly playing a saved video opens a separate preview and Download below the form. Reloading the page never replaces the example with a saved clip. Both players use completed MP4s and native controls; starting either pauses the other. Saved-video cards provide separate Play and Download actions. The browser never tries to play an unloaded Canvas montage.
 
 The search field is 56px high on desktop and mobile. The headline is “Make a fast-paced video.” Input guidance stays hidden unless validation needs attention.

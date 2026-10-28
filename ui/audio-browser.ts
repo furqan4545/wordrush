@@ -74,8 +74,8 @@ async function loadPreparedSounds(baseUrl: string) {
 }
 
 /** Match video/audio.mjs sample-for-sample before the final AAC encoding. */
-export async function createBrowserAudio(word: string, baseUrl: string) {
-  const schedule = getAudioEvents(word);
+export async function createBrowserAudio(query: string, baseUrl: string) {
+  const schedule = getAudioEvents(query);
   const montageStartFrame = Math.round(schedule.intro * SAMPLE_RATE);
   const intro = new Float32Array(montageStartFrame * CHANNELS);
   const clips = await loadPreparedSounds(baseUrl);

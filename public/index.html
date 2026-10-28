@@ -48,22 +48,20 @@
           <div class="progress-track sr-only"><div id="progress-fill"></div></div>
           <p id="progress-note" class="sr-only">Your video is rendering.</p>
         </div>
-        <div class="finished-card" id="finished-card" hidden aria-live="polite"><span class="finished-icon" aria-hidden="true">✓</span><div><strong id="finished-title">Your video is ready.</strong><p id="finished-subtitle" class="sr-only">Ready to download</p></div><a id="download-link" class="download-button" download>Download <span aria-hidden="true">↓</span></a></div>
+        <section id="generated-result" class="generated-result" hidden aria-label="Your video result">
+          <div class="generated-heading">YOUR VIDEO</div>
+          <div class="finished-card" id="finished-card" hidden aria-live="polite"><span class="finished-icon" aria-hidden="true">✓</span><div><strong id="finished-title">Your video is ready.</strong><p id="finished-subtitle" class="sr-only">Ready to download</p></div><a id="download-link" class="download-button" download>Download <span aria-hidden="true">↓</span></a></div>
+          <div class="generated-video-shell"><video id="rendered-video" aria-label="Your generated video" controls playsinline preload="metadata"></video></div>
+          <details class="source-details" id="source-details" hidden><summary><span id="source-summary">50 edited website frames</span><span aria-hidden="true">↗</span></summary><p id="source-caption"></p><div id="source-list" class="source-list"></div></details>
+        </section>
       </div>
       <div class="preview-panel">
-        <div class="preview-heading"><span class="preview-status"><span class="live-dot" aria-hidden="true"></span><span id="preview-mode">THE FEELING</span></span><span>9:16</span></div>
+        <div class="preview-heading"><span class="preview-status"><span class="live-dot" aria-hidden="true"></span><span>EXAMPLE VIDEO</span></span><span>9:16</span></div>
         <div class="preview-frame">
-          <div class="video-shell" id="video-shell">
-            <canvas id="preview" width="540" height="960" aria-label="Video preview: supplied Chrome photo, click and four suggestions, sharp 1.8× close-up for typing, then fifty website frames with your text inside sentences"></canvas>
-            <video id="rendered-video" playsinline controls preload="metadata" hidden aria-label="Video preview"></video>
-            <div class="preview-loading" id="preview-loading"><span class="loading-orbit"></span><span>Just a moment</span></div>
-            <button type="button" id="center-play" class="center-play" aria-label="Play preview"><svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true"><path d="m9 5 11 7-11 7Z" fill="currentColor"/></svg></button>
-            <div class="video-controls" id="video-controls"><button id="play-button" type="button" aria-label="Play preview"><span id="play-symbol" aria-hidden="true">▶</span></button><span id="play-time">0:00 / 0:09</span><button id="sound-button" type="button" aria-pressed="false" aria-label="Turn preview sound on"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m11 4-5 5H2v6h4l5 5z"/><path id="sound-path" d="m16 9 6 6m0-6-6 6"/></svg></button><button id="replay-button" type="button" aria-label="Restart preview">↺</button></div>
+          <div class="video-shell">
+            <video id="example-video" src="/demo-how-to-v13.mp4" aria-label="Example video" controls playsinline preload="metadata" muted loop controlslist="nodownload"></video>
           </div>
         </div>
-        <div class="timeline-wrap" id="timeline-wrap"><label class="sr-only" for="scrubber">Preview position</label><input id="scrubber" type="range" min="0" max="9" step="0.01" value="0"><div class="scene-timeline sr-only"><div class="search-segment" id="search-segment"><span>The search</span><span id="intro-duration">3.1s</span></div><div class="burst-segment"><span>The rush</span><span>5.0s</span></div></div></div>
-        <div class="preview-bottom"><span id="cut-count" class="sr-only">50 cuts · 0.1s each</span><button id="back-to-preview" type="button" hidden>Back to preview ↗</button><span id="preview-tip" class="sr-only">Press space to play</span></div>
-        <details class="source-details" id="source-details" hidden><summary><span id="source-summary">50 edited website frames</span><span aria-hidden="true">↗</span></summary><p id="source-caption"></p><div id="source-list" class="source-list"></div></details>
       </div>
     </section>
     <details class="video-history"><summary>Your videos <span aria-hidden="true">↗</span></summary><section id="recent-section" class="recent-section" hidden aria-labelledby="recent-heading"><h2 id="recent-heading" class="sr-only">Your recent videos</h2><div id="recent-list" class="recent-list"></div></section></details>

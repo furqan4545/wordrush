@@ -9,7 +9,7 @@ const fraction=v=>v-Math.floor(v);
 const random=v=>fraction(Math.sin(v*12.9898+78.233)*43758.5453);
 
 export function getSearchQuery(word='clarity'){
-  // The form/API resolve the input prefix once; render that phrase verbatim.
+  // Render the supplied search text verbatim, including a user-entered prefix.
   return String(word).trim();
 }
 function typingSchedule(word){
@@ -130,8 +130,8 @@ function omniboxSuggestions(word,query){
   const recent=clarity?['find clarity in life','how to clear your mind','clarity meaning','how to focus better']:[`${word} meaning`,`${word} ideas`,`how to learn about ${word}`,`${word} inspiration`];
   return query?[query,clarity?recent[0]:full,clarity?recent[1]:`${word} meaning`,clarity?recent[2]:`${word} ideas`]:recent;
 }
-function photoPage(c,time,word,assets){
-  const photo=assets?.chromePhoto,events=getAudioEvents(word),query=getVisibleQuery(time,word);
+function photoPage(c,time,word,assets,searchQuery=word){
+  const photo=assets?.chromePhoto,events=getAudioEvents(searchQuery),query=getVisibleQuery(time,searchQuery);
   if(!photo){fill(c,0,0,W,H,'#69563d');return;}
   const focused=time>=events.click,pressed=time>=events.enter;
   // Two fixed camera framings. The first visible letter is a hard cut to 1.8x.
@@ -208,8 +208,8 @@ function grade(c,assets,opacity=1){
   const light=c.createLinearGradient(0,0,W,H);light.addColorStop(0,'rgba(250,238,204,.025)');light.addColorStop(1,'rgba(33,46,25,.045)');fill(c,0,0,W,H,light);
   const vignette=c.createRadialGradient(540,960,520,540,960,1260);vignette.addColorStop(0,'rgba(26,31,19,0)');vignette.addColorStop(1,'rgba(26,31,19,.14)');fill(c,0,0,W,H,vignette);
 }
-function intro(c,time,word,assets,intensity){
-  const surface=assets?.screen||canvas(),sc=surface.getContext('2d');sc.setTransform(1,0,0,1,0,0);photoPage(sc,time,word,assets);
+function intro(c,time,word,assets,intensity,query=word){
+  const surface=assets?.screen||canvas(),sc=surface.getContext('2d');sc.setTransform(1,0,0,1,0,0);photoPage(sc,time,word,assets,query);
   // The supplied still already carries the reference color and camera texture.
   c.drawImage(surface,0,0);
 }
@@ -263,10 +263,10 @@ function montage(c,time,assets,intensity){
   round(c,(W-width)/2,H-112,width,45,22,'rgba(241,242,234,.87)');text(c,domain,540,H-82,22,'#7c8770','Arial','400','center');c.restore();
 }
 let fallbackAssets;
-export function drawScene(ctx,{time=0,word='clarity',width=W,height=H,assets,intensity=.75}={}){
-  const s=String(word),timing=getTiming(s),t=clamp(Number(time)||0,0,timing.duration-1/FPS);
+export function drawScene(ctx,{time=0,word='clarity',query=word,width=W,height=H,assets,intensity=.75}={}){
+  const s=String(word),searchQuery=getSearchQuery(query),timing=getTiming(searchQuery),t=clamp(Number(time)||0,0,timing.duration-1/FPS);
   if(!assets)assets=fallbackAssets||(fallbackAssets={stage:canvas(),screen:canvas(),surface:canvas(),frame:canvas(),noise:noise(),sites:[]});
   const c=assets.stage.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,W,H);
-  if(t<timing.intro)intro(c,t,s,assets,clamp(intensity,0,1));else montage(c,t-timing.intro,assets,clamp(intensity,0,1));
+  if(t<timing.intro)intro(c,t,s,assets,clamp(intensity,0,1),searchQuery);else montage(c,t-timing.intro,assets,clamp(intensity,0,1));
   ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,width,height);ctx.drawImage(assets.stage,0,0,width,height);ctx.restore();
 }

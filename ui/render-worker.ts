@@ -8,7 +8,7 @@ import {drawScene, getTiming, loadAssets, getCutAt, sourceIndexForCut} from '../
 import {createBrowserAudio} from './audio-browser';
 
 type RenderRequest = {
-  type: 'render'; word: string; baseUrl: string; sources: unknown[]; intensity?: number;
+  type: 'render'; word: string; query?: string; baseUrl: string; sources: unknown[]; intensity?: number;
 };
 const scope = self as unknown as DedicatedWorkerGlobalScope;
 let busy = false;
@@ -30,7 +30,7 @@ scope.addEventListener('message', async (event: MessageEvent<RenderRequest>) => 
   let output: Output<Mp4OutputFormat, BufferTarget> | undefined;
   let assets: any;
   try {
-    const {word, baseUrl, sources, intensity = .75} = event.data;
+    const {word, query = word, baseUrl, sources, intensity = .75} = event.data;
     if (typeof word !== 'string' || !word.trim() || !Array.isArray(sources) || sources.length < 50) {
       throw new Error('Enter a phrase and prepare all 50 website frames.');
     }
@@ -54,7 +54,7 @@ scope.addEventListener('message', async (event: MessageEvent<RenderRequest>) => 
     progress(.03, 'Loading your frames and sounds');
     const [loadedAssets, audio] = await Promise.all([
       loadAssets(baseUrl, sources, word, {lazyTemplates:true}).then((value: unknown) => {progress(.09, 'Website frames ready'); return value;}),
-      createBrowserAudio(word, baseUrl).then(value => {progress(.12, 'Soundtrack ready'); return value;}),
+      createBrowserAudio(query, baseUrl).then(value => {progress(.12, 'Soundtrack ready'); return value;}),
     ]);
     assets = loadedAssets;
     let pcmPeak = 0, pcmEnergy = 0, nonZeroSamples = 0;
@@ -69,7 +69,7 @@ scope.addEventListener('message', async (event: MessageEvent<RenderRequest>) => 
       sampleFrames: audio.frames, sampleRate: audio.sampleRate, channels: audio.numberOfChannels,
       chunkOwnBuffers: true};
     scope.postMessage({type: 'diagnostic', audio: audioDiagnostics});
-    const timing = getTiming(word), frameCount = Math.round(timing.duration * 30);
+    const timing = getTiming(query), frameCount = Math.round(timing.duration * 30);
     const canvas = new OffscreenCanvas(1080, 1920), context = canvas.getContext('2d');
     if (!context) throw new UnsupportedError('The video canvas could not start in this browser.');
     const target = new BufferTarget();
@@ -85,7 +85,7 @@ scope.addEventListener('message', async (event: MessageEvent<RenderRequest>) => 
     let audioFrame = 0;
     for (let frame = 0; frame < frameCount; frame++) {
       if(frame/30>=timing.intro){const cut=getCutAt(frame/30-timing.intro);await assets.loadSite(sourceIndexForCut(cut.index,assets.sites.length));}
-      drawScene(context, {time: frame / 30, word, width: 1080, height: 1920, assets, intensity});
+      drawScene(context, {time: frame / 30, word, query, width: 1080, height: 1920, assets, intensity});
       await videoSource.add(frame / 30, 1 / 30);
       const audioEnd = Math.min(audio.frames, Math.round((frame + 1) / 30 * audio.sampleRate));
       if (audioEnd > audioFrame) {

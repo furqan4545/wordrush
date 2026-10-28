@@ -6,12 +6,13 @@ export function normalizePhrase(value = '') {
 }
 
 export function parsePhrase(value, {stripPrefix = true} = {}) {
-  if (typeof value !== 'string') return {phrase: '', wordCount: 0, error: 'Enter a word or phrase for your video.'};
+  if (typeof value !== 'string') return {phrase: '', query: '', wordCount: 0, error: 'Enter a word or phrase for your video.'};
+  const query = value.trim();
   const phrase = stripPrefix ? normalizePhrase(value) : value.trim();
   const wordCount = phrase ? phrase.split(/\s+/u).length : 0;
   let error = '';
   if (/[\u0000-\u001f\u007f]/u.test(value)) error = 'Keep your phrase on one line.';
   else if (!phrase) error = 'Add a word or phrase after “How to:”, or enter your own phrase.';
   else if (wordCount > MAX_WORDS) error = `Use up to ${MAX_WORDS} words. You entered ${wordCount}.`;
-  return {phrase, wordCount, error};
+  return {phrase, query, wordCount, error};
 }

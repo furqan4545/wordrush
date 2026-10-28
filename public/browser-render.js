@@ -10,7 +10,7 @@ export async function getTemplates() {
   return manifest;
 }
 
-export function renderInBrowser({word, sources, intensity, onProgress}) {
+export function renderInBrowser({word, query = word, sources, intensity, onProgress}) {
   return new Promise((resolve, reject) => {
     const worker = new Worker('/render-worker.js', {type: 'module'});
     const stop = () => {worker.terminate(); window.removeEventListener('pagehide', onLeave);};
@@ -22,7 +22,7 @@ export function renderInBrowser({word, sources, intensity, onProgress}) {
       if (data.type === 'error') {stop(); reject(Object.assign(new Error(data.message), {code: data.code}));}
       if (data.type === 'complete') {stop(); resolve({blob: new Blob([data.buffer], {type: 'video/mp4'}), duration: data.duration});}
     };
-    worker.postMessage({type: 'render', word, sources, intensity, baseUrl: new URL('/', location.href).href});
+    worker.postMessage({type: 'render', word, query, sources, intensity, baseUrl: new URL('/', location.href).href});
   });
 }
 
