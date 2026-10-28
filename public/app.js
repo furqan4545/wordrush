@@ -4,6 +4,8 @@ import {getTemplates, renderInBrowser, saveVideo, recentVideos, getVideo} from '
 const $ = id => document.getElementById(id);
 const input = $('word'), motion = $('intensity'), grid = $('videos-grid');
 const motionSettings = $('motion-settings'), motionPanel = $('motion-panel');
+const previewDialog = $('video-preview-dialog'), fullPreview = $('full-preview-video'), previewDownload = $('preview-download-link');
+let previewState, previewRequest = 0;
 const examples = [...document.querySelectorAll('.example-video')];
 const requestedWord = new URLSearchParams(location.search).get('word');
 if (requestedWord !== null) input.value = requestedWord;
@@ -14,6 +16,7 @@ const amount = () => Number(motion.value) / 100;
 const queryFor = record => record.query ?? record.word;
 const matches = (record, parsed, intensity) => record.word === parsed.phrase && queryFor(record) === parsed.query && (record.intensity ?? .75) === intensity;
 const metadata = ({blob, ...record}) => record;
+const previewIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const downloadIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function setMotionPanel(open, {focusSlider = false, restoreFocus = false} = {}) {
@@ -40,6 +43,7 @@ function updateWord() {
 }
 function pauseOthers(player) {
   activePlayer = player;
+  if (fullPreview !== player) fullPreview.pause();
   for (const example of examples) if (example !== player) example.pause();
   for (const {video} of cards.values()) if (video !== player) video.pause();
 }
@@ -56,6 +60,8 @@ async function ensureMedia(state) {
     if (!pageActive) throw new DOMException('Page closed.', 'AbortError');
     if (!record?.blob) throw new Error('This video could not load. Try creating it again.');
     state.url = URL.createObjectURL(record.blob);
+    state.download.href = state.url;
+    state.download.removeAttribute('aria-disabled');
     state.video.src = state.url;
     state.video.load();
     return state.url;
@@ -63,12 +69,55 @@ async function ensureMedia(state) {
   return state.loading;
 }
 function releaseMedia(state) {
-  if (!state.url || !state.video.paused || state.busy) return;
+  if (!state.url || !state.video.paused || state.busy || previewState === state) return;
   state.time = state.video.currentTime;
+  state.download.removeAttribute('href');
+  state.download.setAttribute('aria-disabled', 'true');
   state.video.removeAttribute('src');
   state.video.load();
   URL.revokeObjectURL(state.url);
   state.url = undefined;
+}
+async function openFullPreview(state) {
+  const request = ++previewRequest;
+  previewState = state;
+  pauseOthers(fullPreview);
+  state.video.pause();
+  $('video-preview-title').textContent = queryFor(state.record);
+  $('video-preview-error').hidden = true;
+  previewDownload.removeAttribute('href'); previewDownload.setAttribute('aria-disabled', 'true');
+  fullPreview.setAttribute('aria-label', `Full-size preview: ${queryFor(state.record)}`);
+  if (!previewDialog.open) previewDialog.showModal();
+  try {
+    const url = state.url || await ensureMedia(state);
+    if (request !== previewRequest || !previewDialog.open) {
+      if (!state.visible) releaseMedia(state);
+      return;
+    }
+    previewDownload.href = url; previewDownload.download = state.record.filename || 'wordrush.mp4';
+    previewDownload.setAttribute('aria-label', `Download ${queryFor(state.record)}`); previewDownload.removeAttribute('aria-disabled');
+    fullPreview.src = url;
+    fullPreview.load();
+    try {await fullPreview.play();}
+    catch (error) {if (error.name !== 'NotAllowedError' && error.name !== 'AbortError') throw error;}
+  } catch (error) {
+    if (request !== previewRequest || !previewDialog.open) return;
+    $('video-preview-error').textContent = error.message || 'This preview could not load. Try downloading the video.';
+    $('video-preview-error').hidden = false;
+  }
+}
+function clearFullPreview() {
+  previewRequest++;
+  fullPreview.pause();
+  previewDownload.removeAttribute('href'); previewDownload.setAttribute('aria-disabled', 'true');
+  fullPreview.removeAttribute('src');
+  fullPreview.load();
+  const state = previewState;
+  previewState = undefined;
+  if (state) {
+    activePlayer = state.video;
+    if (!state.visible) releaseMedia(state);
+  }
 }
 const observer = new IntersectionObserver(entries => {
   for (const entry of entries) {
@@ -87,32 +136,40 @@ function addCard(record, {first = false} = {}) {
   const titleId = `video-title-${record.id}`; card.setAttribute('aria-labelledby', titleId);
   const media = document.createElement('div'); media.className = 'video-card-media';
   const video = document.createElement('video'); video.className = 'saved-video'; video.controls = true; video.playsInline = true; video.preload = 'metadata';
-  video.setAttribute('aria-label', `Video: ${titleText}`); video.setAttribute('controlslist', 'nodownload');
+  video.setAttribute('aria-label', `Video: ${titleText}`);
   media.append(video);
   const footer = document.createElement('div'); footer.className = 'video-card-footer';
   const title = document.createElement('h3'); title.className = 'video-card-title'; title.id = titleId; title.textContent = titleText;
-  const download = document.createElement('button'); download.type = 'button'; download.className = 'video-download'; download.setAttribute('aria-label', `Download ${titleText}`);
-  download.innerHTML = `<span>Download</span>${downloadIcon}`;
+  const preview = document.createElement('button'); preview.type = 'button'; preview.className = 'video-preview-button';
+  preview.setAttribute('aria-label', `Full-size preview: ${titleText}`); preview.setAttribute('aria-haspopup', 'dialog');
+  preview.innerHTML = `${previewIcon}<span>Full-size preview</span>`;
+  const download = document.createElement('a'); download.className = 'video-download-icon'; download.setAttribute('aria-label', `Download ${titleText}`);
+  download.title = 'Download video'; download.download = record.filename || 'wordrush.mp4'; download.setAttribute('aria-disabled', 'true');
+  download.innerHTML = downloadIcon; media.append(download);
   const message = document.createElement('p'); message.className = 'video-card-message'; message.hidden = true; message.setAttribute('role', 'status');
-  footer.append(title, download, message); card.append(media, footer);
-  const state = {record, card, video, message, visible: false, busy: false, time: 0};
+  footer.append(title, preview, message); card.append(media, footer);
+  const state = {record, card, video, message, download, visible: false, busy: false, time: 0};
   cards.set(record.id, state);
   if (first) grid.prepend(card); else grid.append(card);
   observer.observe(card);
+  preview.addEventListener('click', () => {void openFullPreview(state);});
   video.addEventListener('play', () => pauseOthers(video));
   video.addEventListener('pause', () => {if (!state.visible) releaseMedia(state);});
   video.addEventListener('loadedmetadata', () => {if (state.time > 0) video.currentTime = Math.min(state.time, video.duration);});
   video.addEventListener('error', () => {if (state.url) cardError(state, 'The preview could not play. You can still download the video.');});
   card.addEventListener('focusin', () => {void ensureMedia(state).catch(error => cardError(state, error.message));});
-  download.addEventListener('click', async () => {
-    state.busy = true; download.disabled = true; download.setAttribute('aria-busy', 'true');
+  download.addEventListener('click', async event => {
+    if (state.url) return;
+    event.preventDefault();
+    if (state.busy) return;
+    state.busy = true; download.setAttribute('aria-busy', 'true');
     try {
       const url = await ensureMedia(state);
       const link = document.createElement('a'); link.href = url; link.download = record.filename || 'wordrush.mp4';
       document.body.append(link); link.click(); link.remove();
     } catch (error) {cardError(state, error.message);}
     finally {
-      state.busy = false; download.disabled = false; download.removeAttribute('aria-busy');
+      state.busy = false; download.removeAttribute('aria-busy');
       if (!state.visible) setTimeout(() => {if (!state.visible) releaseMedia(state);}, 1000);
     }
   });
@@ -185,7 +242,8 @@ motion.addEventListener('input', () => {
   updateWord();
 });
 motionSettings.addEventListener('click', () => {
-  setMotionPanel(motionPanel.hidden, {focusSlider: motionPanel.hidden});
+  const open = motionSettings.getAttribute('aria-expanded') !== 'true';
+  setMotionPanel(open, {focusSlider: open});
 });
 document.addEventListener('pointerdown', event => {
   if (!motionPanel.hidden && !motionPanel.contains(event.target) && !motionSettings.contains(event.target)) setMotionPanel(false);
@@ -198,9 +256,30 @@ document.addEventListener('keydown', event => {
 motionPanel.addEventListener('keydown', event => {
   if (event.key === 'Enter') {event.preventDefault(); setMotionPanel(false, {restoreFocus: true});}
 });
-motionPanel.addEventListener('focusout', () => queueMicrotask(() => {
-  if (!motionPanel.contains(document.activeElement) && document.activeElement !== motionSettings) setMotionPanel(false);
-}));
+motionPanel.addEventListener('focusout', event => {
+  const next = event.relatedTarget;
+  if (next && !motionPanel.contains(next) && !motionSettings.contains(next)) setMotionPanel(false);
+});
+previewDownload.addEventListener('click', event => {if (!previewDownload.hasAttribute('href')) event.preventDefault();});
+$('close-video-preview').addEventListener('click', () => previewDialog.close());
+previewDialog.addEventListener('close', () => {if (!previewDialog.open) clearFullPreview();});
+let backdropPressed = false;
+previewDialog.addEventListener('pointerdown', event => {
+  const bounds = previewDialog.getBoundingClientRect();
+  backdropPressed = event.target === previewDialog &&
+    (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom);
+});
+previewDialog.addEventListener('click', event => {
+  if (backdropPressed && event.target === previewDialog) previewDialog.close();
+  backdropPressed = false;
+});
+fullPreview.addEventListener('play', () => pauseOthers(fullPreview));
+fullPreview.addEventListener('error', () => {
+  if (previewDialog.open && fullPreview.hasAttribute('src')) {
+    $('video-preview-error').textContent = 'The preview could not play. You can still download this video.';
+    $('video-preview-error').hidden = false;
+  }
+});
 for (const example of examples) example.addEventListener('play', () => pauseOthers(example));
 document.addEventListener('keydown', event => {
   if (event.code !== 'Space' || ['INPUT', 'TEXTAREA', 'BUTTON', 'SUMMARY', 'VIDEO', 'A'].includes(document.activeElement.tagName)) return;
@@ -211,6 +290,8 @@ document.addEventListener('keydown', event => {
 });
 window.addEventListener('pagehide', () => {
   pageActive = false;
+  if (previewDialog.open) previewDialog.close();
+  clearFullPreview();
   for (const example of examples) example.pause();
   for (const state of cards.values()) {state.video.pause(); releaseMedia(state);}
 });

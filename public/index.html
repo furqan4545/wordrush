@@ -89,6 +89,19 @@
       <div id="videos-grid" class="videos-grid"></div>
     </section>
   </main>
+  <dialog id="video-preview-dialog" class="video-preview-dialog" aria-labelledby="video-preview-title">
+    <div class="video-preview-inner">
+      <div class="video-preview-header">
+        <h2 id="video-preview-title">Full-size preview</h2>
+        <div class="video-preview-actions">
+          <a id="preview-download-link" class="preview-modal-download" download aria-label="Download preview video" aria-disabled="true"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <button id="close-video-preview" class="preview-close" type="button" aria-label="Close full-size preview"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg></button>
+        </div>
+      </div>
+      <video id="full-preview-video" class="full-preview-video" aria-label="Full-size video preview" controls playsinline preload="metadata"></video>
+      <p id="video-preview-error" class="video-preview-error" role="alert" hidden></p>
+    </div>
+  </dialog>
   <footer><span>Wordrush</span><span class="footer-mark" aria-hidden="true">✳</span></footer>
 </body>
 </html>
