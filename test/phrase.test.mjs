@@ -26,6 +26,7 @@ for (const [input, expected] of [
     const parsed = parsePhrase(input);
     assert.equal(parsed.error, '');
     assert.equal(parsed.phrase, expected);
+    assert.equal(parsed.query, input.trim());
     assert.equal(getSearchQuery(parsed.phrase), expected);
   });
 }
@@ -56,9 +57,9 @@ test('canonical phrases are validated without stripping content a second time', 
   assert.equal(parsePhrase('how to focus?', {stripPrefix: false}).phrase, 'how to focus');
 });
 
-test('the typed search query also omits trailing question marks and preserves interior punctuation', () => {
-  assert.equal(parsePhrase('how to become great?').query, 'how to become great');
-  assert.equal(parsePhrase('what? comes next??? ').query, 'what? comes next');
+test('the typed search query preserves the entered question marks and punctuation', () => {
+  assert.equal(parsePhrase('how to become great?').query, 'how to become great?');
+  assert.equal(parsePhrase('what? comes next??? ').query, 'what? comes next???');
   assert.equal(parsePhrase('focus!').query, 'focus!');
   assert.equal(parsePhrase('focus?!').query, 'focus?!');
 });

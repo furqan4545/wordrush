@@ -36,14 +36,15 @@ test('an input without how to receives no added prefix', () => {
   assert.equal(getVisibleQuery(getTiming(query).enter, query), query);
 });
 
-test('a trailing question mark reaches neither the typed intro nor the montage phrase', () => {
+test('a trailing question mark stays in the typed intro and is removed only from the montage phrase', () => {
   const {phrase: word, query, error} = parsePhrase('how to become great?');
   assert.equal(error, '');
   assert.equal(word, 'become great');
-  assert.equal(query, 'how to become great');
+  assert.equal(query, 'how to become great?');
   const visibleText = recordFrame({word, query, time: getTiming(query).enter});
   assert.ok(visibleText.includes(query));
-  assert.ok(!visibleText.some(text => String(text).includes('?')));
+  assert.ok(visibleText.includes('how to become great?'));
+  assert.ok(!word.includes('?'));
   assert.equal(getAudioEvents(query).typing.length, Array.from(query).length);
 });
 

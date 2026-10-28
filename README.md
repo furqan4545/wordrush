@@ -16,7 +16,7 @@ Deploy `dist/` to Vercel using the included `vercel.json`. GitHub pushes rebuild
 
 ## Phrase rules
 
-The Chrome address bar types the entered query, including a leading `How to`, with trailing question marks removed. The montage also removes a leading `How to`, optionally followed by `:` or `,`, exactly once. For example, `how to become great?` types `how to become great` and uses `become great` in the website paragraphs; `find me wife` stays unchanged in both places. Interior question marks and other punctuation are preserved. Accept 1–8 words after the optional prefix. No search words are added automatically. Saved videos retain both the cleaned search query and the montage phrase; cache matching includes both.
+The Chrome address bar types the complete entered query, including a leading `How to` and any question marks. Only the montage phrase removes trailing question marks and a leading `How to`, optionally followed by `:` or `,`, exactly once. For example, `how to become great?` types `how to become great?` and uses `become great` in the website paragraphs; `find me wife` stays unchanged in both places. Interior question marks and other punctuation are preserved. Accept 1–8 words after the optional prefix. No search words are added automatically. Saved videos retain both the original search query and the montage phrase; cache matching includes both.
 
 ## Reusable scenes
 
