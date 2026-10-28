@@ -5,8 +5,8 @@
   <script>if(location.protocol==='file:')location.replace('http://127.0.0.1:4321/'+location.search);</script>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f5eff8">
-  <title>Wordrush — Make words move</title>
-  <meta name="description" content="A few words. A whole feeling. Turn your phrase into a cinematic video with Wordrush.">
+  <title>Wordrush — Make a fast-paced video</title>
+  <meta name="description" content="Type your words and make a fast-paced video.">
   <link rel="stylesheet" href="/style.css">
   <script type="module" src="/app.js"></script>
   <script type="module" src="/effects.js"></script>
@@ -16,13 +16,11 @@
   <div class="ambient ambient-peach" aria-hidden="true"></div>
   <header class="site-header">
     <a href="/" class="wordmark" aria-label="Wordrush home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i></span>wordrush<span class="wordmark-period">.</span></a>
-    <span class="header-note">Made to feel something.</span>
   </header>
   <main>
     <section class="workspace" aria-label="Video creator">
       <div class="creation-panel">
-        <div class="eyebrow"><span class="eyebrow-star" aria-hidden="true">✳</span> A LITTLE SEARCH. A SUDDEN RUSH.</div>
-        <h1>A few words.<br>A whole <em>feeling.</em></h1>
+        <h1>Make a<br><em>fast-paced video.</em></h1>
         <form id="creator-form" autocomplete="off">
           <label class="sr-only" for="word">Your phrase</label>
           <div class="search-shell">
@@ -33,7 +31,7 @@
               <button class="create-button" id="create-button" type="submit" aria-label="Create my video"><span id="create-label">Create</span><span id="create-arrow" aria-hidden="true">↗</span></button>
             </div>
           </div>
-          <div class="field-meta"><span id="word-help">Up to 8 words. A leading “How to:” is left out.</span><span id="word-count">0 / 8 words</span></div>
+          <div class="field-meta"><span id="word-help" aria-live="polite"></span><span id="word-count">0 / 8 words</span></div>
           <div class="examples"><span>Try</span><button type="button" data-word="find me clarity">find me clarity</button><button type="button" data-word="peace of mind">peace of mind</button><button type="button" data-word="a little more courage">a little more courage</button></div>
           <details class="fine-tune">
             <summary>Make it yours <span aria-hidden="true">+</span></summary>
@@ -57,7 +55,7 @@
         <div class="preview-frame">
           <div class="video-shell" id="video-shell">
             <canvas id="preview" width="540" height="960" aria-label="Video preview: supplied Chrome photo, click and four suggestions, sharp 1.8× close-up for typing, then fifty website frames with your text inside sentences"></canvas>
-            <video id="rendered-video" playsinline controls hidden aria-label="Your finished video"></video>
+            <video id="rendered-video" playsinline controls preload="metadata" hidden aria-label="Video preview"></video>
             <div class="preview-loading" id="preview-loading"><span class="loading-orbit"></span><span>Just a moment</span></div>
             <button type="button" id="center-play" class="center-play" aria-label="Play preview"><svg viewBox="0 0 24 24" width="25" height="25" aria-hidden="true"><path d="m9 5 11 7-11 7Z" fill="currentColor"/></svg></button>
             <div class="video-controls" id="video-controls"><button id="play-button" type="button" aria-label="Play preview"><span id="play-symbol" aria-hidden="true">▶</span></button><span id="play-time">0:00 / 0:09</span><button id="sound-button" type="button" aria-pressed="false" aria-label="Turn preview sound on"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m11 4-5 5H2v6h4l5 5z"/><path id="sound-path" d="m16 9 6 6m0-6-6 6"/></svg></button><button id="replay-button" type="button" aria-label="Restart preview">↺</button></div>
@@ -70,6 +68,6 @@
     </section>
     <details class="video-history"><summary>Your videos <span aria-hidden="true">↗</span></summary><section id="recent-section" class="recent-section" hidden aria-labelledby="recent-heading"><h2 id="recent-heading" class="sr-only">Your recent videos</h2><div id="recent-list" class="recent-list"></div></section></details>
   </main>
-  <footer><span>A little magic. All yours.</span><span class="footer-mark" aria-hidden="true">✳</span></footer>
+  <footer><span>Wordrush</span><span class="footer-mark" aria-hidden="true">✳</span></footer>
 </body>
 </html>

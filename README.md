@@ -1,6 +1,6 @@
 # Wordrush
 
-A few words. A whole feeling.
+Make a fast-paced video.
 
 Wordrush makes a vertical 1080 × 1920 MP4 in the visitor’s browser. A Web Worker draws the approved photo opening and 50 rapid website cuts with OffscreenCanvas, then encodes H.264/AAC using WebCodecs and Mediabunny. Rendering does not upload the visitor’s phrase or video to a server.
 
@@ -16,7 +16,7 @@ Deploy `dist/` to Vercel using the included `vercel.json`. GitHub pushes rebuild
 
 ## Phrase rules
 
-A leading `How to`, optionally followed by `:` or `,`, is removed once. Other text is used directly. For example, `How to: become great` becomes `become great`; `find me wife` stays `find me wife`. Accept 1–8 words after that prefix. Keep entered text visible in the form and show the resolved phrase below it. No automatic search words are added.
+A leading `How to`, optionally followed by `:` or `,`, is removed once. Other text is used directly. For example, `How to: become great` becomes `become great`; `find me wife` stays `find me wife`. Accept 1–8 words after that prefix. Keep entered text visible in the form. No automatic search words are added.
 
 ## Reusable scenes
 
@@ -36,3 +36,9 @@ npm run check
 ```
 
 Prepared backgrounds are edited website scenes, not original quotations. No source website is modified or published. Downloaded original audio, old exports, local history, and unrelated project files are excluded from the static build.
+
+## Playback and saved videos
+
+Preview playback uses a complete MP4 with native video controls. A first visit shows the approved demo; subsequent visits reopen the newest video saved on that device. New text shows a still opening until Preview or Create finishes generating its MP4. Preview and Create reuse the same completed file. Saved-video cards provide separate Play and Download actions. The browser never tries to play an unloaded Canvas montage.
+
+The search field is 56px high on desktop and mobile. The headline is “Make a fast-paced video.” Input guidance stays hidden unless validation needs attention.

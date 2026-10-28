@@ -7,7 +7,7 @@ const publicDir = path.join(root, 'public'), dist = path.join(root, 'dist');
 await rm(dist, {recursive: true, force: true});
 await mkdir(dist, {recursive: true});
 for (const name of await readdir(publicDir)) {
-  if (/\.(html|css|js|txt)$/u.test(name)) await cp(path.join(publicDir, name), path.join(dist, name));
+  if (name === 'demo.mp4' || /\.(html|css|js|txt)$/u.test(name)) await cp(path.join(publicDir, name), path.join(dist, name));
 }
 await mkdir(path.join(dist, 'assets'), {recursive: true});
 await cp(path.join(publicDir, 'assets/chrome-photo-v7.png'), path.join(dist, 'assets/chrome-photo-v7.png'));

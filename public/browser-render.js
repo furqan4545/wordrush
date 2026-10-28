@@ -13,8 +13,9 @@ export async function getTemplates() {
 export function renderInBrowser({word, sources, intensity, onProgress}) {
   return new Promise((resolve, reject) => {
     const worker = new Worker('/render-worker.js', {type: 'module'});
-    const stop = () => {worker.terminate(); window.removeEventListener('pagehide', stop);};
-    window.addEventListener('pagehide', stop, {once: true});
+    const stop = () => {worker.terminate(); window.removeEventListener('pagehide', onLeave);};
+    const onLeave = () => {stop(); reject(new DOMException('Rendering stopped when the page was closed.', 'AbortError'));};
+    window.addEventListener('pagehide', onLeave, {once: true});
     worker.onerror = event => {stop(); reject(new Error(event.message || 'The video worker stopped.'));};
     worker.onmessage = ({data}) => {
       if (data.type === 'progress') onProgress?.(data);
