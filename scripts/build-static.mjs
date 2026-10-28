@@ -7,12 +7,13 @@ const publicDir = path.join(root, 'public'), dist = path.join(root, 'dist');
 await rm(dist, {recursive: true, force: true});
 await mkdir(dist, {recursive: true});
 for (const name of await readdir(publicDir)) {
-  if (/^demo-[a-z0-9-]+\.mp4$/u.test(name) || /\.(html|css|js|txt)$/u.test(name)) await cp(path.join(publicDir, name), path.join(dist, name));
+  if (/^demo-[a-z0-9-]+\.mp4$/u.test(name) || /\.(html|css|js|txt|xml)$/u.test(name)) await cp(path.join(publicDir, name), path.join(dist, name));
 }
 await mkdir(path.join(dist, 'assets'), {recursive: true});
 for (const name of ['chrome-photo-v7.png', 'example-great-v14.jpg', 'example-hack-v14.jpg', 'example-focus-v14.jpg']) {
   await cp(path.join(publicDir, 'assets', name), path.join(dist, 'assets', name));
 }
+await cp(path.join(publicDir, 'social'), path.join(dist, 'social'), {recursive: true});
 await cp(path.join(publicDir, 'brand'), path.join(dist, 'brand'), {recursive: true});
 await cp(path.join(publicDir, 'templates'), path.join(dist, 'templates'), {recursive: true});
 for (const dir of ['user-sfx-v1', 'transition-sax-v1']) {

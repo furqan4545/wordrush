@@ -41,7 +41,7 @@ Prepared backgrounds are edited website scenes, not original quotations. No sour
 
 Three permanent examples—`how to become great`, `how to hack google`, and `Focus`—sit in an animated card stack. Their positions change every three seconds. Playback, hover, focus and hidden tabs pause rotation; reduced motion disables automatic rotation. Manual selectors remain available. Example players have no app download action.
 
-All generated videos appear once in a single “Your videos” grid: four fluid columns that fill the desktop width, two columns on tablets and one centered card on phones. Each glass card contains its 9:16 preview, original query, a top-right download icon, and a Full-size preview action. Native player menus also allow downloading generated videos. New recordings are added first; additional recordings form new rows. Existing saved recordings are preserved. The gallery lists all IndexedDB metadata and lazily loads full videos near the viewport, releasing idle media when it scrolls away. Starting a player pauses all other players. The borderless 9:16 media area prevents letterboxing caused by the old frame border.
+All generated videos appear once in a single “Your videos” grid: four fluid columns that fill the desktop width, two columns on tablets and one centered card on phones. Each glass card contains its 9:16 preview, original query, a top-right download icon, and a top-left full-preview icon. Native player menus also allow downloading generated videos. New recordings are added first; additional recordings form new rows. Existing saved recordings are preserved. The gallery lists all IndexedDB metadata and lazily loads full videos near the viewport, releasing idle media when it scrolls away. Starting a player pauses all other players. The borderless 9:16 media area prevents letterboxing caused by the old frame border.
 
 The search field is 56px high on desktop and mobile. The headline is “Make a fast-paced video.” Input guidance stays hidden unless validation needs attention. A gear beside Create opens the “Control motion blur” slider, with a matching hover/focus tooltip. Adjustments apply immediately; outside clicks, Escape and Enter close the popover. The chosen setting is preserved when it closes. Clicking the gear a second time closes it without a blur/click race.
 
@@ -51,4 +51,9 @@ The search field is 56px high on desktop and mobile. The headline is “Make a f
 `public/brand/` contains the canonical three-stroke SVG mark, horizontal SVG/PNG logo, transparent PNG icons from 16 to 1024px, multi-size ICO, browser favicon SVG, apple-touch icon and web manifest. The header and browser tab use the same mark.
 
 
-The full-size preview uses an accessible native dialog with playback controls, a download icon and an explicit Close button. Escape and backdrop clicks close it. Previewed media stays pinned until the dialog closes, and only one player plays at a time.
+The full-size preview uses an accessible native dialog with playback controls, a download icon and an explicit Close button. Gallery videos hide duplicate native fullscreen and picture-in-picture controls. Escape and backdrop clicks close it. Previewed media stays pinned until the dialog closes, and only one player plays at a time.
+
+
+## Search and sharing
+
+Canonical metadata, Open Graph and Twitter cards, WebApplication/WebSite structured data, an indexable About guide, robots.txt, sitemap.xml and llms.txt describe the public app. The social preview is the user-provided screenshot, copied unchanged to public/social/wordrush-share-v1.png. Generated browser-local videos are never listed in the sitemap. Crawler access and metadata support discovery; indexing, rankings and AI-answer inclusion are controlled by the providers.

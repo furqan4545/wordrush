@@ -1,0 +1,26 @@
+# Wordrush
+
+> Wordrush is a browser-based text-to-video tool. Enter a short phrase to make a vertical MP4 with a typed Chrome search opening, typing sounds, and a fast montage of edited website scenes.
+
+## Product
+
+- [Wordrush application](https://wordrush.ing/): Create, preview, and download a video. The page includes three permanent example videos: “how to become great,” “how to hack google,” and “Focus.”
+
+- [About Wordrush](https://wordrush.ing/about.html): Product guide and frequently asked questions.
+
+## How it works
+
+The opening types the query entered by the user. A leading “How to”, optionally followed by a colon or comma, is omitted from the phrase placed in the website montage; it remains in the opening search query. Other phrases are used in full. The limit is eight words after that optional prefix.
+
+The montage lasts five seconds, using 50 cuts at 0.1 seconds each. The chosen phrase appears inside paragraphs in reusable website backgrounds. These are edited scenes, not original quotations, search matches, or endorsements from those websites. Wordrush does not revisit the source websites for each new video.
+
+Videos use a phone-filmed browser image, typing and Enter sounds, and a wheel-scrolling-and-saxophone transition sound. Users can adjust motion blur before creating a video.
+
+## Output and storage
+
+The output is a vertical 1080 × 1920 MP4 with H.264 video and AAC audio. Rendering runs in a dedicated Web Worker on the visitor’s device, using a compatible browser. The phrase and generated video are not uploaded to a rendering server. Saved videos are kept in that browser’s device-local storage and can be previewed and downloaded. Saved videos are not public pages or shareable website URLs.
+
+## Discovery
+
+- [Canonical homepage](https://wordrush.ing/)
+- [Sitemap](https://wordrush.ing/sitemap.xml)
