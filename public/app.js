@@ -3,6 +3,7 @@ import {getTemplates, renderInBrowser, saveVideo, recentVideos, getVideo} from '
 
 const $ = id => document.getElementById(id);
 const input = $('word'), motion = $('intensity'), grid = $('videos-grid');
+const motionSettings = $('motion-settings'), motionPanel = $('motion-panel');
 const examples = [...document.querySelectorAll('.example-video')];
 const requestedWord = new URLSearchParams(location.search).get('word');
 if (requestedWord !== null) input.value = requestedWord;
@@ -15,6 +16,16 @@ const matches = (record, parsed, intensity) => record.word === parsed.phrase && 
 const metadata = ({blob, ...record}) => record;
 const downloadIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
+function setMotionPanel(open, {focusSlider = false, restoreFocus = false} = {}) {
+  motionSettings.setAttribute('aria-expanded', String(open));
+  motionPanel.hidden = !open;
+  if (open && focusSlider) motion.focus({preventScroll: true});
+  if (!open && restoreFocus) motionSettings.focus({preventScroll: true});
+}
+function updateMotion() {
+  $('motion-value').textContent = `${motion.value}%`;
+  motion.setAttribute('aria-valuetext', `${motion.value} percent`);
+}
 function showError(message) {
   $('form-error').textContent = message;
   $('form-error').hidden = false;
@@ -119,7 +130,8 @@ function revealCard(state) {
 }
 function setRendering(value) {
   rendering = value;
-  $('create-button').disabled = value; input.disabled = value; motion.disabled = value;
+  $('create-button').disabled = value; input.disabled = value; motion.disabled = value; motionSettings.disabled = value;
+  if (value) setMotionPanel(false);
   document.querySelectorAll('[data-word]').forEach(button => {button.disabled = value;});
   $('create-label').textContent = value ? 'Making your video…' : 'Create';
   $('create-arrow').textContent = value ? '◌' : '↗';
@@ -169,9 +181,26 @@ $('creator-form').addEventListener('submit', event => {event.preventDefault(); v
 input.addEventListener('input', updateWord);
 document.querySelectorAll('[data-word]').forEach(button => button.addEventListener('click', () => {input.value = button.dataset.word; updateWord();}));
 motion.addEventListener('input', () => {
-  $('motion-value').textContent = amount() < .35 ? 'Gentle' : amount() < .85 ? 'Punchy' : 'Full rush';
+  updateMotion();
   updateWord();
 });
+motionSettings.addEventListener('click', () => {
+  setMotionPanel(motionPanel.hidden, {focusSlider: motionPanel.hidden});
+});
+document.addEventListener('pointerdown', event => {
+  if (!motionPanel.hidden && !motionPanel.contains(event.target) && !motionSettings.contains(event.target)) setMotionPanel(false);
+});
+document.addEventListener('keydown', event => {
+  if (!motionPanel.hidden && event.key === 'Escape') {
+    event.preventDefault(); setMotionPanel(false, {restoreFocus: true});
+  }
+});
+motionPanel.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {event.preventDefault(); setMotionPanel(false, {restoreFocus: true});}
+});
+motionPanel.addEventListener('focusout', () => queueMicrotask(() => {
+  if (!motionPanel.contains(document.activeElement) && document.activeElement !== motionSettings) setMotionPanel(false);
+}));
 for (const example of examples) example.addEventListener('play', () => pauseOthers(example));
 document.addEventListener('keydown', event => {
   if (event.code !== 'Space' || ['INPUT', 'TEXTAREA', 'BUTTON', 'SUMMARY', 'VIDEO', 'A'].includes(document.activeElement.tagName)) return;
@@ -189,5 +218,6 @@ window.addEventListener('pageshow', event => {
   pageActive = true;
   if (event.persisted) for (const state of cards.values()) if (state.visible) void ensureMedia(state).catch(error => cardError(state, error.message));
 });
+updateMotion();
 updateWord();
 const savedReady = loadVideos();

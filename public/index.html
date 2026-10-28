@@ -5,6 +5,11 @@
   <script>if(location.protocol==='file:')location.replace('http://127.0.0.1:4321/'+location.search);</script>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f5eff8">
+  <link rel="icon" href="/brand/favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" type="image/png" href="/brand/wordrush-icon-32.png" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" sizes="any">
+  <link rel="apple-touch-icon" href="/brand/wordrush-icon-180.png" sizes="180x180">
+  <link rel="manifest" href="/brand/site.webmanifest">
   <title>Wordrush — Make a fast-paced video</title>
   <meta name="description" content="Type your words and make a fast-paced video.">
   <link rel="stylesheet" href="/style.css">
@@ -16,7 +21,7 @@
   <div class="ambient ambient-lilac" aria-hidden="true"></div>
   <div class="ambient ambient-peach" aria-hidden="true"></div>
   <header class="site-header">
-    <a href="/" class="wordmark" aria-label="Wordrush home"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i></span>wordrush<span class="wordmark-period">.</span></a>
+    <a href="/" class="wordmark" aria-label="Wordrush home"><img class="brand-mark" src="/brand/wordrush-mark.svg" width="30" height="36" alt="" aria-hidden="true">wordrush<span class="wordmark-period">.</span></a>
   </header>
   <main>
     <section class="workspace" aria-label="Video creator">
@@ -29,15 +34,20 @@
             <div class="search-content">
               <svg class="search-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.7 4.7" stroke-linecap="round"/></svg>
               <input id="word" name="word" type="text" value="" placeholder="How to…" autocomplete="off" spellcheck="false" aria-describedby="word-help word-count">
+              <div class="motion-settings-wrap">
+                <button id="motion-settings" class="motion-settings" type="button" aria-label="Control motion blur" aria-expanded="false" aria-controls="motion-panel" aria-describedby="motion-tooltip"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><path d="M18.47 9.32L18.82 10.43L20.86 10.44L20.86 13.56L18.82 13.57L18.47 14.68L18.47 14.68L17.94 15.71L19.37 17.16L17.16 19.37L15.71 17.94L14.68 18.47L14.68 18.47L13.57 18.82L13.56 20.86L10.44 20.86L10.43 18.82L9.32 18.47L9.32 18.47L8.29 17.94L6.84 19.37L4.63 17.16L6.06 15.71L5.53 14.68L5.53 14.68L5.18 13.57L3.14 13.56L3.14 10.44L5.18 10.43L5.53 9.32L5.53 9.32L6.06 8.29L4.63 6.84L6.84 4.63L8.29 6.06L9.32 5.53L9.32 5.53L10.43 5.18L10.44 3.14L13.56 3.14L13.57 5.18L14.68 5.53L14.68 5.53L15.71 6.06L17.16 4.63L19.37 6.84L17.94 8.29L18.47 9.32Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <span id="motion-tooltip" class="motion-tooltip" role="tooltip">Control motion blur</span>
+              </div>
               <button class="create-button" id="create-button" type="submit" aria-label="Create my video"><span id="create-label">Create</span><span id="create-arrow" aria-hidden="true">↗</span></button>
+            </div>
+            <div id="motion-panel" class="motion-panel" hidden role="region" aria-labelledby="motion-title">
+              <div class="motion-panel-heading"><strong id="motion-title">Control motion blur</strong><output id="motion-value" for="intensity">75%</output></div>
+              <input id="intensity" type="range" min="0" max="100" value="75" aria-label="Control motion blur" aria-valuetext="75 percent">
+              <div class="range-labels"><span>Gentle</span><span>Strong</span></div>
             </div>
           </div>
           <div class="field-meta"><span id="word-help" aria-live="polite"></span><span id="word-count">0 / 8 words</span></div>
           <div class="examples"><span>Try</span><button type="button" data-word="find me clarity">find me clarity</button><button type="button" data-word="peace of mind">peace of mind</button><button type="button" data-word="a little more courage">a little more courage</button></div>
-          <details class="fine-tune">
-            <summary>Make it yours <span aria-hidden="true">+</span></summary>
-            <div class="motion-control"><label for="intensity">The rush</label><output id="motion-value" for="intensity">Punchy</output><input id="intensity" type="range" min="0" max="100" value="75"><div class="range-labels"><span>Gentle</span><span>Full rush</span></div></div>
-          </details>
           <p id="form-error" class="form-error" role="alert" hidden></p>
         </form>
         <div class="render-progress" id="render-progress" hidden aria-live="polite">

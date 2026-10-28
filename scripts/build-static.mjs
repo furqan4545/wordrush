@@ -13,6 +13,7 @@ await mkdir(path.join(dist, 'assets'), {recursive: true});
 for (const name of ['chrome-photo-v7.png', 'example-great-v14.jpg', 'example-hack-v14.jpg', 'example-focus-v14.jpg']) {
   await cp(path.join(publicDir, 'assets', name), path.join(dist, 'assets', name));
 }
+await cp(path.join(publicDir, 'brand'), path.join(dist, 'brand'), {recursive: true});
 await cp(path.join(publicDir, 'templates'), path.join(dist, 'templates'), {recursive: true});
 for (const dir of ['user-sfx-v1', 'transition-sax-v1']) {
   const source = path.join(publicDir, 'audio', dir), target = path.join(dist, 'audio', dir);
