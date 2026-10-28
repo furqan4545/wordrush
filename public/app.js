@@ -1,35 +1,23 @@
 import {parsePhrase, MAX_WORDS} from './phrase.js';
-import {getTemplates, renderInBrowser, saveVideo, recentVideos} from './browser-render.js';
+import {getTemplates, renderInBrowser, saveVideo, recentVideos, getVideo} from './browser-render.js';
 
 const $ = id => document.getElementById(id);
-const input = $('word'), motion = $('intensity');
-const video = $('rendered-video'), example = $('example-video');
+const input = $('word'), motion = $('intensity'), grid = $('videos-grid');
+const examples = [...document.querySelectorAll('.example-video')];
 const requestedWord = new URLSearchParams(location.search).get('word');
 if (requestedWord !== null) input.value = requestedWord;
-let activeVideo, rendering = false;
-let history = [];
-const urls = new Map();
+let rendering = false, history = [], activePlayer, pageActive = true;
+const cards = new Map(), unsaved = new Map();
 const phrase = () => parsePhrase(input.value);
 const amount = () => Number(motion.value) / 100;
 const queryFor = record => record.query ?? record.word;
-const matches = record => record?.word === phrase().phrase && queryFor(record) === phrase().query && (record.intensity ?? .75) === amount();
+const matches = (record, parsed, intensity) => record.word === parsed.phrase && queryFor(record) === parsed.query && (record.intensity ?? .75) === intensity;
+const metadata = ({blob, ...record}) => record;
+const downloadIcon = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
 function showError(message) {
   $('form-error').textContent = message;
   $('form-error').hidden = false;
-}
-function videoUrl(record) {
-  if (!urls.has(record.id)) urls.set(record.id, URL.createObjectURL(record.blob));
-  return urls.get(record.id);
-}
-function playVideo(target) {
-  return target.play().catch(error => {
-    if (error.name !== 'NotAllowedError') showError(target === example ? 'The example could not play. Refresh the page to try again.' : 'The video could not play. Try downloading it instead.');
-  });
-}
-function hideResult() {
-  video.pause();
-  $('generated-result').hidden = true;
 }
 function updateWord() {
   const parsed = phrase();
@@ -38,40 +26,96 @@ function updateWord() {
   input.setAttribute('aria-invalid', String(Boolean(parsed.error) && Boolean(input.value.trim())));
   $('word-help').textContent = parsed.error && input.value.trim() ? parsed.error : '';
   $('form-error').hidden = true;
-  if (!matches(activeVideo)) hideResult();
 }
-function showSources(records, word) {
-  $('source-details').hidden = !records.length;
-  $('source-details').open = false;
-  $('source-summary').textContent = `${new Set(records.map(source => source.domain)).size} edited website frames`;
-  $('source-caption').textContent = `“${word}” is placed into these reusable scenes. These are edited frames, not original quotes.`;
-  const list = $('source-list'); list.replaceChildren();
-  for (const source of records) {
-    const link = document.createElement('a'); link.href = source.url; link.target = '_blank'; link.rel = 'noopener noreferrer';
-    const domain = document.createElement('strong'); domain.textContent = source.domain;
-    const context = document.createElement('span');
-    context.textContent = source.template ? `${source.template.before} ${word} ${source.template.after}` : source.excerpt;
-    link.append(domain, context); list.append(link);
-  }
+function pauseOthers(player) {
+  activePlayer = player;
+  for (const example of examples) if (example !== player) example.pause();
+  for (const {video} of cards.values()) if (video !== player) video.pause();
 }
-function showFinished(record, {autoplay = false, restoreInput = false} = {}) {
-  if (restoreInput) {
-    input.value = queryFor(record); motion.value = (record.intensity ?? .75) * 100;
-    $('motion-value').textContent = amount() < .35 ? 'Gentle' : amount() < .85 ? 'Punchy' : 'Full rush';
-    updateWord();
+function cardError(state, message) {
+  if (!pageActive) return;
+  state.message.textContent = message;
+  state.message.hidden = false;
+}
+async function ensureMedia(state) {
+  if (state.url) return state.url;
+  if (state.loading) return state.loading;
+  state.loading = (async () => {
+    const record = unsaved.get(state.record.id) || await getVideo(state.record.id);
+    if (!pageActive) throw new DOMException('Page closed.', 'AbortError');
+    if (!record?.blob) throw new Error('This video could not load. Try creating it again.');
+    state.url = URL.createObjectURL(record.blob);
+    state.video.src = state.url;
+    state.video.load();
+    return state.url;
+  })().finally(() => {state.loading = undefined;});
+  return state.loading;
+}
+function releaseMedia(state) {
+  if (!state.url || !state.video.paused || state.busy) return;
+  state.time = state.video.currentTime;
+  state.video.removeAttribute('src');
+  state.video.load();
+  URL.revokeObjectURL(state.url);
+  state.url = undefined;
+}
+const observer = new IntersectionObserver(entries => {
+  for (const entry of entries) {
+    const state = cards.get(entry.target.dataset.videoId);
+    state.visible = entry.isIntersecting;
+    if (state.visible) {
+      void ensureMedia(state).then(() => {if (!state.visible) releaseMedia(state);}).catch(error => cardError(state, error.message));
+    } else releaseMedia(state);
   }
-  const url = videoUrl(record);
-  video.pause();
-  if (video.src !== url) {video.src = url; video.load();}
-  activeVideo = record;
-  $('finished-title').textContent = `“${queryFor(record)}” is ready.`;
-  $('finished-subtitle').textContent = '50 websites · 50 cuts · 0.1s each';
-  $('download-link').href = url;
-  $('download-link').download = record.filename || 'wordrush.mp4';
-  $('finished-card').hidden = false;
-  $('generated-result').hidden = false;
-  $('source-details').hidden = true;
-  if (autoplay) void playVideo(video);
+}, {rootMargin: '240px 0px'});
+
+function addCard(record, {first = false} = {}) {
+  if (cards.has(record.id)) return cards.get(record.id);
+  const titleText = queryFor(record);
+  const card = document.createElement('article'); card.className = 'video-card'; card.dataset.videoId = record.id; card.tabIndex = -1;
+  const titleId = `video-title-${record.id}`; card.setAttribute('aria-labelledby', titleId);
+  const media = document.createElement('div'); media.className = 'video-card-media';
+  const video = document.createElement('video'); video.className = 'saved-video'; video.controls = true; video.playsInline = true; video.preload = 'metadata';
+  video.setAttribute('aria-label', `Video: ${titleText}`); video.setAttribute('controlslist', 'nodownload');
+  media.append(video);
+  const footer = document.createElement('div'); footer.className = 'video-card-footer';
+  const title = document.createElement('h3'); title.className = 'video-card-title'; title.id = titleId; title.textContent = titleText;
+  const download = document.createElement('button'); download.type = 'button'; download.className = 'video-download'; download.setAttribute('aria-label', `Download ${titleText}`);
+  download.innerHTML = `<span>Download</span>${downloadIcon}`;
+  const message = document.createElement('p'); message.className = 'video-card-message'; message.hidden = true; message.setAttribute('role', 'status');
+  footer.append(title, download, message); card.append(media, footer);
+  const state = {record, card, video, message, visible: false, busy: false, time: 0};
+  cards.set(record.id, state);
+  if (first) grid.prepend(card); else grid.append(card);
+  observer.observe(card);
+  video.addEventListener('play', () => pauseOthers(video));
+  video.addEventListener('pause', () => {if (!state.visible) releaseMedia(state);});
+  video.addEventListener('loadedmetadata', () => {if (state.time > 0) video.currentTime = Math.min(state.time, video.duration);});
+  video.addEventListener('error', () => {if (state.url) cardError(state, 'The preview could not play. You can still download the video.');});
+  card.addEventListener('focusin', () => {void ensureMedia(state).catch(error => cardError(state, error.message));});
+  download.addEventListener('click', async () => {
+    state.busy = true; download.disabled = true; download.setAttribute('aria-busy', 'true');
+    try {
+      const url = await ensureMedia(state);
+      const link = document.createElement('a'); link.href = url; link.download = record.filename || 'wordrush.mp4';
+      document.body.append(link); link.click(); link.remove();
+    } catch (error) {cardError(state, error.message);}
+    finally {
+      state.busy = false; download.disabled = false; download.removeAttribute('aria-busy');
+      if (!state.visible) setTimeout(() => {if (!state.visible) releaseMedia(state);}, 1000);
+    }
+  });
+  return state;
+}
+function revealCard(state) {
+  activePlayer = state.video;
+  $('videos-section').hidden = false;
+  $('videos-status').textContent = `“${queryFor(state.record)}” is ready to watch or download.`;
+  for (const item of cards.values()) item.card.classList.toggle('is-new', item === state);
+  requestAnimationFrame(() => {
+    state.card.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start'});
+    state.card.focus({preventScroll: true});
+  });
 }
 function setRendering(value) {
   rendering = value;
@@ -85,55 +129,40 @@ async function createVideo() {
   if (rendering) return;
   const parsed = phrase();
   if (parsed.error) {$('word-help').textContent = parsed.error; input.focus(); return;}
-  const cached = [activeVideo, ...history].find(record => record && record.version === 'browser-templates-v13' && matches(record));
-  if (cached) {showFinished(cached); return;}
-  const word = parsed.phrase, query = parsed.query, intensity = amount();
-  setRendering(true); hideResult();
+  const intensity = amount();
+  await savedReady;
+  if (rendering) return;
+  const cached = history.find(record => record.version === 'browser-templates-v13' && matches(record, parsed, intensity));
+  if (cached) {revealCard(addCard(cached)); return;}
+  setRendering(true);
   $('form-error').hidden = true;
   $('progress-fill').style.width = '0%'; $('progress-percent').textContent = '0%';
   $('progress-label').textContent = 'Preparing your video';
   try {
     const manifest = await getTemplates();
-    const result = await renderInBrowser({word, query, sources: manifest.sources, intensity, onProgress: state => {
+    const result = await renderInBrowser({word: parsed.phrase, query: parsed.query, sources: manifest.sources, intensity, onProgress: state => {
       const percent = Math.min(99, Math.round(state.progress * 100));
       $('progress-percent').textContent = `${percent}%`; $('progress-fill').style.width = `${percent}%`;
       $('progress-label').textContent = state.progress < .15 ? 'Preparing your video' : state.progress < .97 ? 'Making your video' : 'Finishing your video';
       $('progress-note').textContent = state.stage;
     }});
-    const safeName = query.replace(/[^\p{L}\p{N} -]/gu, '').trim().replace(/\s+/gu, '-') || 'wordrush';
-    const record = {id: crypto.randomUUID(), word, query, intensity, filename: `${safeName}.mp4`,
+    const safeName = parsed.query.replace(/[^\p{L}\p{N} -]/gu, '').trim().replace(/\s+/gu, '-') || 'wordrush';
+    const record = {id: crypto.randomUUID(), word: parsed.phrase, query: parsed.query, intensity, filename: `${safeName}.mp4`,
       createdAt: new Date().toISOString(), blob: result.blob, duration: result.duration,
       sourceCount: 50, version: 'browser-templates-v13'};
-    try {await saveVideo(record);} catch { /* The current MP4 remains downloadable. */ }
+    try {await saveVideo(record);} catch {unsaved.set(record.id, record);}
+    history.unshift(metadata(record));
     setRendering(false);
-    showFinished(record); showSources(manifest.sources, word);
-    await loadRecent(record);
+    revealCard(addCard(metadata(record), {first: true}));
   } catch (error) {
     setRendering(false);
     if (error.name !== 'AbortError') showError(error.message || 'Your video could not finish. Try Create again.');
   }
 }
-async function loadRecent(freshRecord) {
-  try {history = await recentVideos();} catch {history = freshRecord ? [freshRecord] : [];}
-  if (freshRecord && !history.some(record => record.id === freshRecord.id)) history.unshift(freshRecord);
-  const keep = new Set([...history.map(record => record.id), activeVideo?.id]);
-  for (const [id, url] of urls) if (!keep.has(id)) {URL.revokeObjectURL(url); urls.delete(id);}
-  const list = $('recent-list'); list.replaceChildren();
-  for (const record of history.slice(0, 6)) {
-    const titleText = queryFor(record);
-    const card = document.createElement('article'); card.className = 'recent-item';
-    const play = document.createElement('button'); play.type = 'button'; play.className = 'recent-play';
-    play.setAttribute('aria-label', `Play ${titleText}`);
-    const icon = document.createElement('span'); icon.className = 'recent-play-icon'; icon.textContent = '▶'; icon.setAttribute('aria-hidden', 'true');
-    const copy = document.createElement('span'), title = document.createElement('strong'), subtitle = document.createElement('small');
-    title.textContent = titleText; subtitle.textContent = 'Play · Saved on this device'; copy.append(title, subtitle);
-    play.append(icon, copy);
-    play.addEventListener('click', () => {if (!rendering) showFinished(record, {autoplay: true, restoreInput: true});});
-    const download = document.createElement('a'); download.href = videoUrl(record); download.download = record.filename || 'wordrush.mp4';
-    download.textContent = '↓'; download.setAttribute('aria-label', `Download ${titleText}`);
-    card.append(play, download); list.append(card);
-  }
-  $('recent-section').hidden = !history.length;
+async function loadVideos() {
+  try {history = await recentVideos();} catch {history = [];}
+  for (const record of history) addCard(record);
+  $('videos-section').hidden = !history.length;
 }
 
 $('creator-form').addEventListener('submit', event => {event.preventDefault(); void createVideo();});
@@ -143,16 +172,22 @@ motion.addEventListener('input', () => {
   $('motion-value').textContent = amount() < .35 ? 'Gentle' : amount() < .85 ? 'Punchy' : 'Full rush';
   updateWord();
 });
-video.addEventListener('play', () => example.pause());
-example.addEventListener('play', () => video.pause());
-video.addEventListener('error', () => {if (video.src) showError('The video could not load. Try Create again or open a saved video.');});
+for (const example of examples) example.addEventListener('play', () => pauseOthers(example));
 document.addEventListener('keydown', event => {
   if (event.code !== 'Space' || ['INPUT', 'TEXTAREA', 'BUTTON', 'SUMMARY', 'VIDEO', 'A'].includes(document.activeElement.tagName)) return;
+  const target = activePlayer || document.querySelector('.example-card.is-front video') || examples[0];
+  if (!target?.currentSrc) return;
   event.preventDefault();
-  const target = $('generated-result').hidden ? example : video;
-  if (target.paused) void playVideo(target); else target.pause();
+  if (target.paused) void target.play().catch(() => {}); else target.pause();
 });
-window.addEventListener('pagehide', () => {video.pause(); example.pause();});
-
+window.addEventListener('pagehide', () => {
+  pageActive = false;
+  for (const example of examples) example.pause();
+  for (const state of cards.values()) {state.video.pause(); releaseMedia(state);}
+});
+window.addEventListener('pageshow', event => {
+  pageActive = true;
+  if (event.persisted) for (const state of cards.values()) if (state.visible) void ensureMedia(state).catch(error => cardError(state, error.message));
+});
 updateWord();
-void loadRecent();
+const savedReady = loadVideos();

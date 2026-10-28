@@ -52,9 +52,20 @@ export async function recentVideos() {
       const videos = [], request = db.transaction('videos').objectStore('videos').index('createdAt').openCursor(null, 'prev');
       request.onsuccess = () => {
         const cursor = request.result;
-        if (!cursor || videos.length >= 6) return resolve(videos);
-        videos.push(cursor.value); cursor.continue();
+        if (!cursor) return resolve(videos);
+        const {blob, ...metadata} = cursor.value;
+        videos.push(metadata); cursor.continue();
       };
+      request.onerror = () => reject(request.error);
+    });
+  } finally {db.close();}
+}
+export async function getVideo(id) {
+  const db = await openVideos();
+  try {
+    return await new Promise((resolve, reject) => {
+      const request = db.transaction('videos').objectStore('videos').get(id);
+      request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
   } finally {db.close();}

@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/style.css">
   <script type="module" src="/app.js"></script>
   <script type="module" src="/effects.js"></script>
+  <script type="module" src="/example-stack.js"></script>
 </head>
 <body>
   <div class="ambient ambient-lilac" aria-hidden="true"></div>
@@ -48,23 +49,35 @@
           <div class="progress-track sr-only"><div id="progress-fill"></div></div>
           <p id="progress-note" class="sr-only">Your video is rendering.</p>
         </div>
-        <section id="generated-result" class="generated-result" hidden aria-label="Your video result">
-          <div class="generated-heading">YOUR VIDEO</div>
-          <div class="finished-card" id="finished-card" hidden aria-live="polite"><span class="finished-icon" aria-hidden="true">✓</span><div><strong id="finished-title">Your video is ready.</strong><p id="finished-subtitle" class="sr-only">Ready to download</p></div><a id="download-link" class="download-button" download>Download <span aria-hidden="true">↓</span></a></div>
-          <div class="generated-video-shell"><video id="rendered-video" aria-label="Your generated video" controls playsinline preload="metadata"></video></div>
-          <details class="source-details" id="source-details" hidden><summary><span id="source-summary">50 edited website frames</span><span aria-hidden="true">↗</span></summary><p id="source-caption"></p><div id="source-list" class="source-list"></div></details>
-        </section>
       </div>
       <div class="preview-panel">
-        <div class="preview-heading"><span class="preview-status"><span class="live-dot" aria-hidden="true"></span><span>EXAMPLE VIDEO</span></span><span>9:16</span></div>
-        <div class="preview-frame">
-          <div class="video-shell">
-            <video id="example-video" src="/demo-how-to-v13.mp4" aria-label="Example video" controls playsinline preload="metadata" muted loop controlslist="nodownload"></video>
-          </div>
+        <div class="preview-heading"><span class="preview-status"><span class="live-dot" aria-hidden="true"></span><span>EXAMPLES</span></span><span>9:16</span></div>
+        <div class="example-stack" aria-label="Example videos">
+          <article class="example-card is-front" role="group" aria-label="Example 1 of 3: how to become great">
+            <div class="example-card-media"><video id="example-video" class="example-video" src="/demo-how-to-v13.mp4" poster="/assets/example-great-v14.jpg" aria-label="Example: how to become great" controls playsinline preload="none" muted controlslist="nodownload"></video></div>
+            <h3>how to become great</h3>
+          </article>
+          <article class="example-card is-middle" role="group" aria-label="Example 2 of 3: how to hack google" aria-hidden="true" inert>
+            <div class="example-card-media"><video class="example-video" src="/demo-hack-google-v14.mp4" poster="/assets/example-hack-v14.jpg" aria-label="Example: how to hack google" controls playsinline preload="none" muted controlslist="nodownload" tabindex="-1"></video></div>
+            <h3>how to hack google</h3>
+          </article>
+          <article class="example-card is-back" role="group" aria-label="Example 3 of 3: Focus" aria-hidden="true" inert>
+            <div class="example-card-media"><video class="example-video" src="/demo-focus-v14.mp4" poster="/assets/example-focus-v14.jpg" aria-label="Example: Focus" controls playsinline preload="none" muted controlslist="nodownload" tabindex="-1"></video></div>
+            <h3>Focus</h3>
+          </article>
+        </div>
+        <div class="example-switches" role="group" aria-label="Choose an example">
+          <button type="button" aria-label="Show example 1: how to become great" aria-pressed="true">1</button>
+          <button type="button" aria-label="Show example 2: how to hack google" aria-pressed="false">2</button>
+          <button type="button" aria-label="Show example 3: Focus" aria-pressed="false">3</button>
         </div>
       </div>
     </section>
-    <details class="video-history"><summary>Your videos <span aria-hidden="true">↗</span></summary><section id="recent-section" class="recent-section" hidden aria-labelledby="recent-heading"><h2 id="recent-heading" class="sr-only">Your recent videos</h2><div id="recent-list" class="recent-list"></div></section></details>
+    <section id="videos-section" class="videos-section" hidden aria-labelledby="videos-heading">
+      <h2 id="videos-heading">Your videos</h2>
+      <p id="videos-status" class="sr-only" role="status" aria-live="polite"></p>
+      <div id="videos-grid" class="videos-grid"></div>
+    </section>
   </main>
   <footer><span>Wordrush</span><span class="footer-mark" aria-hidden="true">✳</span></footer>
 </body>

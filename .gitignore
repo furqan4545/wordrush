@@ -9,6 +9,7 @@ references/
 public/captures/
 public/assets/*
 !public/assets/chrome-photo-v7.png
+!public/assets/example-*-v14.jpg
 public/audio/**/originals/
 public/audio/user-sfx-v1/typing-bed.wav
 source-archive/

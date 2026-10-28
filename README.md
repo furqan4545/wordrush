@@ -39,6 +39,8 @@ Prepared backgrounds are edited website scenes, not original quotations. No sour
 
 ## Playback and saved videos
 
-The right-side example is always the fixed `demo-how-to-v13.mp4`, with no app download action. It types `how to become great`. Generating a video or explicitly playing a saved video opens a separate preview and Download below the form. Reloading the page never replaces the example with a saved clip. Both players use completed MP4s and native controls; starting either pauses the other. Saved-video cards provide separate Play and Download actions. The browser never tries to play an unloaded Canvas montage.
+Three permanent examples—`how to become great`, `how to hack google`, and `Focus`—sit in an animated card stack. Their positions change every three seconds. Playback, hover, focus and hidden tabs pause rotation; reduced motion disables automatic rotation. Manual selectors remain available. Example players have no app download action.
+
+All generated videos appear once in a single “Your videos” grid: three columns on desktop, two on tablets and one on phones. Each glass card contains its full 9:16 preview, original query and Download button. New recordings are added first; additional recordings form new rows. Existing saved recordings are preserved. The gallery lists all IndexedDB metadata and lazily loads full videos near the viewport, releasing idle media when it scrolls away. Starting a player pauses all other players. The borderless 9:16 media area prevents letterboxing caused by the old frame border.
 
 The search field is 56px high on desktop and mobile. The headline is “Make a fast-paced video.” Input guidance stays hidden unless validation needs attention.

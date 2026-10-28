@@ -7,10 +7,12 @@ const publicDir = path.join(root, 'public'), dist = path.join(root, 'dist');
 await rm(dist, {recursive: true, force: true});
 await mkdir(dist, {recursive: true});
 for (const name of await readdir(publicDir)) {
-  if (name === 'demo-how-to-v13.mp4' || /\.(html|css|js|txt)$/u.test(name)) await cp(path.join(publicDir, name), path.join(dist, name));
+  if (/^demo-[a-z0-9-]+\.mp4$/u.test(name) || /\.(html|css|js|txt)$/u.test(name)) await cp(path.join(publicDir, name), path.join(dist, name));
 }
 await mkdir(path.join(dist, 'assets'), {recursive: true});
-await cp(path.join(publicDir, 'assets/chrome-photo-v7.png'), path.join(dist, 'assets/chrome-photo-v7.png'));
+for (const name of ['chrome-photo-v7.png', 'example-great-v14.jpg', 'example-hack-v14.jpg', 'example-focus-v14.jpg']) {
+  await cp(path.join(publicDir, 'assets', name), path.join(dist, 'assets', name));
+}
 await cp(path.join(publicDir, 'templates'), path.join(dist, 'templates'), {recursive: true});
 for (const dir of ['user-sfx-v1', 'transition-sax-v1']) {
   const source = path.join(publicDir, 'audio', dir), target = path.join(dist, 'audio', dir);
