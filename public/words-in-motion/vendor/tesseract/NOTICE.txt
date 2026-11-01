@@ -1,0 +1,15 @@
+OCR runs in the visitor browser; uploaded screenshots are not sent to a service.
+
+Vendored upstream packages (unchanged):
+- tesseract.js 6.0.1, Apache-2.0, https://github.com/naptha/tesseract.js
+- tesseract.js-core 6.0.0, Apache-2.0, https://github.com/naptha/tesseract.js-core
+- @tesseract.js-data/eng 1.0.0, MIT package license, English LSTM integer model from 4.0.0_best_int, https://github.com/naptha/tessdata
+
+Registry sources:
+https://registry.npmjs.org/tesseract.js/-/tesseract.js-6.0.1.tgz
+https://registry.npmjs.org/tesseract.js-core/-/tesseract.js-core-6.0.0.tgz
+https://registry.npmjs.org/@tesseract.js-data/eng/-/eng-1.0.0.tgz
+
+Core wrapper .wasm.js files contain the WebAssembly binary; no external .wasm fetch is required.
+The worker picks the SIMD LSTM wrapper when the browser supports it, otherwise the standard LSTM wrapper.
+Only the selected wrapper is loaded per OCR run.

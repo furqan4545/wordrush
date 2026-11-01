@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5eff8">
+  <title>Words in Motion — Wordrush</title>
+  <meta name="description" content="Turn your sentence into a cinematic newspaper video. Keep every word centered, choose your music, and download your finished video.">
+  <link rel="canonical" href="https://wordrush.ing/words-in-motion/">
+  <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/brand/wordrush-icon-180.png">
+  <meta property="og:site_name" content="Wordrush">
+  <meta property="og:title" content="Words in Motion — Wordrush">
+  <meta property="og:description" content="Your words, in the spotlight. Make a cinematic newspaper video with music.">
+  <meta property="og:url" content="https://wordrush.ing/words-in-motion/">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a href="#sentence" class="skip-link">Skip to editor</a>
+  <header class="site-header">
+    <a href="/" class="wordmark" aria-label="Wordrush home"><img src="/brand/wordrush-mark.svg" width="28" height="34" alt="">wordrush<span>.</span></a>
+    <nav class="site-nav" aria-label="Wordrush features"><a href="/">Fast cuts</a><a href="/words-in-motion/" aria-current="page">Words in Motion</a></nav>
+  </header>
+  <main class="motion-workspace">
+    <div class="workspace-heading">
+      <div><div class="eyebrow">THE NEWSPAPER VIDEO EDITOR</div><h1>Words in <em>Motion.</em></h1><p>Your sentence. Every word in the spotlight.</p></div>
+      <div class="export-actions">
+        <button class="download-button" id="download-button" disabled><span id="download-label">Loading the press…</span><span aria-hidden="true">↗</span></button>
+        <div class="export-status" id="export-status" role="status" aria-live="polite"><span>MP4 VIDEO</span><span id="duration-label">—</span><span>NO WATERMARK</span></div>
+        <div id="export-progress" class="export-progress" hidden><progress id="progress-bar" max="100" value="0" aria-label="Video export progress"></progress><button class="text-button" id="cancel-export">Cancel export</button></div>
+        <a id="download-again" class="download-again" hidden>Save video again ↓</a>
+      </div>
+    </div>
+    <div class="studio-grid">
+      <section class="creation-panel" aria-label="Video editor">
+        <div class="sentence-card">
+          <div class="sentence-heading"><label for="sentence">Your sentence</label><span id="word-count">5 words / 60</span></div>
+          <textarea id="sentence" rows="2" spellcheck="true" placeholder="Write something worth a closer look…" aria-describedby="input-error">every generation of Indian founders</textarea>
+          <div class="input-error" id="input-error" role="status"></div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-topline"><span class="section-label">YOUR VIDEO</span><button id="reference-button" class="text-button"><span aria-hidden="true">▷</span> See the reference</button></div>
+          <div class="preview-stage" id="preview-stage"><canvas id="preview" width="1280" height="720" aria-label="Animated newspaper video preview"></canvas><div class="preview-loading" id="preview-loading"><span class="loading-mark">Aa</span><span>Setting the type…</span></div><div class="canvas-error" id="canvas-error" hidden></div></div>
+          <div class="player-controls"><button id="play-button" class="play-button" aria-label="Play preview" disabled>▶</button><label class="sr-only" for="scrubber">Video position</label><input type="range" id="scrubber" min="0" max="1000" step="1" value="0" aria-label="Video position"><div class="timecode"><span id="current-time">0.00</span><span>/</span><span id="total-time">0.00</span></div><button id="loop-button" class="loop-button" aria-label="Loop preview" aria-pressed="true" title="Loop preview">↻</button></div>
+          <div class="focus-strip"><span class="focus-label">JUMP TO A WORD</span><div id="word-track" class="word-track" aria-label="Jump to a word"></div></div>
+          <div class="preview-caption"><span>The paper moves. Your word stays centered.</span><span id="dimensions-label">1280 × 720 · 30 FPS</span></div>
+        </div>
+
+      </section>
+      <aside class="settings-card" aria-label="Editing controls">
+        <div class="editor-tabs" role="tablist" aria-label="Editor settings">
+          <button type="button" id="tab-video" role="tab" aria-selected="true" aria-controls="panel-video" tabindex="0"><span>Video</span><small>Frame &amp; motion</small></button>
+          <button type="button" id="tab-paper" role="tab" aria-selected="false" aria-controls="panel-paper" tabindex="-1"><span>Paper</span><small id="paper-tab-summary">Choose a paper</small></button>
+          <button type="button" id="tab-music" role="tab" aria-selected="false" aria-controls="panel-music" tabindex="-1"><span>Music</span><small id="music-tab-summary">Optional</small></button>
+        </div>
+        <section id="panel-video" class="settings-panel" role="tabpanel" aria-labelledby="tab-video">
+          <div class="control-group"><label class="field-label" id="frame-label">Frame</label><div class="segmented" id="formats" role="group" aria-labelledby="frame-label"><button data-format="landscape" aria-pressed="true"><span class="ratio-icon landscape" aria-hidden="true"></span>16:9</button><button data-format="portrait" aria-pressed="false"><span class="ratio-icon portrait" aria-hidden="true"></span>9:16</button><button data-format="square" aria-pressed="false"><span class="ratio-icon square" aria-hidden="true"></span>1:1</button></div></div>
+          <div class="control-group"><label for="text-size"><span>Text size</span><output id="text-size-value" for="text-size">200px</output></label><input type="range" id="text-size" min="60" max="280" step="5" value="200"><p>One fixed size for your entire sentence.</p></div>
+          <div class="control-group"><label for="motion-blur"><span>Motion blur</span><output id="motion-blur-value" for="motion-blur">30%</output></label><input type="range" id="motion-blur" min="0" max="1" step="0.05" value="0.30"><div class="range-labels"><span>Clear</span><span>Dreamy</span></div></div>
+          <div class="control-group"><label for="pace"><span>Time per word</span><output id="pace-value" for="pace">0.38s</output></label><input type="range" id="pace" min="0.20" max="0.75" step="0.01" value="0.38"><div class="range-labels"><span>Quick cuts</span><span>Take it slow</span></div></div>
+          <div class="control-group quality-row"><label for="quality">Download quality</label><select id="quality"><option value="720">720p · quicker</option><option value="1080">1080p · Full HD</option></select></div>
+          <div class="panel-note"><span class="note-dot" aria-hidden="true"></span>Changes appear in your preview.</div>
+        </section>
+        <section id="panel-paper" class="settings-panel" role="tabpanel" aria-labelledby="tab-paper" hidden>
+          <div class="panel-intro"><h2>A little front-page energy.</h2><p>Pick a real newspaper, or use your article.</p></div>
+          <div id="source-list" class="source-list" role="group" aria-label="Choose a real newspaper"></div>
+          <p class="source-note" id="source-note">Loading original newspaper scans…</p>
+          <button type="button" id="upload-button" class="upload-button">Use my article <span aria-hidden="true">↗</span></button><input type="file" accept="image/png,image/jpeg,image/webp" id="article-upload" class="sr-only" tabindex="-1">
+          <p class="hint">Upload a clear screenshot of English article paragraphs. Your image stays in this browser.</p>
+          <details class="sources-details"><summary>About the original papers</summary><div id="source-credits"></div><p>Your sentence is typeset into the article for your video. It is not a quotation from the publication.</p></details>
+        </section>
+        <section id="panel-music" class="settings-panel music-section" role="tabpanel" aria-labelledby="tab-music" hidden>
+          <div class="panel-intro"><h2>Find your soundtrack.</h2><p>Pick a track, then choose the perfect moment.</p></div>
+          <div id="music-trim" class="music-trim" hidden>
+            <div class="music-clip-heading"><span>YOUR MUSIC CLIP</span><button type="button" id="music-clip-preview" class="text-button">▶ Preview clip</button></div><div id="music-clip-title" class="music-clip-title"></div><div class="music-clip-time"><output id="music-clip-range" for="music-start"></output><span id="music-clip-length"></span></div>
+            <div id="music-waveform-wrap" class="music-waveform-wrap"><canvas id="music-waveform" aria-hidden="true"></canvas><div class="music-clip-window" aria-hidden="true"></div></div>
+            <label id="music-trim-hint" for="music-start" class="music-trim-hint">Drag the waveform to choose your clip.</label><input type="range" id="music-start" min="0" max="0" step="0.01" value="0" aria-label="Music start time"><div class="music-track-times"><span>0:00</span><span id="music-track-duration"></span></div>
+          </div>
+          <div id="music-volume-controls" hidden><div class="music-volume-row"><label for="music-volume">Music volume</label><output id="music-volume-value" for="music-volume">35%</output></div><input type="range" id="music-volume" min="0" max="1" step="0.05" value="0.35" aria-label="Music volume"><div class="music-note"><span id="music-selection-note">Choose a track or upload your own.</span><span id="music-fit-note"></span></div></div>
+          <p id="music-status" class="music-status" role="status" aria-live="polite"></p>
+          <div class="music-library-heading">CHOOSE A TRACK</div>
+          <button class="upload-button" id="music-upload-button" title="WAV or MP3 · up to 40 MB and 10 minutes">Upload WAV / MP3 <span aria-hidden="true">↗</span></button><input type="file" accept=".wav,.mp3,audio/wav,audio/x-wav,audio/mpeg,audio/mp3" id="music-upload" class="sr-only" tabindex="-1">
+          <label class="sr-only" for="music-search">Find music or sounds</label><input id="music-search" class="music-search" type="search" placeholder="Find music or sounds…" autocomplete="off">
+          <div class="music-library-toolbar"><div id="music-filters" class="music-filters" role="group" aria-label="Filter audio"><button type="button" data-category="all" aria-pressed="true">All</button><button type="button" data-category="Music" aria-pressed="false">Music</button><button type="button" data-category="Sound effect" aria-pressed="false">Sounds</button></div><span id="music-results-count"></span></div>
+          <div id="music-list" class="music-list" role="group" aria-label="Choose background music"></div>
+        </section>
+      </aside>
+    </div>
+  </main>
+  <dialog id="reference-dialog"><div class="dialog-heading"><span>THE ORIGINAL / 00:00–00:02</span><button id="close-reference" class="text-button" aria-label="Close reference">Close ✕</button></div><video id="reference-video" controls loop playsinline preload="none" src="./assets/reference.mp4"></video><p>The motion reference. <a href="https://www.instagram.com/reels/DfFZlj7oxQk/" target="_blank" rel="noopener noreferrer">Original reel by @aiplusfriends ↗</a></p></dialog>
+  <noscript>This video editor needs JavaScript enabled to animate and export your sentence.</noscript>
+</body>
+</html>

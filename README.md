@@ -4,6 +4,12 @@ Make a fast-paced video.
 
 Wordrush makes a vertical 1080 × 1920 MP4 in the visitor’s browser. A Web Worker draws the approved photo opening and 50 rapid website cuts with OffscreenCanvas, then encodes H.264/AAC using WebCodecs and Mediabunny. Rendering does not upload the visitor’s phrase or video to a server.
 
+## Words in Motion
+
+The header connects two dedicated video tools: **Fast cuts** at `/` and **Words in Motion** at `/words-in-motion/`. Fast cuts keeps the existing short-phrase workflow, browser intro, rapid website cuts and saved-video library. Words in Motion places a sentence into a newspaper paragraph and follows its highlighted words with a moving camera. Its controls, soundtrack selection, preview and video export live on the dedicated page.
+
+The sentence editor is contained in `public/words-in-motion/`, with its own modules, styles and assets. Keep its asset URLs inside that directory so the root Wordrush scripts and renderer remain independent. Browser settings retain their existing storage keys.
+
 ## Run and build
 
 ```sh
@@ -12,7 +18,7 @@ npm run build
 npx serve dist
 ```
 
-Deploy `dist/` to Vercel using the included `vercel.json`. GitHub pushes rebuild the static site. The legacy `npm start` server and the prepared Hetzner package remain available for development and future fallback work; the live frontend does not call their render API.
+Deploy `dist/` to Vercel using the included `vercel.json`. GitHub pushes rebuild the static site. The static build recursively copies `public/words-in-motion/` to `dist/words-in-motion/`, including its `index.html`; Vercel serves that directory index directly at `/words-in-motion/` without an SPA rewrite ([directory-index behavior](https://vercel.com/docs/directory-listing)). Use `npx serve dist` to preview both tools. The legacy `npm start` server and the prepared Hetzner package remain available for development and future fallback work; the live frontend does not call their render API.
 
 ## Phrase rules
 

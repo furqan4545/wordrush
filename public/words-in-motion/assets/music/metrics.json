@@ -1,0 +1,89 @@
+[
+  {
+    "id": "after-hours",
+    "file": "after-hours.mp3",
+    "durationSeconds": 24.024,
+    "intendedLoopSeconds": 24.0,
+    "bytes": 577367,
+    "integratedLufs": -18.27,
+    "truePeakDbtp": -3.64,
+    "loudnessRangeLu": 3.0,
+    "measurementMethod": "FFmpeg loudnorm analysis of the delivered MP3 after decoding.",
+    "streams": [
+      {
+        "codec_name": "mp3",
+        "sample_rate": "48000",
+        "channels": 2
+      }
+    ],
+    "masteringTarget": {
+      "integratedLufs": -18,
+      "truePeakDbtp": -2.5
+    },
+    "samplePeakLinearRaw": 0.7200000286102295,
+    "dcOffsetRaw": [
+      -1.1336689567542635e-05,
+      -1.0932736586255487e-05
+    ],
+    "edgeFadeMilliseconds": 12,
+    "tailHandling": "Instrument tails and room reflections wrap around the exact musical-loop boundary."
+  },
+  {
+    "id": "paper-trail",
+    "file": "paper-trail.mp3",
+    "durationSeconds": 26.712,
+    "intendedLoopSeconds": 26.666666666666668,
+    "bytes": 641879,
+    "integratedLufs": -18.26,
+    "truePeakDbtp": -5.13,
+    "loudnessRangeLu": 1.3,
+    "measurementMethod": "FFmpeg loudnorm analysis of the delivered MP3 after decoding.",
+    "streams": [
+      {
+        "codec_name": "mp3",
+        "sample_rate": "48000",
+        "channels": 2
+      }
+    ],
+    "masteringTarget": {
+      "integratedLufs": -18,
+      "truePeakDbtp": -2.5
+    },
+    "samplePeakLinearRaw": 0.7199999690055847,
+    "dcOffsetRaw": [
+      -8.772461114858743e-06,
+      -8.66073060024064e-06
+    ],
+    "edgeFadeMilliseconds": 12,
+    "tailHandling": "Instrument tails and room reflections wrap around the exact musical-loop boundary."
+  },
+  {
+    "id": "quiet-momentum",
+    "file": "quiet-momentum.mp3",
+    "durationSeconds": 30.024,
+    "intendedLoopSeconds": 30.0,
+    "bytes": 721370,
+    "integratedLufs": -18.26,
+    "truePeakDbtp": -7.64,
+    "loudnessRangeLu": 1.6,
+    "measurementMethod": "FFmpeg loudnorm analysis of the delivered MP3 after decoding.",
+    "streams": [
+      {
+        "codec_name": "mp3",
+        "sample_rate": "48000",
+        "channels": 2
+      }
+    ],
+    "masteringTarget": {
+      "integratedLufs": -18,
+      "truePeakDbtp": -2.5
+    },
+    "samplePeakLinearRaw": 0.7200000286102295,
+    "dcOffsetRaw": [
+      -1.3940568521775276e-07,
+      -9.617600937872339e-08
+    ],
+    "edgeFadeMilliseconds": 12,
+    "tailHandling": "Instrument tails and room reflections wrap around the exact musical-loop boundary."
+  }
+]
