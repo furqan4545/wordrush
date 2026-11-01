@@ -112,7 +112,15 @@ export async function renderBrowserTyping(options = {}) {
     const target = new BufferTarget();
     output = new Output({format: new Mp4OutputFormat({fastStart: 'in-memory'}), target});
     const video = new CanvasSource(picture.canvas, {codec: 'avc', quality: videoQuality, keyFrameInterval: 2, latencyMode: 'quality', fullCodecString: VIDEO_CODEC});
-    const audioSource = new AudioSampleSource({codec: 'aac', quality: audioQuality});
+    let audioPackets = 0, audioBytes = 0, audioPacketEnd = 0, audioConfig;
+    const audioSource = new AudioSampleSource({
+      codec: 'aac', quality: audioQuality,
+      onEncodedPacket: (packet, metadata) => {
+        audioPackets++; audioBytes += packet.data.byteLength;
+        audioPacketEnd = Math.max(audioPacketEnd, packet.timestamp + packet.duration);
+        if (metadata?.decoderConfig) audioConfig = metadata.decoderConfig;
+      },
+    });
     output.addVideoTrack(video, {frameRate: FPS}); output.addAudioTrack(audioSource);
     await output.start();
     const frameCount = Math.round(timing.duration * FPS);
@@ -162,10 +170,23 @@ export async function renderBrowserTyping(options = {}) {
     progress(.96, 'Finishing your MP4');
     await output.finalize();
     abortIfNeeded(signal);
+    // A supported codec alone does not prove that a usable audio track was
+    // emitted. Match Words in Motion's packet guard and verify the full mix.
+    const soundComplete = audioFrame >= audio.frames - 1
+      && audioPackets > 0 && audioBytes > 0
+      && audioPacketEnd >= timing.duration - .05
+      && audioConfig?.numberOfChannels === audio.channels
+      && audioConfig?.sampleRate === audio.sampleRate
+      && audioConfig?.description?.byteLength > 0;
+    if (!soundComplete) {
+      throw Object.assign(new Error('The sound could not be included in this video. Please try exporting again.'), {code: 'AUDIO_ENCODING_FAILED'});
+    }
     if (!target.buffer?.byteLength) throw new Error('The MP4 could not be finished. Please try again.');
     const blob = new Blob([target.buffer], {type: 'video/mp4'});
     progress(1, 'Your video is ready');
-    return {blob, duration: timing.duration, width: WIDTH, height: HEIGHT, hasAudio: true};
+    return {blob, duration: timing.duration, width: WIDTH, height: HEIGHT, hasAudio: true,
+      audio: {codec: 'aac', sampleRate: audio.sampleRate, channels: audio.channels,
+        packets: audioPackets, bytes: audioBytes, peak: audio.peak, end: audioPacketEnd}};
   } catch (error) {
     if (output) await output.cancel().catch(() => {});
     abortIfNeeded(signal);

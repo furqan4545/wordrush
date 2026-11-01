@@ -46,3 +46,21 @@ h1{color:#292434;font-weight:500}h1 em{font-family:'Instrument Serif',Georgia,'T
 /* Keep the editor copy limited to the heading, settings and action. */
 .website-entry{margin-bottom:24px}.website-entry .input-wrap{margin-top:0}footer{justify-content:flex-end}
 @media(max-width:559px){.website-entry{margin-bottom:0}.intro-copy h1{margin-bottom:0}}
+/* In-player preview controls and an immediate photographic first frame. */
+.shot>.preview-poster{position:absolute;inset:0;z-index:0;display:block;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.shot>#footage{z-index:1}.shot>#overlay{z-index:2}.shot>#finished-video{z-index:3}
+.shot #play{position:absolute;z-index:5;left:50%;top:50%;display:flex;align-items:center;justify-content:center;width:66px;height:66px;min-height:44px;margin:0;padding:0;transform:translate(-50%,-50%);border:1px solid #ffffffed;border-radius:50%;background:#fffcf8e8;color:#5a3e70;box-shadow:0 8px 30px #34253f30,inset 0 1px 0 #fff;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:background .16s,box-shadow .16s,opacity .16s}
+.shot #play:not(:disabled):hover{background:#fff;box-shadow:0 10px 34px #34253f40}
+.shot #play:disabled{opacity:.65}
+.shot #play svg{width:26px;height:26px;margin-left:3px;fill:currentColor;stroke:none;stroke-width:0}
+.shot.is-playing #play{left:14px;top:auto;bottom:14px;width:44px;height:44px;transform:none;border-color:#ffffff60;background:#3c2c49b8;color:#fff9ff;box-shadow:0 3px 14px #34253f25;opacity:.8}
+.shot.is-playing #play:hover,.shot.is-playing #play:focus-visible{opacity:1;background:#4c3b61ed}
+.shot.is-playing #play svg{width:20px;height:20px;margin-left:0}
+.shot .preview-empty{position:absolute;inset:0;z-index:4;display:grid;place-items:center;padding:22px;background:#30263b0d;text-align:center;pointer-events:none}
+.preview-empty>span{display:block;padding:12px 17px;border:1px solid #ffffffed;border-radius:12px;background:#fffcf8ed;color:#80648e;font-size:13px;font-weight:500;line-height:1.5;box-shadow:0 5px 24px #34253f14;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#preview-empty:not([hidden])~#play,#finished-video:not([hidden])~#play{display:none}
+#finished-video:not([hidden])~#preview-empty{display:none}
+.preview-loader{z-index:6}
+.playback{justify-content:flex-end}.playback #preview-sound{margin-left:0}
+@media(max-width:559px){.shot #play{width:62px;height:62px}.shot.is-playing #play{left:10px;bottom:10px;width:44px;height:44px}.preview-empty>span{font-size:12px;padding:11px 15px}}
+@media(prefers-reduced-motion:reduce){.shot #play{transition:none}}
