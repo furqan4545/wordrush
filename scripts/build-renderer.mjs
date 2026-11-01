@@ -15,3 +15,9 @@ await build({
   bundle: true, minify: true, format: 'esm', platform: 'browser', target: ['es2022'],
   legalComments: 'linked', logLevel: 'info',
 });
+await build({
+  entryPoints: [path.join(root, 'ui/words-in-motion-audio.ts')],
+  outfile: path.join(root, 'public/words-in-motion/vendor/music-aac.js'),
+  bundle: true, minify: true, format: 'esm', platform: 'browser', target: ['es2022'],
+  legalComments: 'linked', logLevel: 'info',
+});

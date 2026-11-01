@@ -1,3 +1,5 @@
+import { prepareMusicPcm } from './audio-pcm.js';
+
 /**
  * PRESSCUT — deterministic article-camera renderer.
  * All surrounding article copy comes from the credited source's genuine OCR.
@@ -472,11 +474,6 @@ export async function createFilm(options) {
 
 const AUDIO_SAMPLE_RATE = 48000;
 const AUDIO_CHANNELS = 2;
-const AAC_CONFIG = {
-  codec: 'mp4a.40.2', sampleRate: AUDIO_SAMPLE_RATE,
-  numberOfChannels: AUDIO_CHANNELS, bitrate: 160000,
-  aac: { format: 'aac' },
-};
 
 function audioError(code, message, cause) {
   const error = new Error(message);
@@ -497,19 +494,11 @@ export async function getAudioExportSupport(format = 'mp4') {
       ? { supported: true, codec: 'opus', sampleRate: AUDIO_SAMPLE_RATE, numberOfChannels: AUDIO_CHANNELS }
       : { supported: false, code: 'WEBM_AUDIO_UNAVAILABLE', message: 'This browser cannot export a WebM video with music.' };
   }
-  if (typeof window === 'undefined' || !('AudioEncoder' in window) || !('AudioData' in window)) {
-    return { supported: false, code: 'AUDIO_ENCODER_UNAVAILABLE', message: 'This browser cannot encode AAC music for MP4. Choose WebM instead.' };
-  }
-  if (!(window.OfflineAudioContext || window.webkitOfflineAudioContext)) {
-    return { supported: false, code: 'AUDIO_RENDER_UNAVAILABLE', message: 'This browser cannot prepare music for MP4 export.' };
-  }
-  try {
-    const result = await AudioEncoder.isConfigSupported(AAC_CONFIG);
-    if (!result.supported) return { supported: false, code: 'AAC_UNSUPPORTED', message: 'AAC music export is unavailable in this browser. Choose WebM instead.' };
-    return { supported: true, codec: AAC_CONFIG.codec, sampleRate: AUDIO_SAMPLE_RATE, numberOfChannels: AUDIO_CHANNELS };
-  } catch (cause) {
-    return { supported: false, code: 'AAC_UNSUPPORTED', message: 'AAC music export is unavailable in this browser. Choose WebM instead.' };
-  }
+  // Music encoding does not depend on native AudioEncoder/AudioData. Some
+  // iPhone WebKit versions return invalid AAC metadata despite reporting support.
+  return typeof WebAssembly !== 'undefined' && typeof Worker !== 'undefined'
+    ? { supported: true, codec: 'mp4a.40.2', sampleRate: AUDIO_SAMPLE_RATE, numberOfChannels: AUDIO_CHANNELS }
+    : { supported: false, code: 'AUDIO_ENCODER_UNAVAILABLE', message: 'This browser cannot prepare music for MP4 export.' };
 }
 
 function normalizeExportAudio(audio) {
@@ -551,94 +540,24 @@ function scheduleMusic(context, destination, audio, start, duration) {
   return { source, gain };
 }
 
-async function renderOfflineMusic(audio, duration, signal) {
-  abortIfNeeded(signal);
-  const OfflineContext = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-  if (!OfflineContext) throw audioError('AUDIO_RENDER_UNAVAILABLE', 'This browser cannot prepare music for MP4 export.');
-  const frames = Math.round(duration * AUDIO_SAMPLE_RATE);
-  const offline = new OfflineContext(AUDIO_CHANNELS, frames, AUDIO_SAMPLE_RATE);
-  const nodes = scheduleMusic(offline, offline.destination, audio, 0, frames / AUDIO_SAMPLE_RATE);
-  const rendering = offline.startRendering();
-  try {
-    return await new Promise((resolve, reject) => {
-      const abort = () => {
-        try { nodes.source.stop(0); } catch {}
-        reject(new DOMException('Export cancelled.', 'AbortError'));
-      };
-      signal?.addEventListener('abort', abort, { once: true });
-      rendering.then((buffer) => { signal?.removeEventListener('abort', abort); resolve(buffer); }, (error) => { signal?.removeEventListener('abort', abort); reject(error); });
-      if (signal?.aborted) abort();
-    });
-  } finally {
-    nodes.source.disconnect();
-    nodes.gain.disconnect();
-  }
-}
-
-async function encodeAac(buffer, duration, muxer, onProgress, signal) {
-  let encoderError = null;
+async function encodeAac(audio, duration, muxer, onProgress, signal) {
+  const { encodeMusicAac } = await import('./vendor/music-aac.js');
   let firstTimestamp = null;
   let chunksAdded = 0;
   const endTimestamp = Math.round(duration * 1000000);
-  const encoder = new AudioEncoder({
-    output: (chunk, metadata) => {
-      try {
-        // Normalize possible codec priming timestamps and keep the final AAC
-        // sample's container duration inside the exact video end time.
-        if (firstTimestamp === null) firstTimestamp = chunk.timestamp;
-        const timestamp = Math.max(0, chunk.timestamp - firstTimestamp);
-        if (timestamp >= endTimestamp) return;
-        const nominalDuration = chunk.duration > 0 ? chunk.duration : 1024 * 1000000 / AUDIO_SAMPLE_RATE;
-        const chunkDuration = Math.min(nominalDuration, endTimestamp - timestamp);
-        const bytes = new Uint8Array(chunk.byteLength);
-        chunk.copyTo(bytes);
-        muxer.addAudioChunkRaw(bytes, chunk.type, timestamp, chunkDuration, metadata);
-        chunksAdded++;
-      } catch (cause) {
-        encoderError = audioError('AUDIO_ENCODING_FAILED', 'The music could not be added to this MP4.', cause);
-      }
-    },
-    error: (cause) => { encoderError = audioError('AUDIO_ENCODING_FAILED', 'The browser could not encode the selected music.', cause); },
-  });
   try {
-    try { encoder.configure(AAC_CONFIG); }
-    catch (cause) { throw audioError('AAC_UNSUPPORTED', 'AAC music export is unavailable in this browser. Choose WebM instead.', cause); }
-    const left = buffer.getChannelData(0);
-    const right = buffer.getChannelData(Math.min(1, buffer.numberOfChannels - 1));
-    for (let offset = 0; offset < buffer.length; offset += 1024) {
-      abortIfNeeded(signal);
-      if (encoderError) throw encoderError;
-      const frames = Math.min(1024, buffer.length - offset);
-      // f32-planar requires complete channel planes: [all left][all right].
-      const planar = new Float32Array(frames * AUDIO_CHANNELS);
-      planar.set(left.subarray(offset, offset + frames), 0);
-      planar.set(right.subarray(offset, offset + frames), frames);
-      const data = new AudioData({
-        format: 'f32-planar', sampleRate: AUDIO_SAMPLE_RATE,
-        numberOfFrames: frames, numberOfChannels: AUDIO_CHANNELS,
-        timestamp: Math.round(offset * 1000000 / AUDIO_SAMPLE_RATE), data: planar,
-      });
-      try { encoder.encode(data); } finally { data.close(); }
-      while (encoder.encodeQueueSize > 8) {
-        abortIfNeeded(signal);
-        if (encoderError) throw encoderError;
-        await tick();
-      }
-      if ((offset / 1024) % 8 === 0) {
-        onProgress?.(Math.min(0.99, (offset + frames) / buffer.length));
-        await tick();
-      }
-    }
-    await encoder.flush();
-    abortIfNeeded(signal);
-    if (encoderError) throw encoderError;
-    if (!chunksAdded) throw audioError('AUDIO_ENCODING_FAILED', 'The browser returned no encoded music.');
-    onProgress?.(1);
-  } catch (error) {
-    if (error.name === 'AbortError' || error.code) throw error;
-    throw audioError('AUDIO_ENCODING_FAILED', 'The selected music could not be encoded.', error);
-  } finally {
-    if (encoder.state !== 'closed') encoder.close();
+    await encodeMusicAac(audio, (packet, metadata) => {
+      if (firstTimestamp === null) firstTimestamp = packet.timestamp;
+      const timestamp = Math.max(0, Math.round((packet.timestamp - firstTimestamp) * 1000000));
+      if (timestamp >= endTimestamp) return;
+      const chunkDuration = Math.min(Math.round(packet.duration * 1000000), endTimestamp - timestamp);
+      muxer.addAudioChunkRaw(packet.data, packet.type, timestamp, chunkDuration, metadata);
+      chunksAdded++;
+    }, onProgress, signal);
+    if (!chunksAdded) throw new Error('The music encoder returned no audio.');
+  } catch (cause) {
+    if (cause.name === 'AbortError') throw cause;
+    throw audioError('AUDIO_ENCODING_FAILED', 'The selected music could not be added to this MP4. Please try again.', cause);
   }
 }
 
@@ -667,7 +586,7 @@ async function exportMp4(film, onProgress, signal, audio) {
     const support = await getAudioExportSupport('mp4');
     if (!support.supported) throw audioError(support.code, support.message);
     onProgress?.(0.02);
-    renderedAudio = await renderOfflineMusic(audio, duration, signal);
+    renderedAudio = await prepareMusicPcm(audio, duration, { signal });
     abortIfNeeded(signal);
     onProgress?.(0.08);
   }

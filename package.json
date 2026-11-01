@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check source-capture.mjs && node --check public/app.js && node --check public/scene.js && node --check video/audio.mjs && node --check public/words-in-motion/app.js && node --check public/words-in-motion/engine.js && node --check public/words-in-motion/music.js && node --check public/words-in-motion/music-trimmer.js && node --check public/words-in-motion/article-import.js",
+    "check": "node --check server.mjs && node --check source-capture.mjs && node --check public/app.js && node --check public/scene.js && node --check video/audio.mjs && node --check public/words-in-motion/app.js && node --check public/words-in-motion/engine.js && node --check public/words-in-motion/audio-pcm.js && node --check public/words-in-motion/music.js && node --check public/words-in-motion/music-trimmer.js && node --check public/words-in-motion/article-import.js",
     "build": "node scripts/build-ui.mjs && node scripts/build-renderer.mjs && node scripts/build-static.mjs",
     "test": "node --test test/*.test.mjs"
   },
