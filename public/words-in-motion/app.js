@@ -6,9 +6,10 @@ const $ = (id) => document.getElementById(id);
 const els = Object.fromEntries(['sentence','word-count','input-error','source-list','source-note','formats','pace','pace-value','motion-blur','motion-blur-value','text-size','text-size-value','quality','download-button','download-label','export-status','export-progress','progress-bar','cancel-export','download-again','duration-label','preview-stage','preview','preview-loading','preview-empty','canvas-error','play-button','scrubber','current-time','total-time','loop-button','word-track','dimensions-label','source-credits'].map(id => [id, $(id)]));
 els.sentence.value=els.sentence.defaultValue;
 const sizes = {landscape:[1280,720],portrait:[720,1280],square:[720,720]};
+const DEFAULT_MUSIC=Object.freeze({trackId:'ali-0c946fa5b814',volume:.60,startTime:155.68});
 let film, sources = [], selectedSource, format='landscape', looping=true, revision=0, debounce, exportController, lastBlobUrl, customObjectUrl;
 let exporting=false, ready=false, articleImportController, previewFailure='';
-let music=null, musicTracks=[], musicBusy=false, restoringMusic=true, savedMusicSettings=null;
+let music=null, musicTracks=[], musicBusy=true, initializingMusic=true, defaultMusicFailed=false;
 let musicCategory='all',musicQuery='',musicListSignature='';
 let pendingMusicFocus=null;
 const musicTrimmer=createMusicTrimmer({onStartTime:setMusicStart,onPreview:()=>auditionMusic(music.getSelection())});
@@ -46,18 +47,17 @@ try {
   if (saved?.motionBlur != null && Number.isFinite(Number(saved.motionBlur)) && Number(saved.motionBlur) >= 0 && Number(saved.motionBlur) <= 1) els['motion-blur'].value = saved.motionBlur;
   if (saved?.textSize != null && Number.isFinite(Number(saved.textSize)) && Number(saved.textSize) >= 60 && Number(saved.textSize) <= 280) els['text-size'].value = saved.textSize;
   if (saved?.quality === '1080') els.quality.value = saved.quality;
-  if (saved?.music && typeof saved.music==='object') savedMusicSettings=saved.music;
 } catch { /* Storage can be disabled in private sessions. */ }
 
 music=createMusicController({onChange:()=>{
   renderMusic();
-  if(!restoringMusic)persist();
+  if(!initializingMusic)persist();
   if(film&&!exporting)syncMusic();
 },onStatus:(message,detail)=>setMusicStatus(message,!!detail?.error)});
-if(savedMusicSettings?.volume!=null&&Number.isFinite(Number(savedMusicSettings.volume))) music.setVolume(Math.min(1,Math.max(0,Number(savedMusicSettings.volume))));
+music.setVolume(DEFAULT_MUSIC.volume);
 
 function persist() {
-  try {localStorage.setItem('wordrush-words-in-motion-v1', JSON.stringify({format,pace:els.pace.value,motionBlur:Number(els['motion-blur'].value),textSize:Number(els['text-size'].value),quality:els.quality.value,source:selectedSource?.id,music:restoringMusic&&savedMusicSettings?savedMusicSettings:{trackId:music?.getSelection()?.isCustom?null:music?.getSelection()?.id??null,volume:music?.getVolume()??.35,startTime:music?.getStartTime()??0}}));} catch {}
+  try {localStorage.setItem('wordrush-words-in-motion-v1', JSON.stringify({format,pace:els.pace.value,motionBlur:Number(els['motion-blur'].value),textSize:Number(els['text-size'].value),quality:els.quality.value,source:selectedSource?.id}));} catch {}
 }
 function setExportStatus(message, error=false) {
   els['export-status'].classList.toggle('error',error);
@@ -86,10 +86,10 @@ function updateCounts() {
   const previewFailed=!!previewFailure;
   els['canvas-error'].hidden=empty||!previewFailed;
   els['preview-loading'].hidden=!valid||ready||previewFailed;
-  els['download-button'].disabled=!valid||!ready||exporting||musicBusy;
-  for(const control of [els['play-button'],els.scrubber,els['loop-button']])control.disabled=!valid||!ready||exporting;
-  els['word-track'].querySelectorAll('button').forEach(button=>button.disabled=!valid||!ready||exporting);
-  if(!exporting)els['download-label'].textContent=empty?'Type something':!valid?'Shorten sentence':previewFailed?'Preview unavailable':!ready?'Loading the press…':musicBusy?'Loading music…':globalThis.VideoEncoder?'Download MP4':'Download video';
+  els['download-button'].disabled=!valid||!ready||exporting||musicBusy||defaultMusicFailed;
+  for(const control of [els['play-button'],els.scrubber,els['loop-button']])control.disabled=!valid||!ready||exporting||initializingMusic;
+  els['word-track'].querySelectorAll('button').forEach(button=>button.disabled=!valid||!ready||exporting||initializingMusic);
+  if(!exporting)els['download-label'].textContent=empty?'Type something':!valid?'Shorten sentence':previewFailed?'Preview unavailable':!ready?'Loading the press…':musicBusy?'Loading music…':defaultMusicFailed?'Choose music':globalThis.VideoEncoder?'Download MP4':'Download video';
   return valid;
 }
 function updatePlaying(playing) {
@@ -143,7 +143,7 @@ function renderMusic(){
   const scrollTop=list.scrollTop;list.replaceChildren();
   const none=document.createElement('button');none.type='button';none.className='music-none';none.dataset.musicFocus='none';none.setAttribute('aria-pressed',String(!selection));none.disabled=exporting||musicBusy;
   none.append('No music');const silent=document.createElement('span');silent.textContent='Silent video';none.append(silent);
-  none.addEventListener('click',()=>{music.selectNone();setMusicStatus('');});list.append(none);
+  none.addEventListener('click',()=>{if(exporting||musicBusy)return;defaultMusicFailed=false;music.selectNone();setMusicStatus('');updateCounts();});list.append(none);
   const allTracks=[...musicTracks];if(selection?.isCustom)allTracks.push(selection);
   const tracks=allTracks.filter(track=>(musicCategory==='all'||(track.category||'Music')===musicCategory)&&[track.title,track.mood,track.collection,track.originalFilename,track.fileName].filter(Boolean).join(' ').toLowerCase().includes(musicQuery));
   $('music-results-count').textContent=`${tracks.length} ${tracks.length===1?'track':'tracks'}`;
@@ -167,6 +167,7 @@ function renderMusic(){
   $('music-volume').value=music.getVolume();$('music-volume').disabled=exporting||musicBusy;
   $('music-volume-value').textContent=`${Math.round(music.getVolume()*100)}%`;
   $('music-upload-button').disabled=exporting||musicBusy;
+  $('music-upload').disabled=exporting||musicBusy;
   $('music-selection-note').textContent=selection?(selection.isCustom?'Your audio · this tab only':selection.credit||'Inprint Originals'):'Choose a track or upload your own.';
   $('music-fit-note').textContent=selection?(selection.duration<musicClipDuration()?'Repeats to fit':'Selected clip'):'17 tracks from your library';
   $('music-tab-summary').textContent=selection?.title||'Optional';
@@ -178,7 +179,7 @@ async function chooseMusic(track){
   if(exporting||musicBusy)return;
   musicBusy=true;renderMusic();updateCounts();setMusicStatus('Loading your music…');
   let loaded=false;
-  try{music.stopAudition();await music.loadTrack(track);syncMusic();loaded=true;setMusicStatus('Ready for preview and export.');}
+  try{music.stopAudition();await music.loadTrack(track);defaultMusicFailed=false;syncMusic();loaded=true;setMusicStatus('Ready for preview and export.');}
   catch(error){setMusicStatus(error.message||'This track could not load.',true);}
   finally{musicBusy=false;renderMusic();updateCounts();if(loaded&&!$('panel-music').hidden){$('panel-music').scrollTop=0;$('music-clip-preview').focus({preventScroll:true});}}
 }
@@ -312,8 +313,9 @@ $('article-upload').addEventListener('change',async event=>{
 $('music-upload-button').addEventListener('click',()=>{if(!exporting&&!musicBusy)$('music-upload').click();});
 $('music-upload').addEventListener('change',async event=>{
   const file=event.target.files?.[0];if(!file)return;
+  if(exporting||musicBusy){event.target.value='';return;}
   musicBusy=true;music.stopAudition();renderMusic();updateCounts();setMusicStatus('Reading your audio…');
-  try{await music.loadFile(file);syncMusic();setMusicStatus('Your audio is ready. It stays in this tab.');}
+  try{await music.loadFile(file);defaultMusicFailed=false;syncMusic();setMusicStatus('Your audio is ready. It stays in this tab.');}
   catch(error){setMusicStatus(error.message||'This audio could not be opened.',true);}
   finally{musicBusy=false;event.target.value='';renderMusic();updateCounts();}
 });
@@ -323,7 +325,7 @@ $('music-filters').querySelectorAll('button').forEach(button=>button.addEventLis
 
 els['cancel-export'].addEventListener('click',()=>exportController?.abort());
 els['download-button'].addEventListener('click',async()=>{
-  if(exporting||musicBusy||!ready||!updateCounts())return;
+  if(exporting||musicBusy||defaultMusicFailed||!ready||!updateCounts())return;
   clearTimeout(debounce);
   music.stopAudition();film.pause();updatePlaying(false);exporting=true;renderMusic();exportController=new AbortController();
   const signal=exportController.signal;
@@ -377,21 +379,21 @@ async function init() {
     for(const source of sources.slice(0,3)) {
       const a=document.createElement('a');a.textContent=source.attribution+' ↗';a.href=source.sourceUrl;a.target='_blank';a.rel='noopener noreferrer';els['source-credits'].append(a);
     }
-    await rebuild({initial:!savedMusicSettings?.trackId});
+    await rebuild({initial:false});
     musicTracks=await musicLibrary;renderMusic();
-    const restoreTrack=musicTracks.find(track=>track.id===savedMusicSettings?.trackId);
-    const restoreStartTime=Number(savedMusicSettings?.startTime)||0;
-    if(restoreTrack){
+    const defaultTrack=musicTracks.find(track=>track.id===DEFAULT_MUSIC.trackId);
+    if(defaultTrack){
       film?.pause();updatePlaying(false);
-      try{musicBusy=true;renderMusic();updateCounts();setMusicStatus('Restoring your music…');await music.loadTrack(restoreTrack);syncMusic();music.setStartTime(Math.min(Math.max(0,restoreStartTime),Math.max(0,music.getSelection().duration-musicClipDuration())));setMusicStatus('Press play to hear your selected music.');}
-      catch(error){setMusicStatus(error.message||'Your selected track could not load.',true);}
-      finally{musicBusy=false;}
-    }
-    restoringMusic=false;renderMusic();updateCounts();
+      try{renderMusic();updateCounts();setMusicStatus('Loading your music…');await music.loadTrack(defaultTrack);syncMusic();music.setStartTime(Math.min(DEFAULT_MUSIC.startTime,Math.max(0,music.getSelection().duration-musicClipDuration())));setMusicStatus('Ready for preview and export.');}
+      catch(error){defaultMusicFailed=true;setMusicStatus(error.message||'Choose another track or No music to continue.',true);}
+    }else{defaultMusicFailed=true;setMusicStatus('The default music could not load. Choose a track, upload audio, or select No music.',true);}
   } catch(error) {
+    defaultMusicFailed=true;
     previewFailure='The original scans could not load. Please reload the studio.';
     els['preview-loading'].hidden=true;els['canvas-error'].hidden=false;els['canvas-error'].textContent=previewFailure;
     setExportStatus(error.message,true);updateCounts();
+  } finally {
+    musicBusy=false;initializingMusic=false;renderMusic();updateCounts();
   }
 }
 init();
