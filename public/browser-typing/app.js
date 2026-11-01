@@ -233,7 +233,14 @@ $('editor-form').addEventListener('submit', async event => {
     blobUrl = URL.createObjectURL(result.blob);
     lastExport = {...renderMetrics, output_duration_seconds: result.duration, file_bytes: result.blob.size};
     lastExportKey = requestKey;
-    const finished = $('finished-video'); finished.src = blobUrl; finished.hidden = false;
+    const finished = $('finished-video');
+    // iPhone also needs a still for the newly generated, paused MP4. Include
+    // this export's address so the player stays complete before its first tap.
+    const thumbnail = document.createElement('canvas'); thumbnail.width = 540; thumbnail.height = 960;
+    const thumbnailContext = thumbnail.getContext('2d');
+    thumbnailContext.drawImage(poster, 0, 0, 540, 960); thumbnailContext.drawImage(overlay, 0, 0, 540, 960);
+    finished.poster = thumbnail.toDataURL('image/jpeg', .85); thumbnail.width = 0; thumbnail.height = 0;
+    finished.src = blobUrl; finished.hidden = false;
     video.hidden = true; overlay.hidden = true; $('preview-empty').hidden = true; $('preview-loader').hidden = true; $('preview-controls').hidden = true;
     $('preview-state').textContent = 'Your finished video';
     $('progress').value = 1;
