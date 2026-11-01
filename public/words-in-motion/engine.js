@@ -212,7 +212,8 @@ export async function createFilm(options) {
   const resolutionScale = Math.min(outputWidth, outputHeight) / 720;
   const edgeDefocus = 6 * resolutionScale;
   const centerDefocus = 0.45 * resolutionScale;
-  const lensPadding = Math.ceil(edgeDefocus * 3) + 1;
+  const portraitDefocus = outputHeight > outputWidth ? 14 * resolutionScale : 0;
+  const lensPadding = Math.ceil(Math.max(edgeDefocus, portraitDefocus) * 3) + 1;
   const lensSource = surface(outputWidth + lensPadding * 2, outputHeight + lensPadding * 2);
   const lensSourceContext = lensSource.getContext('2d', { alpha: false });
   const lensLayer = surface(outputWidth, outputHeight);
@@ -231,6 +232,20 @@ export async function createFilm(options) {
   maskContext.fillStyle = edgeMask;
   maskContext.fillRect(-1, -1, 2, 2);
   maskContext.restore();
+  // Tall frames need a narrower vertical focal band: the rows immediately
+  // above and below the centered word should already fall out of focus.
+  // Keep this separate from the four-edge mask so landscape and side blur stay
+  // exactly as before. Both preview and export use this resolution-scaled pass.
+  const portraitMask = portraitDefocus ? surface(outputWidth, outputHeight) : null;
+  if (portraitMask) {
+    const portraitContext = portraitMask.getContext('2d');
+    const verticalMask = portraitContext.createLinearGradient(0, 0, 0, outputHeight);
+    for (const [position, opacity] of [[0,1],[0.22,1],[0.28,0.92],[0.36,0.55],[0.43,0],[0.57,0],[0.64,0.55],[0.72,0.92],[0.78,1],[1,1]]) {
+      verticalMask.addColorStop(position, `rgba(255,255,255,${opacity})`);
+    }
+    portraitContext.fillStyle = verticalMask;
+    portraitContext.fillRect(0, 0, outputWidth, outputHeight);
+  }
   let currentTime = 0;
   let playing = false;
   let disposed = false;
@@ -342,6 +357,27 @@ export async function createFilm(options) {
     context.globalCompositeOperation = 'source-over';
     context.drawImage(lensLayer, 0, 0);
     context.restore();
+
+    if (portraitMask) {
+      lensContext.save();
+      lensContext.setTransform(1, 0, 0, 1, 0, 0);
+      lensContext.clearRect(0, 0, w, h);
+      lensContext.globalCompositeOperation = 'source-over';
+      lensContext.filter = 'blur(' + portraitDefocus + 'px)';
+      lensContext.drawImage(lensSource, -p, -p);
+      lensContext.filter = 'none';
+      lensContext.globalCompositeOperation = 'destination-in';
+      lensContext.drawImage(portraitMask, 0, 0);
+      lensContext.restore();
+
+      context.save();
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.filter = 'none';
+      context.globalAlpha = 1;
+      context.globalCompositeOperation = 'source-over';
+      context.drawImage(lensLayer, 0, 0);
+      context.restore();
+    }
   }
 
   function drawFocusedWord(camera) {
@@ -455,7 +491,7 @@ export async function createFilm(options) {
     for (const scene of scenes) { scene.page.width = 1; scene.page.height = 1; }
     sampleCanvas.width = 1;
     sampleCanvas.height = 1;
-    for (const buffer of [lensSource, lensLayer, lensMask]) { buffer.width = 1; buffer.height = 1; }
+    for (const buffer of [lensSource, lensLayer, lensMask, portraitMask].filter(Boolean)) { buffer.width = 1; buffer.height = 1; }
   }
 
   const film = {
