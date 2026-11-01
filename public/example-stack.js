@@ -1,3 +1,5 @@
+import {track} from './analytics.js';
+
 const panel = document.querySelector('.preview-panel');
 const cards = [...document.querySelectorAll('.example-card')];
 const switches = [...document.querySelectorAll('.example-switches button')];
@@ -32,7 +34,7 @@ function show(index) {
 }
 
 if (panel && cards.length === 3 && switches.length === 3) {
-  switches.forEach((button, index) => button.addEventListener('click', () => show(index)));
+  switches.forEach((button, index) => button.addEventListener('click', () => {track('example_selected', {example_index: index + 1, selection_source: 'manual'}); show(index);}));
   panel.addEventListener('pointerenter', event => {
     if (event.pointerType !== 'touch') {hovered = true; stop();}
   });

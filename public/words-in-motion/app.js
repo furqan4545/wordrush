@@ -1,6 +1,7 @@
 import { createFilm, exportFilm } from './engine.js';
 import { createMusicController } from './music.js';
 import { createMusicTrimmer } from './music-trimmer.js';
+import { track as captureEvent, trackError, textMetrics } from '../analytics.js';
 
 const $ = (id) => document.getElementById(id);
 const els = Object.fromEntries(['sentence','word-count','input-error','source-list','source-note','formats','pace','pace-value','motion-blur','motion-blur-value','text-size','text-size-value','quality','download-button','download-label','export-status','export-progress','progress-bar','cancel-export','download-again','duration-label','preview-stage','preview','preview-loading','preview-empty','canvas-error','play-button','scrubber','current-time','total-time','loop-button','word-track','dimensions-label','source-credits'].map(id => [id, $(id)]));
@@ -12,12 +13,35 @@ let exporting=false, ready=false, articleImportController, previewFailure='';
 let music=null, musicTracks=[], musicBusy=true, initializingMusic=true, defaultMusicFailed=false;
 let musicCategory='all',musicQuery='',musicListSignature='';
 let pendingMusicFocus=null;
+let lastValidationState,lastExportMetrics;
+const queuedAnalytics=new Map();
+function trackLater(key,event,properties,delay=450){
+  clearTimeout(queuedAnalytics.get(key)?.timer);
+  const entry={event,properties};
+  entry.timer=setTimeout(()=>{queuedAnalytics.delete(key);captureEvent(event,properties);},delay);
+  queuedAnalytics.set(key,entry);
+}
+function flushAnalytics(){
+  for(const entry of queuedAnalytics.values()){clearTimeout(entry.timer);captureEvent(entry.event,entry.properties);}
+  queuedAnalytics.clear();
+}
+function failureMetrics(error){
+  const safe=value=>typeof value==='string'&&/^[A-Za-z][A-Za-z0-9_.-]{0,63}$/.test(value)?value:undefined;
+  return {error_code:safe(error?.code)||safe(error?.name)||'unknown',error_type:safe(error?.name)||'Error'};
+}
+function musicMetrics(selection=music?.getSelection()){
+  return {music_selected:!!selection,custom_music:!!selection?.isCustom,music_id:selection&&!selection.isCustom?selection.id:undefined,music_volume:music?.getVolume(),music_start_seconds:selection?.startTime,music_duration_seconds:selection?.duration};
+}
+function videoMetrics(){
+  return {...textMetrics(els.sentence.value),frame_format:format,quality_px:Number(els.quality.value),seconds_per_word:Number(els.pace.value),motion_blur:Number(els['motion-blur'].value),text_size_px:Number(els['text-size'].value),custom_paper:!!selectedSource?.custom,paper_id:selectedSource&&!selectedSource.custom?selectedSource.id:undefined,...musicMetrics()};
+}
 const musicTrimmer=createMusicTrimmer({onStartTime:setMusicStart,onPreview:()=>auditionMusic(music.getSelection())});
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const countWords = text => text.trim().split(/\s+/u).filter(Boolean);
 const showTime = n => Number(n || 0).toFixed(2);
 const settingsTabs=[...document.querySelectorAll('.editor-tabs [role="tab"]')];
-function openSettings(tab,{focus=false}={}){
+function openSettings(tab,{focus=false,inputMethod=focus?'keyboard':'pointer'}={}){
+  if(tab.getAttribute('aria-selected')!=='true')captureEvent('settings_panel_opened',{panel:tab.id.replace('tab-',''),input_method:inputMethod});
   for(const item of settingsTabs){
     const active=item===tab;item.setAttribute('aria-selected',String(active));item.tabIndex=active?0:-1;
     $(item.getAttribute('aria-controls')).hidden=!active;
@@ -26,14 +50,14 @@ function openSettings(tab,{focus=false}={}){
   if(matchMedia('(max-width:540px)').matches)document.querySelector('.settings-card').scrollIntoView({block:'start',behavior:reducedMotion?'auto':'smooth'});
 }
 for(const [index,tab] of settingsTabs.entries()){
-  tab.addEventListener('click',()=>openSettings(tab));
+  tab.addEventListener('click',event=>openSettings(tab,{inputMethod:event.detail===0?'keyboard':'pointer'}));
   tab.addEventListener('keydown',event=>{
     const next=event.key==='ArrowRight'?(index+1)%settingsTabs.length:event.key==='ArrowLeft'?(index+settingsTabs.length-1)%settingsTabs.length:event.key==='Home'?0:event.key==='End'?settingsTabs.length-1:null;
     if(next!==null){event.preventDefault();openSettings(settingsTabs[next],{focus:true});}
   });
 }
 
-$('mobile-preview').addEventListener('click',()=>{document.querySelector('.preview-card').scrollIntoView({block:'start',behavior:reducedMotion?'auto':'smooth'});els['play-button'].focus({preventScroll:true});});
+$('mobile-preview').addEventListener('click',()=>{captureEvent('preview_focused',{source:'back_to_preview'});document.querySelector('.preview-card').scrollIntoView({block:'start',behavior:reducedMotion?'auto':'smooth'});els['play-button'].focus({preventScroll:true});});
 const exportDockObserver=new ResizeObserver(entries=>{
   const height=Math.ceil(entries[0].target.getBoundingClientRect().height);
   document.documentElement.style.setProperty('--export-dock-height',`${height}px`);
@@ -73,6 +97,9 @@ function updateCounts() {
   const words=countWords(els.sentence.value);
   const empty=words.length===0;
   const valid=!empty&&words.length<=60;
+  const validationState=empty?'empty':valid?'valid':'too_long';
+  if(lastValidationState!==undefined&&lastValidationState!==validationState)captureEvent('validation_changed',{state:validationState,...textMetrics(els.sentence.value)});
+  lastValidationState=validationState;
   els['word-count'].textContent=`${words.length} ${words.length===1?'word':'words'} / 60`;
   const error=words.length>60?'Keep this cut to 60 words or fewer. Your text has not been shortened.':'';
   els['input-error'].textContent=error;
@@ -109,15 +136,17 @@ function syncMusic(){
 }
 
 function musicClipDuration(){return film?Math.ceil(film.duration*30)/30:0;}
-function setMusicStart(seconds){
+function setMusicStart(seconds,{userInitiated=true}={}){
   const selection=music?.getSelection();if(!selection||exporting||musicBusy)return;
   music.setStartTime(Math.min(Math.max(0,Number(seconds)||0),Math.max(0,selection.duration-musicClipDuration())));
+  if(userInitiated)trackLater('music_trim','music_trim_changed',{...musicMetrics(),video_duration_seconds:musicClipDuration()});
 }
 async function auditionMusic(track){
   if(!track||exporting||musicBusy)return;
+  flushAnalytics();
   film?.pause();updatePlaying(false);
-  try{if(music.getAuditionId()===track.id)music.stopAudition();else await music.previewTrack(track);}
-  catch(error){setMusicStatus(error.message||'This track could not be previewed.',true);}
+  try{if(music.getAuditionId()===track.id){music.stopAudition();captureEvent('music_preview_paused',musicMetrics(track));}else{await music.previewTrack(track);captureEvent('music_previewed',musicMetrics(track));}}
+  catch(error){captureEvent('music_preview_failed',{...musicMetrics(track),...failureMetrics(error)});trackError(error,'words_in_motion.music_preview',musicMetrics(track));setMusicStatus(error.message||'This track could not be previewed.',true);}
 }
 
 function setMusicStatus(message,error=false){
@@ -143,7 +172,7 @@ function renderMusic(){
   const scrollTop=list.scrollTop;list.replaceChildren();
   const none=document.createElement('button');none.type='button';none.className='music-none';none.dataset.musicFocus='none';none.setAttribute('aria-pressed',String(!selection));none.disabled=exporting||musicBusy;
   none.append('No music');const silent=document.createElement('span');silent.textContent='Silent video';none.append(silent);
-  none.addEventListener('click',()=>{if(exporting||musicBusy)return;defaultMusicFailed=false;music.selectNone();setMusicStatus('');updateCounts();});list.append(none);
+  none.addEventListener('click',()=>{if(exporting||musicBusy)return;flushAnalytics();defaultMusicFailed=false;music.selectNone();captureEvent('music_removed',{selection_source:'no_music'});setMusicStatus('');updateCounts();});list.append(none);
   const allTracks=[...musicTracks];if(selection?.isCustom)allTracks.push(selection);
   const tracks=allTracks.filter(track=>(musicCategory==='all'||(track.category||'Music')===musicCategory)&&[track.title,track.mood,track.collection,track.originalFilename,track.fileName].filter(Boolean).join(' ').toLowerCase().includes(musicQuery));
   $('music-results-count').textContent=`${tracks.length} ${tracks.length===1?'track':'tracks'}`;
@@ -177,10 +206,11 @@ function renderMusic(){
 
 async function chooseMusic(track){
   if(exporting||musicBusy)return;
+  flushAnalytics();
   musicBusy=true;renderMusic();updateCounts();setMusicStatus('Loading your music…');
   let loaded=false;
-  try{music.stopAudition();await music.loadTrack(track);defaultMusicFailed=false;syncMusic();loaded=true;setMusicStatus('Ready for preview and export.');}
-  catch(error){setMusicStatus(error.message||'This track could not load.',true);}
+  try{music.stopAudition();await music.loadTrack(track);defaultMusicFailed=false;syncMusic();loaded=true;captureEvent('music_selected',{...musicMetrics(),selection_source:'library'});setMusicStatus('Ready for preview and export.');}
+  catch(error){captureEvent('music_selection_failed',{...musicMetrics(track),...failureMetrics(error)});trackError(error,'words_in_motion.music_selection',musicMetrics(track));setMusicStatus(error.message||'This track could not load.',true);}
   finally{musicBusy=false;renderMusic();updateCounts();if(loaded&&!$('panel-music').hidden){$('panel-music').scrollTop=0;$('music-clip-preview').focus({preventScroll:true});}}
 }
 function focusWord(value) {
@@ -199,7 +229,7 @@ function showWords(words) {
     const button=document.createElement('button');
     button.type='button';button.textContent=word.text??String(word);button.setAttribute('aria-label',`Preview word ${i+1}: ${button.textContent}`);
     button.setAttribute('aria-current',String(i===0));
-    button.addEventListener('click',()=>{if(!film||exporting)return;film.pause();updatePlaying(false);film.seek(Math.min(film.duration-.001,word.start+Number(els.pace.value)*.4));updateTime(film.getTime());focusWord(i);});
+    button.addEventListener('click',()=>{if(!film||exporting)return;film.pause();updatePlaying(false);film.seek(Math.min(film.duration-.001,word.start+Number(els.pace.value)*.4));updateTime(film.getTime());focusWord(i);captureEvent('preview_seeked',{seek_source:'word',word_index:i,position_seconds:film.getTime(),video_duration_seconds:film.duration});});
     els['word-track'].append(button);
   });
 }
@@ -223,7 +253,7 @@ function renderSourceCards() {
     button.setAttribute('aria-pressed',String(source.id===selectedSource?.id));button.setAttribute('aria-label',source.title);
     const img=document.createElement('img');img.src=source.url;img.alt='';img.loading='lazy';
     const label=document.createElement('span');label.textContent=source.custom?'Your article':['The Sun','Inside page','El Paso'][i]||source.title;
-    button.append(img,label);button.addEventListener('click',()=>{if(exporting)return;articleImportController?.abort();selectedSource=source;renderSourceCards();updateSourceNote();scheduleRebuild(true);});
+    button.append(img,label);button.addEventListener('click',()=>{if(exporting)return;articleImportController?.abort();selectedSource=source;captureEvent('paper_selected',{paper_id:source.custom?undefined:source.id,custom_paper:!!source.custom,selection_source:'library'});renderSourceCards();updateSourceNote();scheduleRebuild(true);});
     els['source-list'].append(button);
   }
   els['source-list'].style.gridTemplateColumns=`repeat(${visible.length},minmax(0,1fr))`;
@@ -258,7 +288,7 @@ async function rebuild({initial=false}={}) {
     }});
     if(ticket!==revision){next.dispose();return;}
     film?.dispose();film=next;syncMusic();
-    if(music.getSelection())setMusicStart(music.getStartTime());
+    if(music.getSelection())setMusicStart(music.getStartTime(),{userInitiated:false});
     renderMusic();
     film.render(0);film.seek(0);
     showWords(film.words);focusWord(0);
@@ -269,6 +299,7 @@ async function rebuild({initial=false}={}) {
     if(wasPlaying){film.play();updatePlaying(true);}
   } catch(error) {
     if(ticket!==revision)return;
+    captureEvent('preview_failed',{...videoMetrics(),...failureMetrics(error)});trackError(error,'words_in_motion.preview',videoMetrics());
     ready=false;els['preview-loading'].hidden=true;
     previewFailure=`We couldn't load this paper. Choose another scan or upload an article screenshot. ${error.message||''}`;
     els['canvas-error'].textContent=previewFailure;
@@ -277,20 +308,26 @@ async function rebuild({initial=false}={}) {
   }
 }
 
-els.sentence.addEventListener('input',()=>scheduleRebuild());
+els.sentence.addEventListener('input',()=>{trackLater('text','text_changed',textMetrics(els.sentence.value));scheduleRebuild();});
 els.pace.addEventListener('input',()=>scheduleRebuild());
 els['motion-blur'].addEventListener('input',()=>scheduleRebuild());
 els['text-size'].addEventListener('input',()=>scheduleRebuild());
-els.quality.addEventListener('change',persist);
-els.formats.querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{if(exporting)return;format=button.dataset.format;scheduleRebuild(true);}));
-els['play-button'].addEventListener('click',()=>{if(!film||exporting)return;if(film.isPlaying()){film.pause();updatePlaying(false);}else{music.stopAudition();music.resume().catch(error=>setMusicStatus(error.message,true));if(film.getTime()>=film.duration-.01)film.seek(0);film.play();updatePlaying(true);}});
+for(const [id,setting] of [['pace','seconds_per_word'],['motion-blur','motion_blur'],['text-size','text_size_px']])els[id].addEventListener('change',()=>captureEvent('settings_changed',{setting,value:Number(els[id].value)}));
+els.quality.addEventListener('change',()=>{persist();captureEvent('settings_changed',{setting:'quality_px',value:Number(els.quality.value)});});
+els.formats.querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{if(exporting)return;format=button.dataset.format;captureEvent('settings_changed',{setting:'frame_format',value:format});scheduleRebuild(true);}));
+els['play-button'].addEventListener('click',()=>{if(!film||exporting)return;if(film.isPlaying()){film.pause();updatePlaying(false);captureEvent('preview_paused',{position_seconds:film.getTime(),video_duration_seconds:film.duration});}else{music.stopAudition();music.resume().catch(error=>{trackError(error,'words_in_motion.music_resume');setMusicStatus(error.message,true);});if(film.getTime()>=film.duration-.01)film.seek(0);film.play();updatePlaying(true);captureEvent('preview_played',{position_seconds:film.getTime(),video_duration_seconds:film.duration,...musicMetrics()});}});
 els.scrubber.addEventListener('input',()=>{if(!film||exporting)return;film.pause();updatePlaying(false);film.seek(Number(els.scrubber.value)/1000*film.duration);updateTime(film.getTime());});
-els['loop-button'].addEventListener('click',()=>{looping=!looping;els['loop-button'].setAttribute('aria-pressed',String(looping));});
-$('upload-button').addEventListener('click',()=>{if(articleImportController){articleImportController.abort();return;}if(!exporting)$('article-upload').click();});
+els.scrubber.addEventListener('change',()=>{if(film&&!exporting)captureEvent('preview_seeked',{seek_source:'scrubber',position_seconds:film.getTime(),video_duration_seconds:film.duration});});
+els['loop-button'].addEventListener('click',()=>{looping=!looping;captureEvent('settings_changed',{setting:'preview_loop',value:looping});els['loop-button'].setAttribute('aria-pressed',String(looping));});
+$('upload-button').addEventListener('click',()=>{if(articleImportController){articleImportController.abort();return;}if(!exporting){captureEvent('upload_picker_opened',{upload_type:'paper'});$('article-upload').click();}});
+$('article-upload').addEventListener('cancel',()=>captureEvent('upload_canceled',{upload_type:'paper',stage:'picker'}));
 $('article-upload').addEventListener('change',async event=>{
   const file=event.target.files?.[0];if(!file)return;
-  if(file.size>20*1024*1024){setExportStatus('Choose an image smaller than 20 MB.',true);return;}
-  if(!['image/png','image/jpeg','image/webp'].includes(file.type)){setExportStatus('Choose a JPG, PNG, or WebP screenshot.',true);return;}
+  const uploadStarted=performance.now();
+  const uploadMetrics={upload_type:'paper',file_bytes:file.size,file_type:['image/png','image/jpeg','image/webp'].includes(file.type)?file.type:'other'};
+  captureEvent('upload_started',uploadMetrics);
+  if(file.size>20*1024*1024){captureEvent('upload_failed',{...uploadMetrics,error_code:'FILE_TOO_LARGE'});setExportStatus('Choose an image smaller than 20 MB.',true);return;}
+  if(!['image/png','image/jpeg','image/webp'].includes(file.type)){captureEvent('upload_failed',{...uploadMetrics,error_code:'UNSUPPORTED_FILE_TYPE'});setExportStatus('Choose a JPG, PNG, or WebP screenshot.',true);return;}
   const url=URL.createObjectURL(file);
   const controller=new AbortController();articleImportController=controller;
   film?.pause();updatePlaying(false);ready=false;els['download-button'].disabled=true;
@@ -304,28 +341,38 @@ $('article-upload').addEventListener('change',async event=>{
     if(controller.signal.aborted)throw new DOMException('Reading canceled.','AbortError');
     if(customObjectUrl)URL.revokeObjectURL(customObjectUrl);customObjectUrl=url;
     selectedSource={id:'custom',title:file.name,url,width:img.width,height:img.height,articleText,type:'newspaper',custom:true,paperColor:'#efefec',region:{x:img.width*.12,y:img.height*.2,width:img.width*.76,height:img.height*.6}};
+    captureEvent('upload_completed',{...uploadMetrics,image_width:img.width,image_height:img.height,elapsed_ms:Math.round(performance.now()-uploadStarted)});
+    captureEvent('paper_selected',{custom_paper:true,selection_source:'upload'});
     renderSourceCards();updateSourceNote();scheduleRebuild(true);
-  } catch(error){URL.revokeObjectURL(url);setExportStatus(error.name==='AbortError'?'Article reading canceled.':error.message||'This image could not be opened.',error.name!=='AbortError');ready=!!film;updateCounts();}
+  } catch(error){captureEvent(error.name==='AbortError'?'upload_canceled':'upload_failed',{...uploadMetrics,...failureMetrics(error),elapsed_ms:Math.round(performance.now()-uploadStarted)});if(error.name!=='AbortError')trackError(error,'words_in_motion.paper_upload',uploadMetrics);URL.revokeObjectURL(url);setExportStatus(error.name==='AbortError'?'Article reading canceled.':error.message||'This image could not be opened.',error.name!=='AbortError');ready=!!film;updateCounts();}
   finally{if(articleImportController===controller){articleImportController=undefined;$('upload-button').innerHTML='Use my article <span aria-hidden="true">↗</span>';}}
   event.target.value='';
 });
 
-$('music-upload-button').addEventListener('click',()=>{if(!exporting&&!musicBusy)$('music-upload').click();});
+$('music-upload-button').addEventListener('click',()=>{if(!exporting&&!musicBusy){captureEvent('upload_picker_opened',{upload_type:'music'});$('music-upload').click();}});
+$('music-upload').addEventListener('cancel',()=>captureEvent('upload_canceled',{upload_type:'music',stage:'picker'}));
 $('music-upload').addEventListener('change',async event=>{
   const file=event.target.files?.[0];if(!file)return;
   if(exporting||musicBusy){event.target.value='';return;}
+  const uploadStarted=performance.now();
+  const uploadMetrics={upload_type:'music',file_bytes:file.size,file_type:['audio/wav','audio/x-wav','audio/mpeg','audio/mp3','audio/mp4','audio/aac','audio/ogg','audio/flac','audio/webm'].includes(file.type)?file.type:'other'};
+  captureEvent('upload_started',uploadMetrics);
   musicBusy=true;music.stopAudition();renderMusic();updateCounts();setMusicStatus('Reading your audio…');
-  try{await music.loadFile(file);defaultMusicFailed=false;syncMusic();setMusicStatus('Your audio is ready. It stays in this tab.');}
-  catch(error){setMusicStatus(error.message||'This audio could not be opened.',true);}
+  try{await music.loadFile(file);defaultMusicFailed=false;syncMusic();captureEvent('upload_completed',{...uploadMetrics,audio_duration_seconds:music.getSelection()?.duration,elapsed_ms:Math.round(performance.now()-uploadStarted)});captureEvent('music_selected',{...musicMetrics(),selection_source:'upload'});setMusicStatus('Your audio is ready. It stays in this tab.');}
+  catch(error){captureEvent(error.name==='AbortError'?'upload_canceled':'upload_failed',{...uploadMetrics,...failureMetrics(error),elapsed_ms:Math.round(performance.now()-uploadStarted)});if(error.name!=='AbortError')trackError(error,'words_in_motion.music_upload',uploadMetrics);setMusicStatus(error.message||'This audio could not be opened.',true);}
   finally{musicBusy=false;event.target.value='';renderMusic();updateCounts();}
 });
 $('music-volume').addEventListener('input',()=>music.setVolume(Number($('music-volume').value)));
-$('music-search').addEventListener('input',event=>{musicQuery=event.target.value.trim().toLowerCase();renderMusic();});
-$('music-filters').querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{musicCategory=button.dataset.category;renderMusic();}));
+$('music-volume').addEventListener('change',()=>captureEvent('music_volume_changed',musicMetrics()));
+$('music-search').addEventListener('input',event=>{musicQuery=event.target.value.trim().toLowerCase();trackLater('music_search','music_search_used',{character_count:musicQuery.length,category:musicCategory});renderMusic();});
+$('music-filters').querySelectorAll('button').forEach(button=>button.addEventListener('click',()=>{musicCategory=button.dataset.category;captureEvent('music_filter_changed',{category:musicCategory});renderMusic();}));
 
-els['cancel-export'].addEventListener('click',()=>exportController?.abort());
+els['cancel-export'].addEventListener('click',()=>{if(exportController)captureEvent('render_cancel_requested');exportController?.abort();});
+els['download-again'].addEventListener('click',event=>{if(event.isTrusted&&lastExportMetrics)captureEvent('video_downloaded',{...lastExportMetrics,download_source:'save_again'});});
 els['download-button'].addEventListener('click',async()=>{
   if(exporting||musicBusy||defaultMusicFailed||!ready||!updateCounts())return;
+  flushAnalytics();
+  const renderStarted=performance.now(),renderMetrics={...videoMetrics(),render_id:crypto.randomUUID()};
   clearTimeout(debounce);
   music.stopAudition();film.pause();updatePlaying(false);exporting=true;renderMusic();exportController=new AbortController();
   const signal=exportController.signal;
@@ -335,6 +382,7 @@ els['download-button'].addEventListener('click',async()=>{
   try {
     const quality=Number(els.quality.value);
     const resolution=format==='landscape'?[Math.round(quality*16/9/2)*2,quality]:format==='portrait'?[quality,Math.round(quality*16/9/2)*2]:[quality,quality];
+    captureEvent('render_started',{...renderMetrics,output_width:resolution[0],output_height:resolution[1],output_format:globalThis.VideoEncoder?'mp4':'webm'});
     exportMovie=await createFilm({canvas:document.createElement('canvas'),text:els.sentence.value,width:resolution[0],height:resolution[1],secondsPerWord:Number(els.pace.value),motionBlur:Number(els['motion-blur'].value),textSize:Number(els['text-size'].value),pushPull:1,sourceMode:'paper',assets:[selectedSource]});
     const onProgress=progress=>{
       const pct=Math.max(0,Math.min(100,Math.round(progress<=1?progress*100:progress)));
@@ -344,18 +392,23 @@ els['download-button'].addEventListener('click',async()=>{
     const audio=music.getExportAudio();
     try{result=await exportFilm({film:exportMovie,format:globalThis.VideoEncoder?'mp4':'webm',signal,onProgress,audio});}
     catch(error){
-      if((/cannot encode MP4|MP4 export is unavailable/.test(error.message)||['AUDIO_ENCODER_UNAVAILABLE','AAC_UNSUPPORTED'].includes(error.code))&&!signal.aborted){setExportStatus('Using the video format supported by this browser…');result=await exportFilm({film:exportMovie,format:'webm',signal,onProgress,audio});}
+      if((/cannot encode MP4|MP4 export is unavailable/.test(error.message)||['AUDIO_ENCODER_UNAVAILABLE','AAC_UNSUPPORTED'].includes(error.code))&&!signal.aborted){captureEvent('render_format_fallback',{from_format:'mp4',to_format:'webm',...failureMetrics(error)});setExportStatus('Using the video format supported by this browser…');result=await exportFilm({film:exportMovie,format:'webm',signal,onProgress,audio});}
       else throw error;
     }
     if(signal.aborted)throw new DOMException('Export canceled.','AbortError');
     const blob=result.blob??result;
     const extension=result.extension??(blob.type.includes('mp4')?'mp4':'webm');
     if(!(blob instanceof Blob)||blob.size===0)throw new Error('The video encoder returned an empty file.');
+    lastExportMetrics={...renderMetrics,output_width:resolution[0],output_height:resolution[1],output_format:extension,file_bytes:blob.size,video_duration_seconds:result.duration??exportMovie.duration,elapsed_ms:Math.round(performance.now()-renderStarted)};
+    captureEvent('render_completed',lastExportMetrics);
     if(lastBlobUrl)URL.revokeObjectURL(lastBlobUrl);lastBlobUrl=URL.createObjectURL(blob);
     const title=countWords(els.sentence.value).slice(0,6).join('-').replace(/[^\p{L}\p{N}-]/gu,'').toLowerCase()||'my-sentence';
     const link=els['download-again'];link.href=lastBlobUrl;link.download=`wordrush-words-in-motion-${title}.${extension}`;link.hidden=false;link.click();
+    captureEvent('video_downloaded',{...lastExportMetrics,download_source:'automatic'});
     setExportStatus(`Your ${extension.toUpperCase()} is ready · ${(blob.size/1024/1024).toFixed(1)} MB`);
   } catch(error) {
+    captureEvent(error.name==='AbortError'?'render_canceled':'render_failed',{...renderMetrics,...failureMetrics(error),elapsed_ms:Math.round(performance.now()-renderStarted)});
+    if(error.name!=='AbortError')trackError(error,'words_in_motion.render',renderMetrics);
     setExportStatus(error.name==='AbortError'?'Export canceled. Your sentence is still here.':`${error.message||'Could not export this video.'} Try 720p or open the studio in Edge.`,error.name!=='AbortError');
   } finally {
     exportMovie?.dispose();exporting=false;exportController=null;els['export-progress'].hidden=true;
@@ -365,11 +418,12 @@ els['download-button'].addEventListener('click',async()=>{
 });
 
 document.addEventListener('visibilitychange',()=>{if(document.hidden){music.stopAudition();if(!exporting){film?.pause();updatePlaying(false);}}});
+window.addEventListener('pagehide',()=>{flushAnalytics();if(exporting)captureEvent('render_interrupted',{reason:'page_exit'});});
 window.addEventListener('beforeunload',()=>{exportDockObserver.disconnect();musicTrimmer.dispose();music.dispose();film?.dispose();if(lastBlobUrl)URL.revokeObjectURL(lastBlobUrl);if(customObjectUrl)URL.revokeObjectURL(customObjectUrl);});
 async function init() {
   updateLabels();updateCounts();
   renderMusic();
-  const musicLibrary=fetch('./assets/music/tracks.json').then(response=>{if(!response.ok)throw new Error('The music library could not load.');return response.json();}).catch(error=>{setMusicStatus(`${error.message} You can still upload WAV or MP3.`,true);return [];});
+  const musicLibrary=fetch('./assets/music/tracks.json').then(response=>{if(!response.ok)throw new Error('The music library could not load.');return response.json();}).catch(error=>{trackError(error,'words_in_motion.music_library');setMusicStatus(`${error.message} You can still upload WAV or MP3.`,true);return [];});
   try {
     const response=await fetch('./assets/sources.json');if(!response.ok)throw new Error('Newspaper sources did not load.');
     sources=await response.json();
@@ -385,9 +439,10 @@ async function init() {
     if(defaultTrack){
       film?.pause();updatePlaying(false);
       try{renderMusic();updateCounts();setMusicStatus('Loading your music…');await music.loadTrack(defaultTrack);syncMusic();music.setStartTime(Math.min(DEFAULT_MUSIC.startTime,Math.max(0,music.getSelection().duration-musicClipDuration())));setMusicStatus('Ready for preview and export.');}
-      catch(error){defaultMusicFailed=true;setMusicStatus(error.message||'Choose another track or No music to continue.',true);}
+      catch(error){defaultMusicFailed=true;captureEvent('music_default_load_failed',failureMetrics(error));trackError(error,'words_in_motion.default_music');setMusicStatus(error.message||'Choose another track or No music to continue.',true);}
     }else{defaultMusicFailed=true;setMusicStatus('The default music could not load. Choose a track, upload audio, or select No music.',true);}
   } catch(error) {
+    trackError(error,'words_in_motion.initialization');
     defaultMusicFailed=true;
     previewFailure='The original scans could not load. Please reload the studio.';
     els['preview-loading'].hidden=true;els['canvas-error'].hidden=false;els['canvas-error'].textContent=previewFailure;

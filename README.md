@@ -74,3 +74,17 @@ Storage estimates compare available origin space with the renderer’s duration 
 Words in Motion resets its sentence and music preset on every reload. The music preset is Stay · Version 2 at 60% volume, beginning at 2:35.68; the selected end follows the video length (2:39.31 for the default 3.63-second cut). Visitors can change or remove the music for their current session. Frame, pace, text size, blur, quality and paper preferences continue to be saved.
 
 Words in Motion prepares only the selected music window as stereo 48 kHz PCM, then uses the bundled Mediabunny software AAC encoder. This avoids WebKit's invalid native AAC decoder-description bug (302253), and does not require native AudioEncoder, AudioData, or OfflineAudioContext. Empty selected music sections fail with a visible message; no-music and zero-volume exports remain intentionally silent. Audio preparation preserves volume, selected start, looping, end fade, mono resampling, and Web Audio speaker downmix for quad/5.1 uploads. Run `node --test test/words-in-motion-audio.test.mjs` for these regression checks.
+
+## Product analytics
+
+PostHog: Wordrush organization, Wordrush project **703444** — https://us.posthog.com/project/703444.
+
+Both editors and the About page share `public/analytics.js` and one PostHog project token in `public/analytics-config.js`. The same anonymous visitor and session continue across Fast cuts and Words in Motion; every event carries `app`, `feature`, and `analytics_version`. The SDK is loaded asynchronously, and analytics failures do not block editing or export.
+
+The integration enables page views/leaves, interaction autocapture, heatmaps, rage/dead clicks, web vitals, network timing, browser exceptions, and masked session replay at 100% sampling. The PostHog project must also have session replay enabled, a zero-second recording minimum, and the Wordrush site URL configured. It does not activate unrelated paid products or change account billing.
+
+Explicit events cover navigation; text length and validation; editor settings and panels; preview playback/seeking; paper, music, trim and volume choices; uploads; render starts/completions/failures/cancellations and time/size; downloads; cached renders; and saved-library operations. `render_started` and `render_completed` with feature breakdowns support completion funnels, export failure rates, and render-duration reports.
+
+Input values, user-facing generated titles, media pixels, file names, OCR, clipboard contents, network bodies/headers, and original exception messages are excluded. URLs are stripped of queries/fragments, including nested web-vitals and heatmap keys. Do Not Track and existing PostHog opt-outs are respected. Ordinary local/preview visits do not send events; an explicit `?analytics_test=1` on localhost enables a marked QA visit after project configuration. Run `node --test test/analytics-policy.test.mjs` for these privacy regressions.
+
+Vercel rewrites `/press-events/static/*` and `/press-events/array/*` to the PostHog US assets host and other `/press-events/*` requests to its ingestion host. The public project token is not a personal API credential. Verify the completed connection in the project's live events and session recordings before release.

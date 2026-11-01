@@ -5,6 +5,12 @@ import {appendFile, readFile} from 'node:fs/promises';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 await build({
+  entryPoints: [path.join(root, 'ui/analytics-sdk.ts')],
+  outfile: path.join(root, 'public/analytics-sdk.js'),
+  bundle: true, minify: true, format: 'esm', platform: 'browser', target: ['es2022'],
+  legalComments: 'linked', logLevel: 'info',
+});
+await build({
   entryPoints: [path.join(root, 'ui/effects.tsx')],
   outfile: path.join(root, 'public/effects.js'),
   bundle: true,
