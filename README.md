@@ -94,3 +94,5 @@ Vercel rewrites `/press-events/static/*` and `/press-events/array/*` to the Post
 `/browser-typing/` turns an entered website into Safari typing B-roll using the approved filmed MacBook shot, tracked native-size text and click/typing/Enter effects. Its own page is linked with Fast cuts and Words in Motion. Phone and laptop layouts share the same controls: exact website input, typing pace, a default one-second focus pause, preset video speeds and a Custom option for values such as 2.3×. Whole-video speed also scales pauses; effects keep their natural pitch.
 
 The prepared SDR Rec.709 movie and camera tracking preserve the Apple-native color conversion approved for the local template. Browser Typing renders H.264/AAC MP4s on the visitor's device, without the local Remotion server or upload of the entered website. Preview and export share timing, perspective and PCM sound code. Per-export generated files from the local development tool are excluded from the public bundle.
+
+Browser Typing downloads the MP4 automatically when export finishes. Export MP4 stays visible and reuses the completed file when its text and settings are unchanged.

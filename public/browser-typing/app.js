@@ -9,7 +9,7 @@ const context = overlay.getContext('2d'), previewAudio = new PreviewAudio();
 const presets = [1, 1.25, 1.5, 2, 3], storageKey = 'wordrush-browser-typing-settings-v1';
 let tracking, pace = 'natural', delay = DEFAULT_DELAY, speed = 1, customMode = false, customSpeed = 2.3;
 let ready = false, playing = false, currentTime = 0, renderBusy = false, raf = 0, playToken = 0;
-let exportController, blobUrl, lastExport, analyticsTimer;
+let exportController, blobUrl, lastExport, lastExportKey, analyticsTimer;
 
 try {
   const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
@@ -81,7 +81,7 @@ function showEditorPreview() {
 }
 function refresh() {
   pause(); showError(''); showEditorPreview();
-  $('download').hidden = true; $('export').hidden = false; $('render-status').hidden = true;
+  $('render-status').hidden = true;
   if (tracking && ready) seek(timing().duration - .25); else paint();
   persist();
 }
@@ -165,6 +165,15 @@ function validate() {
   }
   return true;
 }
+function downloadVideo(source) {
+  const link = document.createElement('a');
+  link.href = blobUrl; link.download = 'wordrush-browser-typing.mp4'; link.hidden = true;
+  link.className = 'ph-no-capture';
+  document.body.append(link); link.click(); link.remove();
+  $('render-status').hidden = false; $('progress').value = 1;
+  $('status-text').textContent = 'Download started.';
+  track('video_downloaded', {...lastExport, download_source: source});
+}
 $('cancel-export').addEventListener('click', () => {
   if (!exportController) return;
   $('cancel-export').disabled = true; $('status-text').textContent = 'Stopping…'; exportController.abort();
@@ -172,11 +181,14 @@ $('cancel-export').addEventListener('click', () => {
 $('editor-form').addEventListener('submit', async event => {
   event.preventDefault(); if (renderBusy) return;
   showError(''); if (!validate()) return;
-  pause(); showEditorPreview(); busy(true); $('download').hidden = true; $('render-status').hidden = false;
+  const request = {text: input.value, pace, delay, speed};
+  const requestKey = JSON.stringify(request);
+  if (blobUrl && lastExportKey === requestKey) {downloadVideo('export_button'); return;}
+  pause(); showEditorPreview(); busy(true); $('render-status').hidden = false;
   $('cancel-export').hidden = false; $('cancel-export').disabled = false;
   $('status-text').textContent = 'Preparing your video…'; $('progress').value = 0;
   exportController = new AbortController();
-  const controller = exportController, request = {text: input.value, pace, delay, speed};
+  const controller = exportController;
   const started = performance.now(), renderMetrics = metrics(); track('render_started', renderMetrics);
   try {
     const {renderBrowserTyping} = await import('./engine.js');
@@ -190,12 +202,13 @@ $('editor-form').addEventListener('submit', async event => {
     if (blobUrl) URL.revokeObjectURL(blobUrl);
     blobUrl = URL.createObjectURL(result.blob);
     lastExport = {...renderMetrics, output_duration_seconds: result.duration, file_bytes: result.blob.size};
-    $('download').href = blobUrl; $('download').hidden = false; $('export').hidden = true;
+    lastExportKey = requestKey;
     const finished = $('finished-video'); finished.src = blobUrl; finished.hidden = false;
     video.hidden = true; overlay.hidden = true; $('preview-loader').hidden = true; $('preview-controls').hidden = true;
     $('preview-state').textContent = 'Your finished video';
-    $('progress').value = 1; $('status-text').textContent = 'Your MP4 is ready.';
+    $('progress').value = 1;
     track('render_completed', {...lastExport, render_duration_ms: Math.round(performance.now() - started)});
+    downloadVideo('automatic');
   } catch (error) {
     if (error.name === 'AbortError' || controller.signal.aborted) {
       $('status-text').textContent = 'Export canceled. Your settings are ready when you are.';
@@ -209,7 +222,6 @@ $('editor-form').addEventListener('submit', async event => {
     if (exportController === controller) exportController = null;
   }
 });
-$('download').addEventListener('click', () => track('video_downloaded', lastExport || metrics()));
 $('finished-video').addEventListener('play', () => {pause(); $('preview-state').textContent = 'Your finished video'; track('generated_video_played', lastExport || metrics());});
 $('timing-settings').addEventListener('toggle', () => {if ($('timing-settings').open) track('settings_panel_opened', {panel: 'typing_timing'});});
 window.addEventListener('pagehide', event => {
