@@ -3,10 +3,11 @@ import { createMusicController } from './music.js';
 import { createMusicTrimmer } from './music-trimmer.js';
 
 const $ = (id) => document.getElementById(id);
-const els = Object.fromEntries(['sentence','word-count','input-error','source-list','source-note','formats','pace','pace-value','motion-blur','motion-blur-value','text-size','text-size-value','quality','download-button','download-label','export-status','export-progress','progress-bar','cancel-export','download-again','duration-label','preview-stage','preview','preview-loading','canvas-error','play-button','scrubber','current-time','total-time','loop-button','word-track','dimensions-label','source-credits'].map(id => [id, $(id)]));
+const els = Object.fromEntries(['sentence','word-count','input-error','source-list','source-note','formats','pace','pace-value','motion-blur','motion-blur-value','text-size','text-size-value','quality','download-button','download-label','export-status','export-progress','progress-bar','cancel-export','download-again','duration-label','preview-stage','preview','preview-loading','preview-empty','canvas-error','play-button','scrubber','current-time','total-time','loop-button','word-track','dimensions-label','source-credits'].map(id => [id, $(id)]));
+els.sentence.value=els.sentence.defaultValue;
 const sizes = {landscape:[1280,720],portrait:[720,1280],square:[720,720]};
 let film, sources = [], selectedSource, format='landscape', looping=true, revision=0, debounce, exportController, lastBlobUrl, customObjectUrl;
-let exporting=false, ready=false, articleImportController;
+let exporting=false, ready=false, articleImportController, previewFailure='';
 let music=null, musicTracks=[], musicBusy=false, restoringMusic=true, savedMusicSettings=null;
 let musicCategory='all',musicQuery='',musicListSignature='';
 let pendingMusicFocus=null;
@@ -40,7 +41,6 @@ exportDockObserver.observe(document.querySelector('.export-actions'));
 
 try {
   const saved = JSON.parse(localStorage.getItem('wordrush-words-in-motion-v1') || 'null');
-  if (saved && typeof saved.text === 'string' && saved.text.trim() !== 'every generation of Indian founders') els.sentence.value = saved.text;
   if (saved && sizes[saved.format]) format = saved.format;
   if (saved?.pace >= .2 && saved?.pace <= .75) els.pace.value = saved.pace;
   if (saved?.motionBlur != null && Number.isFinite(Number(saved.motionBlur)) && Number(saved.motionBlur) >= 0 && Number(saved.motionBlur) <= 1) els['motion-blur'].value = saved.motionBlur;
@@ -57,7 +57,7 @@ music=createMusicController({onChange:()=>{
 if(savedMusicSettings?.volume!=null&&Number.isFinite(Number(savedMusicSettings.volume))) music.setVolume(Math.min(1,Math.max(0,Number(savedMusicSettings.volume))));
 
 function persist() {
-  try {localStorage.setItem('wordrush-words-in-motion-v1', JSON.stringify({text:els.sentence.value,format,pace:els.pace.value,motionBlur:Number(els['motion-blur'].value),textSize:Number(els['text-size'].value),quality:els.quality.value,source:selectedSource?.id,music:restoringMusic&&savedMusicSettings?savedMusicSettings:{trackId:music?.getSelection()?.isCustom?null:music?.getSelection()?.id??null,volume:music?.getVolume()??.35,startTime:music?.getStartTime()??0}}));} catch {}
+  try {localStorage.setItem('wordrush-words-in-motion-v1', JSON.stringify({format,pace:els.pace.value,motionBlur:Number(els['motion-blur'].value),textSize:Number(els['text-size'].value),quality:els.quality.value,source:selectedSource?.id,music:restoringMusic&&savedMusicSettings?savedMusicSettings:{trackId:music?.getSelection()?.isCustom?null:music?.getSelection()?.id??null,volume:music?.getVolume()??.35,startTime:music?.getStartTime()??0}}));} catch {}
 }
 function setExportStatus(message, error=false) {
   els['export-status'].classList.toggle('error',error);
@@ -71,11 +71,26 @@ function setExportStatus(message, error=false) {
 }
 function updateCounts() {
   const words=countWords(els.sentence.value);
+  const empty=words.length===0;
+  const valid=!empty&&words.length<=60;
   els['word-count'].textContent=`${words.length} ${words.length===1?'word':'words'} / 60`;
-  const error=!words.length?'Type a sentence to make your video.':words.length>60?'Keep this cut to 60 words or fewer. Your text has not been shortened.':'';
+  const error=words.length>60?'Keep this cut to 60 words or fewer. Your text has not been shortened.':'';
   els['input-error'].textContent=error;
-  els['download-button'].disabled=!!error||!ready||exporting||musicBusy;
-  return !error;
+  els['preview-empty'].hidden=!empty;
+  els.preview.setAttribute('aria-hidden',String(empty));
+  els['export-status'].hidden=empty;
+  document.querySelector('.focus-strip').hidden=empty;
+  if(empty){
+    els['current-time'].textContent='0.00';els['total-time'].textContent='0.00';els.scrubber.value=0;
+  }
+  const previewFailed=!!previewFailure;
+  els['canvas-error'].hidden=empty||!previewFailed;
+  els['preview-loading'].hidden=!valid||ready||previewFailed;
+  els['download-button'].disabled=!valid||!ready||exporting||musicBusy;
+  for(const control of [els['play-button'],els.scrubber,els['loop-button']])control.disabled=!valid||!ready||exporting;
+  els['word-track'].querySelectorAll('button').forEach(button=>button.disabled=!valid||!ready||exporting);
+  if(!exporting)els['download-label'].textContent=empty?'Type something':!valid?'Shorten sentence':previewFailed?'Preview unavailable':!ready?'Loading the press…':musicBusy?'Loading music…':globalThis.VideoEncoder?'Download MP4':'Download video';
+  return valid;
 }
 function updatePlaying(playing) {
   els['play-button'].textContent=playing?'Ⅱ':'▶';
@@ -233,7 +248,7 @@ async function rebuild({initial=false}={}) {
   const ticket=++revision;
   const wasPlaying=initial?!reducedMotion:film?.isPlaying();
   film?.pause();updatePlaying(false);
-  els['canvas-error'].hidden=true;
+  previewFailure='';els['canvas-error'].hidden=true;updateCounts();
   try {
     const [width,height]=sizes[format];
     const next=await createFilm({canvas:els.preview,text:els.sentence.value,width,height,secondsPerWord:Number(els.pace.value),motionBlur:Number(els['motion-blur'].value),textSize:Number(els['text-size'].value),pushPull:1,sourceMode:'paper',assets:[selectedSource],onWord:focusWord,onTime:updateTime,onEnd:()=>{
@@ -249,15 +264,15 @@ async function rebuild({initial=false}={}) {
     els['total-time'].textContent=showTime(film.duration);els['current-time'].textContent='0.00';els.scrubber.value=0;
     els['dimensions-label'].textContent=`${width} × ${height} · 30 FPS`;
     ready=true;els['preview-loading'].hidden=true;els['play-button'].disabled=false;
-    els['download-label'].textContent=globalThis.VideoEncoder?'Download MP4':'Download video';
     setExportStatus();updateCounts();
     if(wasPlaying){film.play();updatePlaying(true);}
   } catch(error) {
     if(ticket!==revision)return;
     ready=false;els['preview-loading'].hidden=true;
-    els['canvas-error'].textContent=`We couldn't load this paper. Choose another scan or upload an article screenshot. ${error.message||''}`;
+    previewFailure=`We couldn't load this paper. Choose another scan or upload an article screenshot. ${error.message||''}`;
+    els['canvas-error'].textContent=previewFailure;
     els['canvas-error'].hidden=false;
-    els['download-label'].textContent='Preview unavailable';
+    updateCounts();
   }
 }
 
@@ -343,7 +358,7 @@ els['download-button'].addEventListener('click',async()=>{
   } finally {
     exportMovie?.dispose();exporting=false;exportController=null;els['export-progress'].hidden=true;
     for(const el of [els.sentence,els.pace,els['motion-blur'],els['text-size'],els.quality,els.scrubber,els['play-button']])el.disabled=false;
-    els['download-label'].textContent=globalThis.VideoEncoder?'Download MP4':'Download video';renderMusic();updateCounts();
+    renderMusic();updateCounts();
   }
 });
 
@@ -374,8 +389,9 @@ async function init() {
     }
     restoringMusic=false;renderMusic();updateCounts();
   } catch(error) {
-    els['preview-loading'].hidden=true;els['canvas-error'].hidden=false;els['canvas-error'].textContent='The original scans could not load. Please reload the studio.';
-    els['download-label'].textContent='Reload to try again';setExportStatus(error.message,true);
+    previewFailure='The original scans could not load. Please reload the studio.';
+    els['preview-loading'].hidden=true;els['canvas-error'].hidden=false;els['canvas-error'].textContent=previewFailure;
+    setExportStatus(error.message,true);updateCounts();
   }
 }
 init();
