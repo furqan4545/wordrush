@@ -3,7 +3,7 @@ import { createMusicController } from './music.js';
 import { createMusicTrimmer } from './music-trimmer.js';
 
 const $ = (id) => document.getElementById(id);
-const els = Object.fromEntries(['sentence','word-count','input-error','source-list','source-note','formats','pace','pace-value','motion-blur','motion-blur-value','text-size','text-size-value','quality','download-button','download-label','export-status','export-progress','progress-bar','cancel-export','download-again','duration-label','preview-stage','preview','preview-loading','canvas-error','play-button','scrubber','current-time','total-time','loop-button','word-track','dimensions-label','source-credits','reference-dialog','reference-video'].map(id => [id, $(id)]));
+const els = Object.fromEntries(['sentence','word-count','input-error','source-list','source-note','formats','pace','pace-value','motion-blur','motion-blur-value','text-size','text-size-value','quality','download-button','download-label','export-status','export-progress','progress-bar','cancel-export','download-again','duration-label','preview-stage','preview','preview-loading','canvas-error','play-button','scrubber','current-time','total-time','loop-button','word-track','dimensions-label','source-credits'].map(id => [id, $(id)]));
 const sizes = {landscape:[1280,720],portrait:[720,1280],square:[720,720]};
 let film, sources = [], selectedSource, format='landscape', looping=true, revision=0, debounce, exportController, lastBlobUrl, customObjectUrl;
 let exporting=false, ready=false, articleImportController;
@@ -21,6 +21,7 @@ function openSettings(tab,{focus=false}={}){
     $(item.getAttribute('aria-controls')).hidden=!active;
   }
   if(focus)tab.focus();
+  if(matchMedia('(max-width:540px)').matches)document.querySelector('.settings-card').scrollIntoView({block:'start',behavior:reducedMotion?'auto':'smooth'});
 }
 for(const [index,tab] of settingsTabs.entries()){
   tab.addEventListener('click',()=>openSettings(tab));
@@ -30,9 +31,16 @@ for(const [index,tab] of settingsTabs.entries()){
   });
 }
 
+$('mobile-preview').addEventListener('click',()=>{document.querySelector('.preview-card').scrollIntoView({block:'start',behavior:reducedMotion?'auto':'smooth'});els['play-button'].focus({preventScroll:true});});
+const exportDockObserver=new ResizeObserver(entries=>{
+  const height=Math.ceil(entries[0].target.getBoundingClientRect().height);
+  document.documentElement.style.setProperty('--export-dock-height',`${height}px`);
+});
+exportDockObserver.observe(document.querySelector('.export-actions'));
+
 try {
   const saved = JSON.parse(localStorage.getItem('wordrush-words-in-motion-v1') || 'null');
-  if (saved && typeof saved.text === 'string') els.sentence.value = saved.text;
+  if (saved && typeof saved.text === 'string' && saved.text.trim() !== 'every generation of Indian founders') els.sentence.value = saved.text;
   if (saved && sizes[saved.format]) format = saved.format;
   if (saved?.pace >= .2 && saved?.pace <= .75) els.pace.value = saved.pace;
   if (saved?.motionBlur != null && Number.isFinite(Number(saved.motionBlur)) && Number(saved.motionBlur) >= 0 && Number(saved.motionBlur) <= 1) els['motion-blur'].value = saved.motionBlur;
@@ -161,7 +169,13 @@ async function chooseMusic(track){
 }
 function focusWord(value) {
   const index=typeof value==='number'?value:value?.index;
-  els['word-track'].querySelectorAll('button').forEach((button,i)=>button.setAttribute('aria-current',String(i===index)));
+  const track=els['word-track'];
+  const buttons=[...track.querySelectorAll('button')];
+  buttons.forEach((button,i)=>button.setAttribute('aria-current',String(i===index)));
+  if(matchMedia('(max-width:540px)').matches&&buttons[index]){
+    const wordRect=buttons[index].getBoundingClientRect(),trackRect=track.getBoundingClientRect();
+    track.scrollTo({left:track.scrollLeft+wordRect.left-trackRect.left-(track.clientWidth-wordRect.width)/2,behavior:reducedMotion?'auto':'smooth'});
+  }
 }
 function showWords(words) {
   els['word-track'].replaceChildren();
@@ -256,10 +270,6 @@ els.formats.querySelectorAll('button').forEach(button=>button.addEventListener('
 els['play-button'].addEventListener('click',()=>{if(!film||exporting)return;if(film.isPlaying()){film.pause();updatePlaying(false);}else{music.stopAudition();music.resume().catch(error=>setMusicStatus(error.message,true));if(film.getTime()>=film.duration-.01)film.seek(0);film.play();updatePlaying(true);}});
 els.scrubber.addEventListener('input',()=>{if(!film||exporting)return;film.pause();updatePlaying(false);film.seek(Number(els.scrubber.value)/1000*film.duration);updateTime(film.getTime());});
 els['loop-button'].addEventListener('click',()=>{looping=!looping;els['loop-button'].setAttribute('aria-pressed',String(looping));});
-$('reference-button').addEventListener('click',()=>{music.stopAudition();film?.pause();updatePlaying(false);els['reference-dialog'].showModal();});
-$('close-reference').addEventListener('click',()=>els['reference-dialog'].close());
-els['reference-dialog'].addEventListener('close',()=>els['reference-video'].pause());
-els['reference-dialog'].addEventListener('click',event=>{if(event.target===els['reference-dialog']){const rect=els['reference-dialog'].getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)els['reference-dialog'].close();}});
 $('upload-button').addEventListener('click',()=>{if(articleImportController){articleImportController.abort();return;}if(!exporting)$('article-upload').click();});
 $('article-upload').addEventListener('change',async event=>{
   const file=event.target.files?.[0];if(!file)return;
@@ -338,7 +348,7 @@ els['download-button'].addEventListener('click',async()=>{
 });
 
 document.addEventListener('visibilitychange',()=>{if(document.hidden){music.stopAudition();if(!exporting){film?.pause();updatePlaying(false);}}});
-window.addEventListener('beforeunload',()=>{musicTrimmer.dispose();music.dispose();film?.dispose();if(lastBlobUrl)URL.revokeObjectURL(lastBlobUrl);if(customObjectUrl)URL.revokeObjectURL(customObjectUrl);});
+window.addEventListener('beforeunload',()=>{exportDockObserver.disconnect();musicTrimmer.dispose();music.dispose();film?.dispose();if(lastBlobUrl)URL.revokeObjectURL(lastBlobUrl);if(customObjectUrl)URL.revokeObjectURL(customObjectUrl);});
 async function init() {
   updateLabels();updateCounts();
   renderMusic();
