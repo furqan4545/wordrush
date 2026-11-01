@@ -88,3 +88,9 @@ Explicit events cover navigation; text length and validation; editor settings an
 Input values, user-facing generated titles, media pixels, file names, OCR, clipboard contents, network bodies/headers, and original exception messages are excluded. URLs are stripped of queries/fragments, including nested web-vitals and heatmap keys. Do Not Track and existing PostHog opt-outs are respected. Ordinary local/preview visits do not send events; an explicit `?analytics_test=1` on localhost enables a marked QA visit after project configuration. Run `node --test test/analytics-policy.test.mjs` for these privacy regressions.
 
 Vercel rewrites `/press-events/static/*` and `/press-events/array/*` to the PostHog US assets host and other `/press-events/*` requests to its ingestion host. The public project token is not a personal API credential. Verify the completed connection in the project's live events and session recordings before release.
+
+## Browser Typing
+
+`/browser-typing/` turns an entered website into Safari typing B-roll using the approved filmed MacBook shot, tracked native-size text and click/typing/Enter effects. Its own page is linked with Fast cuts and Words in Motion. Phone and laptop layouts share the same controls: exact website input, typing pace, a default one-second focus pause, preset video speeds and a Custom option for values such as 2.3×. Whole-video speed also scales pauses; effects keep their natural pitch.
+
+The prepared SDR Rec.709 movie and camera tracking preserve the Apple-native color conversion approved for the local template. Browser Typing renders H.264/AAC MP4s on the visitor's device, without the local Remotion server or upload of the entered website. Preview and export share timing, perspective and PCM sound code. Per-export generated files from the local development tool are excluded from the public bundle.

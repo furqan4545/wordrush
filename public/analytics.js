@@ -36,8 +36,8 @@ export function trackError(error, context, properties = {}) {
   } catch { /* Error reporting must never obscure the actual product error. */ }
 }
 
-const privateText = '#word-track, #videos-grid, #videos-status, #video-preview-dialog, #music-clip-title, #music-tab-summary, #paper-tab-summary, #delete-toast-message, .music-track-title, .source-note, #canvas-error, #form-error';
-const privateMedia = 'canvas, video, #word-track, #videos-grid, #video-preview-dialog, #download-again, #download-pending-video';
+const privateText = '#word-track, #videos-grid, #videos-status, #video-preview-dialog, #music-clip-title, #music-tab-summary, #paper-tab-summary, #delete-toast-message, .music-track-title, .source-note, #canvas-error, #form-error, #website, #browser-website, #typing-error, #error';
+const privateMedia = 'canvas, video, #word-track, #videos-grid, #video-preview-dialog, #download-again, #download-pending-video, #download, #typing-download';
 
 async function start() {
   if (!enabled || !analyticsConfig.projectToken) { document.documentElement.dataset.analyticsStatus = 'disabled'; return; }

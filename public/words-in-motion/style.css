@@ -48,3 +48,6 @@ dialog{border:1px solid #e8d8ef;border-radius:16px;padding:20px;background:#faf5
 }
 
 @media(min-width:541px) and (max-width:800px){.workspace-heading{column-gap:14px;padding-inline:16px}.export-status{gap:6px;letter-spacing:0}.export-status span{white-space:nowrap}.export-status span+span:before{margin-right:6px}}
+
+/* Three Wordrush tools share one accessible phone navigation row. */
+@media(max-width:600px){.site-header{height:auto;min-height:0;padding:17px 16px 12px;flex-direction:column;align-items:flex-start;gap:14px}.site-nav{align-self:stretch;width:100%;min-width:0;box-sizing:border-box;display:flex;padding:3px;gap:2px;border:1px solid #fff9;background:#fff3}.site-nav a{flex:1;justify-content:center;min-width:0;min-height:44px;padding:10px 6px;font-size:clamp(9px,2.45vw,11px)}}

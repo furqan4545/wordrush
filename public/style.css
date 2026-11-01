@@ -195,3 +195,6 @@ footer{max-width:1210px;margin:0 auto;padding:0 55px 28px;display:flex;align-ite
 @media(max-width:700px){.site-header{gap:16px}.site-nav a{padding:9px 12px;font-size:11px}}
 @media(max-width:600px){.site-header{height:auto;min-height:0;padding-top:22px;padding-bottom:12px;flex-direction:column;align-items:flex-start;gap:18px}.site-nav{align-self:stretch}.site-nav a{flex:1;min-height:42px;padding:10px 12px}}
 @media(prefers-reduced-motion:reduce){.site-nav a{transition:none}}
+
+/* Three Wordrush tools share one accessible phone navigation row. */
+@media(max-width:600px){.site-nav{width:100%;min-width:0;box-sizing:border-box}.site-nav a{flex:1;min-width:0;min-height:44px;padding:10px 6px;font-size:clamp(9px,2.45vw,11px)}}

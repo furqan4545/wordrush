@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "start": "node server.mjs",
-    "check": "node --check server.mjs && node --check source-capture.mjs && node --check public/analytics.js && node --check public/analytics-policy.js && node --check public/analytics-config.js && node --check public/app.js && node --check public/scene.js && node --check video/audio.mjs && node --check public/words-in-motion/app.js && node --check public/words-in-motion/engine.js && node --check public/words-in-motion/audio-pcm.js && node --check public/words-in-motion/music.js && node --check public/words-in-motion/music-trimmer.js && node --check public/words-in-motion/article-import.js",
-    "build": "node scripts/build-ui.mjs && node scripts/build-renderer.mjs && node scripts/build-static.mjs",
-    "test": "node --test test/*.test.mjs"
+    "check": "node --check server.mjs && node --check source-capture.mjs && node --check public/analytics.js && node --check public/analytics-policy.js && node --check public/analytics-config.js && node --check public/app.js && node --check public/scene.js && node --check video/audio.mjs && node --check public/words-in-motion/app.js && node --check public/words-in-motion/engine.js && node --check public/words-in-motion/audio-pcm.js && node --check public/words-in-motion/music.js && node --check public/words-in-motion/music-trimmer.js && node --check public/words-in-motion/article-import.js && node --check public/browser-typing/app.js && node --check public/browser-typing/scene.js && node --check public/browser-typing/audio.js && node --check public/browser-typing/preview-audio.js && node --check ui/browser-typing-render.js",
+    "build": "node scripts/build-ui.mjs && node scripts/build-renderer.mjs && node scripts/build-browser-typing.mjs && node scripts/build-static.mjs",
+    "test": "node --test test/*.test.mjs",
+    "preview": "node scripts/preview-static.mjs"
   },
   "dependencies": {
     "@mediabunny/aac-encoder": "^1.61.3",

@@ -18,6 +18,8 @@ await cp(path.join(publicDir, 'brand'), path.join(dist, 'brand'), {recursive: tr
 await cp(path.join(publicDir, 'templates'), path.join(dist, 'templates'), {recursive: true});
 // Keep the sentence editor and all of its relative module/asset URLs together.
 await cp(path.join(publicDir, 'words-in-motion'), path.join(dist, 'words-in-motion'), {recursive: true});
+// Browser Typing exports locally; ship its prepared movie, tracking and SFX only.
+await cp(path.join(publicDir, 'browser-typing'), path.join(dist, 'browser-typing'), {recursive: true});
 for (const dir of ['user-sfx-v1', 'transition-sax-v1']) {
   const source = path.join(publicDir, 'audio', dir), target = path.join(dist, 'audio', dir);
   await mkdir(target, {recursive: true});
