@@ -35,8 +35,8 @@ dialog{border:1px solid #e8d8ef;border-radius:16px;padding:20px;background:#faf5
 @media(max-width:540px){.site-nav a{min-height:44px}.control-group input[type=range],#music-start,#music-volume{height:40px}.quality-row select,.upload-button{min-height:44px}.music-audition{width:40px;height:44px}.music-clip-heading .text-button{min-height:40px}.word-track{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:5px}.word-track button{flex:none;min-width:44px;min-height:44px;padding:8px 12px}.word-track::-webkit-scrollbar{display:none}}
 .preview-empty{position:absolute;inset:0;display:grid;place-items:center;padding:24px;background:#f4edf5;color:#80648e;font-size:14px;line-height:1.6;text-align:center}.preview-stage:has(.preview-empty:not([hidden])){background:#f4edf5}
 
-/* A softly lit desktop header, with equal inset around its title and export. */
-@media(min-width:801px){
+/* A softly lit header, with equal inset around its title and export. */
+@media(min-width:541px){
   .workspace-heading{
     padding:12px 18px;
     border:1px solid #fffffff0;
@@ -46,3 +46,5 @@ dialog{border:1px solid #e8d8ef;border-radius:16px;padding:20px;background:#faf5
   }
   .workspace-heading>.export-actions{margin-left:auto}
 }
+
+@media(min-width:541px) and (max-width:800px){.workspace-heading{column-gap:14px;padding-inline:16px}.export-status{gap:6px;letter-spacing:0}.export-status span{white-space:nowrap}.export-status span+span:before{margin-right:6px}}
