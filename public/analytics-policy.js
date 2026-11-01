@@ -6,13 +6,27 @@ const SAFE_LABELS = new Set([
   'validation', 'validation_state', 'validation_reason', 'action', 'trigger',
   'category', 'quality', 'renderer', 'extension', 'stage', 'setting_name',
   'destination_feature',
+  'control', 'typing_pace',
   'output_format', 'from_format', 'to_format', 'selection_source', 'seek_source',
   'playback_source', 'save_source', 'reuse_source', 'input_method', 'music_type',
   'paper_type', 'error_name', 'music_category', 'result', 'frame_format', 'render_id', 'input_source',
 ]);
 const PRIVATE_KEY = /(?:^|_)(?:sentence|query|word|words|text|ocr|title|filename|file_name|message|stack|email|password|token|authorization|cookie|body|headers|url|href|src)(?:_|$)/i;
+const ELEMENT_TAGS = new Set('a button input select option textarea label div span form section main body html header nav footer p ul ol li h1 h2 h3 h4 h5 h6 svg path circle img table tr td th aside article summary details progress canvas video strong em small'.split(' '));
+
+export function sanitizeElementChain(chain) {
+  if (typeof chain !== 'string') return '';
+  return chain.split(';').map(part => {
+    const tag = /^([a-z][a-z0-9-]*)/i.exec(part)?.[1]?.toLowerCase();
+    if (!ELEMENT_TAGS.has(tag)) return '';
+    const child = /(?:^|[^\w-])nth-child="(\d+)"/.exec(part)?.[1] || '0';
+    const type = /(?:^|[^\w-])nth-of-type="(\d+)"/.exec(part)?.[1] || '0';
+    return `${tag}:nth-child="${child}"nth-of-type="${type}"`;
+  }).filter(Boolean).join(';');
+}
 
 export function featureForPath(pathname = '/') {
+  if (/^\/browser-typing(?:\/|$)/.test(pathname)) return 'browser_typing';
   if (/^\/words-in-motion(?:\/|$)/.test(pathname)) return 'words_in_motion';
   if (pathname === '/' || pathname === '/index.html') return 'fast_cuts';
   if (pathname === '/about.html') return 'about';
@@ -64,7 +78,7 @@ function scrubSystemProperties(properties) {
   if (Array.isArray(result.$elements)) result.$elements = result.$elements.map(element => Object.fromEntries(
     Object.entries(element).filter(([key]) => ['tag_name', 'classes', 'nth_child', 'nth_of_type', 'attr__id', 'attr__class'].includes(key)),
   ));
-  delete result.$elements_chain;
+  if (result.$elements_chain) result.$elements_chain = sanitizeElementChain(result.$elements_chain);
   if (result.$heatmap_data && typeof result.$heatmap_data === 'object') {
     const cleaned = {};
     for (const [url, points] of Object.entries(result.$heatmap_data)) {

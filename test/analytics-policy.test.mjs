@@ -32,10 +32,12 @@ test('text metrics describe usage without retaining the entered sentence', () =>
   assert.ok(!JSON.stringify(textMetrics(PRIVATE)).includes(PRIVATE));
 });
 
-test('both Wordrush tools use stable feature labels on the same site', () => {
+test('Wordrush tools use stable feature labels on the same site', () => {
   assert.equal(featureForPath('/'), 'fast_cuts');
   assert.equal(featureForPath('/words-in-motion'), 'words_in_motion');
   assert.equal(featureForPath('/words-in-motion/'), 'words_in_motion');
+  assert.equal(featureForPath('/browser-typing'), 'browser_typing');
+  assert.equal(featureForPath('/browser-typing/'), 'browser_typing');
   assert.equal(featureForPath('/about.html'), 'about');
   assert.equal(featureForPath('/some-future-page'), 'site');
 });
@@ -327,5 +329,13 @@ test('heatmap URL keys lose private queries and merge points for the same page',
   assert.equal(page.pathname, '/words-in-motion/');
   assert.deepEqual(heatmap[keys[0]], [...firstPoints, ...secondPoints],
     'both point arrays retain their coordinates and interaction metadata');
+  assert.ok(!JSON.stringify(result).includes(PRIVATE));
+});
+
+test('string-only autocapture keeps a valid structural chain without copied labels or URLs', () => {
+  const result = sanitizeCapture({event: '$autocapture', properties: {
+    $event_type: 'click', $elements_chain: `button.private:text="${PRIVATE}"attr_id="${PRIVATE}"href="https://example.com/?word=${PRIVATE}"nth-child="3"nth-of-type="1";div:nth-child="2"nth-of-type="2"`,
+  }});
+  assert.equal(result.properties.$elements_chain, 'button:nth-child="3"nth-of-type="1";div:nth-child="2"nth-of-type="2"');
   assert.ok(!JSON.stringify(result).includes(PRIVATE));
 });
