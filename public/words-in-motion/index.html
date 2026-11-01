@@ -25,7 +25,7 @@
   </header>
   <main class="motion-workspace">
     <div class="workspace-heading">
-      <div><div class="eyebrow">THE NEWSPAPER VIDEO EDITOR</div><h1>Words in <em>Motion.</em></h1><p>Your sentence. Every word in the spotlight.</p></div>
+      <div><h1>Words in <em>Motion.</em></h1></div>
       <div class="export-actions">
         <button class="download-button" id="download-button" disabled><span id="download-label">Loading the press…</span><span aria-hidden="true">↗</span></button>
         <div class="export-status" id="export-status" role="status" aria-live="polite"><span>MP4 VIDEO</span><span id="duration-label">—</span><span>NO WATERMARK</span></div>
@@ -34,12 +34,13 @@
       </div>
     </div>
     <div class="studio-grid">
+      <div class="sentence-bar">
+        <label for="sentence">Your sentence</label>
+        <textarea id="sentence" rows="1" spellcheck="true" placeholder="Write something worth a closer look…" aria-describedby="input-error">every generation of Indian founders</textarea>
+        <span id="word-count">5 words / 60</span>
+        <div class="input-error" id="input-error" role="status"></div>
+      </div>
       <section class="creation-panel" aria-label="Video editor">
-        <div class="sentence-card">
-          <div class="sentence-heading"><label for="sentence">Your sentence</label><span id="word-count">5 words / 60</span></div>
-          <textarea id="sentence" rows="2" spellcheck="true" placeholder="Write something worth a closer look…" aria-describedby="input-error">every generation of Indian founders</textarea>
-          <div class="input-error" id="input-error" role="status"></div>
-        </div>
         <div class="preview-card">
           <div class="preview-topline"><span class="section-label">YOUR VIDEO</span><button id="reference-button" class="text-button"><span aria-hidden="true">▷</span> See the reference</button></div>
           <div class="preview-stage" id="preview-stage"><canvas id="preview" width="1280" height="720" aria-label="Animated newspaper video preview"></canvas><div class="preview-loading" id="preview-loading"><span class="loading-mark">Aa</span><span>Setting the type…</span></div><div class="canvas-error" id="canvas-error" hidden></div></div>
