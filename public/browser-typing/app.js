@@ -1,16 +1,22 @@
-import {drawOverlay, getTiming, getOutputTime, getSourceTime, splitText, TYPING_START, DEFAULT_DELAY} from './scene.js';
+import {drawOverlay, getTiming, splitText, DEFAULT_DELAY} from './scene.js';
 import {PreviewAudio} from './preview-audio.js';
 import {track, trackError, textMetrics} from '../analytics.js';
 
 const $ = id => document.getElementById(id);
-const input = $('website'), video = $('footage'), overlay = $('overlay'), scrubber = $('scrubber');
+const input = $('website'), overlay = $('overlay'), scrubber = $('scrubber');
 const poster = $('preview-poster'), shot = $('shot');
 const delayInput = $('typing-delay'), speedInput = $('video-speed'), customInput = $('custom-speed');
-const context = overlay.getContext('2d'), previewAudio = new PreviewAudio({onInterrupted: () => pause()});
+const context = overlay.getContext('2d');
+const stillOverlay = document.createElement('canvas'); stillOverlay.width = 1080; stillOverlay.height = 1920;
+const stillContext = stillOverlay.getContext('2d');
+const previewAudio = new PreviewAudio({onInterrupted: () => pause()});
 const presets = [1, 1.25, 1.5, 2, 3], storageKey = 'wordrush-browser-typing-settings-v1';
 let tracking, pace = 'natural', delay = DEFAULT_DELAY, speed = 1, customMode = false, customSpeed = 2.3;
 let ready = false, playing = false, currentTime = 0, renderBusy = false, raf = 0, playToken = 0;
 let editingStill = true, previewStarting = 0;
+let preview, previewController, previewModule, timingCache, timingKey, audioStarts = 0;
+let lastClockTime = 0, lastClockAdvance = 0;
+let playOrigin = 0, previewSoundUnavailable = false;
 let exportController, blobUrl, lastExport, lastExportKey, analyticsTimer;
 
 try {
@@ -38,7 +44,12 @@ narrowScreen.addEventListener('change', event => {$('timing-settings').open = !e
 function persist() {
   try {localStorage.setItem(storageKey, JSON.stringify({text: input.value, pace, delay, speed, customMode, customSpeed, defaultUrlVersion: 2}));} catch { /* Optional preference. */ }
 }
-const timing = () => getTiming(input.value, pace, tracking?.duration, delay, speed);
+const settings = () => ({text: input.value, pace, delay, speed});
+const timing = () => {
+  const key = JSON.stringify([input.value, pace, tracking?.duration, delay, speed]);
+  if (key !== timingKey) {timingKey = key; timingCache = getTiming(input.value, pace, tracking?.duration, delay, speed);}
+  return timingCache;
+};
 const clock = value => `${Math.floor(value / 60)}:${String(Math.floor(value % 60)).padStart(2, '0')}`;
 const decimal = value => Number(value.toFixed(3)).toString();
 const metrics = () => ({...textMetrics(input.value), typing_pace: pace, typing_delay_seconds: delay, video_speed: speed,
@@ -53,52 +64,98 @@ updateCustomControl();
 function paint(time = currentTime) {
   currentTime = time;
   const t = timing();
-  drawOverlay(context, {time: editingStill ? t.duration : time, text: input.value, pace, delay, speed, tracking});
+  if (editingStill && poster.complete && poster.naturalWidth) {
+    drawOverlay(stillContext, {...settings(), time: t.duration, tracking, timing: t});
+    context.drawImage(poster, 0, 0, 1080, 1920); context.drawImage(stillOverlay, 0, 0);
+  } else if (preview) {
+    preview.render(time, settings());
+    const info = preview.getDiagnostics();
+    if (info.error) throw new Error(info.error);
+    shot.dataset.previewFrame = String(info.presentedFrame ?? info.frameIndex ?? '');
+    shot.dataset.previewTargetFrame = String(info.targetFrame ?? '');
+    shot.dataset.previewQueuedFrames = String(info.queueLength ?? '');
+  }
   const empty = !input.value.trim();
   $('preview-empty').hidden = !empty;
   overlay.hidden = empty || !$('finished-video').hidden;
   $('play').disabled = !ready || empty || renderBusy || !!previewStarting;
+  $('preview-sound').disabled = renderBusy || !!previewStarting;
   scrubber.max = t.duration; scrubber.value = Math.min(time, t.duration);
   $('duration').textContent = `${t.duration.toFixed(1)} sec`;
   $('delay-hint').textContent = speed === 1 ? 'After the address bar focuses' : `${decimal(delay / speed)} s at ${decimal(speed)}× speed`;
   $('settings-summary').textContent = `${decimal(delay)} s delay · ${decimal(speed)}×`;
   $('timecode').textContent = `${clock(time)} / ${clock(Math.ceil(t.duration))}`;
+  shot.dataset.previewTime = time.toFixed(3);
+  shot.dataset.audioStarts = String(audioStarts);
+  shot.dataset.previewSound = previewSoundUnavailable ? 'unavailable' : previewAudio.muted ? 'muted' : 'ready';
 }
 function setPlaying(value) {
   playing = value;
+  shot.dataset.previewState = value ? 'playing' : 'paused';
   shot.classList.toggle('is-playing', value);
   $('play-label').textContent = value ? 'Pause preview' : 'Play preview';
   $('play').setAttribute('aria-label', value ? 'Pause preview' : 'Play preview');
   $('play-icon').innerHTML = value ? '<path d="M7 5h4v14H7zM15 5h4v14h-4z"/>' : '<path d="m9 5 11 7-11 7z"/>';
-  $('preview-state').textContent = !input.value.trim() ? 'Type your URL' : value ? 'Playing preview' : (ready ? 'Ready to preview' : 'Loading preview…');
+  $('preview-state').textContent = !input.value.trim() ? 'Type your URL' : value ? (previewSoundUnavailable ? 'Playing preview · muted' : 'Playing preview') : (ready ? 'Ready to preview' : 'Loading preview…');
 }
-function pause() {playToken++; previewStarting = 0; video.pause(); previewAudio.stop(); cancelAnimationFrame(raf); setPlaying(false);}
-function seek(time) {
-  const t = timing(); currentTime = Math.max(0, Math.min(t.duration - 1 / 30, time));
-  if (!editingStill) video.currentTime = getSourceTime(currentTime, t);
-  paint();
+function pause() {
+  if (playing) currentTime = Math.min(timing().duration, (performance.now() - playOrigin) / 1000);
+  playToken++; previewStarting = 0; cancelAnimationFrame(raf); previewAudio.stop();
+  previewController?.abort(); previewController = undefined; preview?.dispose(); preview = undefined;
+  $('preview-loader').hidden = true;
+  setPlaying(false);
+  $('play').disabled = !ready || !input.value.trim() || renderBusy;
+  $('preview-sound').disabled = renderBusy;
 }
 function animate() {
   if (!playing) return;
-  const t = timing();
-  video.playbackRate = (video.currentTime >= TYPING_START ? t.tailRate : 1) * speed;
-  paint(getOutputTime(video.currentTime, t));
-  if (video.readyState >= 3) previewAudio.sync(currentTime); else previewAudio.stop();
-  if (video.ended || currentTime >= t.duration - 1 / 30) {pause(); paint(t.duration - 1 / 30); return;}
+  const now = performance.now();
+  const time = (now - playOrigin) / 1000;
+  // Like Words in Motion, canvas playback has one monotonic render clock.
+  // A broken browser audio session cannot rewind or freeze the picture.
+  if (!previewSoundUnavailable) {
+    const soundTime = previewAudio.getTime();
+    if (soundTime > lastClockTime + .00001) {lastClockTime = soundTime; lastClockAdvance = now;}
+    else if (now - lastClockAdvance > 1000) {
+      previewAudio.invalidateClock(); previewSoundUnavailable = true; updateSoundControl();
+      $('preview-state').textContent = 'Playing preview · muted';
+      showError('Preview sound is unavailable. Your MP4 export will include the sound effects.');
+    }
+  }
+  if (time >= timing().duration) {finishPreview(); return;}
+  try {paint(time);}
+  catch (error) {pause(); showError('Your preview paused. Tap Play to try again.'); trackError(error, 'browser_typing_preview', metrics()); return;}
   raf = requestAnimationFrame(animate);
+}
+function finishPreview() {
+  if (!playing) return;
+  const end = timing().duration;
+  try {paint(end);}
+  catch (error) {showError('Your preview paused. Tap Play to try again.'); trackError(error, 'browser_typing_preview', metrics());}
+  finally {pause(); currentTime = end;}
+  shot.dataset.previewTime = end.toFixed(3);
+  $('timecode').textContent = `${clock(end)} / ${clock(Math.ceil(end))}`;
+}
+async function preparePicture(startTime, token, controller) {
+  previewModule ??= import('./preview.js').catch(error => {previewModule = undefined; throw error;});
+  const {createBrowserTypingPreview} = await previewModule;
+  if (token !== playToken || controller.signal.aborted) throw new DOMException('Preview canceled.', 'AbortError');
+  const next = createBrowserTypingPreview({canvas: overlay, tracking});
+  preview = next;
+  try {await next.prepare({timing: timing(), startTime, signal: controller.signal});}
+  catch (error) {next.dispose(); throw error;}
+  if (token !== playToken || controller.signal.aborted) {next.dispose(); throw new DOMException('Preview canceled.', 'AbortError');}
+  return next;
 }
 function showEditorPreview() {
   $('finished-video').pause(); $('finished-video').hidden = true;
   editingStill = true;
-  video.hidden = true; poster.hidden = false; overlay.hidden = !input.value.trim(); $('preview-controls').hidden = false;
+  poster.hidden = false; overlay.hidden = !input.value.trim(); $('preview-controls').hidden = false;
+  currentTime = 0; paint();
 }
 function refresh() {
   pause(); showError(''); showEditorPreview();
   $('render-status').hidden = true;
-  // iOS may not decode or paint a paused <video> before its first play gesture.
-  // This exact final camera frame gives every keystroke a complete live preview
-  // without asking the media element to seek or play while someone is editing.
-  if (tracking) seek(timing().duration - 1 / 30); else paint();
   setPlaying(false);
   persist();
 }
@@ -137,50 +194,107 @@ $('play').addEventListener('click', async () => {
   if (playing) {pause(); track('preview_paused', metrics()); return;}
   if (!ready || previewStarting || renderBusy) return;
   if (!validate()) return;
+  const startTime = editingStill || currentTime >= timing().duration - 1 / 30 ? 0 : currentTime;
+  // A paused seek already owns a prepared decoder. Release it before a new
+  // Play takes ownership, while retaining the chosen output position.
+  previewController?.abort(); preview?.dispose(); preview = undefined;
   const token = ++playToken; previewStarting = token; showError('');
-  editingStill = false; video.hidden = false;
-  if (currentTime >= timing().duration - .5) seek(0);
-  video.playbackRate = (video.currentTime >= TYPING_START ? timing().tailRate : 1) * speed;
+  const controller = new AbortController(); previewController = controller;
   try {
     $('play').disabled = true;
-    // Start both media unlocks inside this tap, before either async operation
-    // can lose Safari's user activation.
-    const soundReady = previewAudio.prepare(timing());
-    const playbackReady = video.play();
-    await Promise.all([soundReady, playbackReady]);
+    $('preview-sound').disabled = true;
+    $('preview-state').textContent = 'Preparing preview…';
+    $('preview-loader').textContent = 'Preparing preview…'; $('preview-loader').hidden = false;
+    // Unlock sound inside the tap, but do not advance either picture or sound
+    // until both the first decoded frames and the complete PCM mix are ready.
+    const soundReady = previewAudio.prepare(timing(), {signal: controller.signal}).then(() => true).catch(error => {
+      if (error.name === 'AbortError') throw error;
+      if (error.code === 'AUDIO_CLOCK_STALLED' || error.name === 'NotAllowedError') return false;
+      throw error;
+    });
+    const [soundAvailable] = await Promise.all([soundReady, preparePicture(startTime, token, controller)]);
     if (token !== playToken) return;
-    poster.hidden = true;
-    previewAudio.start(getOutputTime(video.currentTime, timing()));
+    previewSoundUnavailable = !soundAvailable;
+    editingStill = false; poster.hidden = true; overlay.hidden = false;
+    paint(startTime);
+    if (soundAvailable) {
+      try {if (previewAudio.start(startTime)) audioStarts++; else previewSoundUnavailable = true;}
+      catch {previewAudio.invalidateClock(); previewSoundUnavailable = true;}
+    }
+    playOrigin = performance.now() - startTime * 1000;
+    lastClockTime = startTime; lastClockAdvance = performance.now();
+    $('preview-loader').hidden = true;
+    updateSoundControl();
+    if (previewSoundUnavailable) showError('Preview sound is unavailable. Your MP4 export will include the sound effects.');
     setPlaying(true); animate(); track('preview_played', metrics());
   } catch (error) {
     if (token !== playToken) return;
-    pause(); showEditorPreview(); seek(timing().duration - 1 / 30);
+    pause(); showEditorPreview();
     showError(error.message || 'Your preview could not play. Please try again.'); trackError(error, 'browser_typing_preview', metrics());
   }
   finally {
     if (previewStarting === token) previewStarting = 0;
     $('play').disabled = !ready || !input.value.trim() || renderBusy || !!previewStarting;
+    updateSoundControl();
   }
 });
-$('preview-sound').addEventListener('click', async () => {
-  try {await previewAudio.setMuted(!previewAudio.muted);}
-  catch (error) {pause(); showError(error.message || 'Tap Play again to enable preview sound.');}
-  const label = previewAudio.muted ? 'Unmute preview sound' : 'Mute preview sound';
+function updateSoundControl() {
+  const label = previewSoundUnavailable ? 'Retry preview sound' : previewAudio.muted ? 'Unmute preview sound' : 'Mute preview sound';
   $('preview-sound').setAttribute('aria-label', label); $('preview-sound').title = label;
-  $('preview-sound').style.opacity = previewAudio.muted ? '.4' : '1';
+  $('preview-sound').style.opacity = previewAudio.muted || previewSoundUnavailable ? '.4' : '1';
+  $('preview-sound').disabled = renderBusy || !!previewStarting;
+}
+$('preview-sound').addEventListener('click', async () => {
+  const token = playToken;
+  try {
+    if (previewSoundUnavailable) {
+      await previewAudio.prepare(timing(), {signal: previewController?.signal});
+      if (token !== playToken) return;
+      if (playing) {
+        const position = Math.min(timing().duration, (performance.now() - playOrigin) / 1000);
+        if (!previewAudio.start(position)) throw new Error('Preview sound could not start.');
+        audioStarts++; lastClockTime = position; lastClockAdvance = performance.now();
+      }
+      previewSoundUnavailable = false; showError('');
+      if (playing) setPlaying(true);
+    } else await previewAudio.setMuted(!previewAudio.muted);
+  } catch (error) {
+    if (token !== playToken || error.name === 'AbortError') return;
+    previewAudio.invalidateClock(); previewSoundUnavailable = true;
+    if (playing) setPlaying(true);
+    showError('Preview sound is unavailable. Your MP4 export will include the sound effects.');
+  }
+  updateSoundControl();
   track('preview_sound_changed', {muted: previewAudio.muted});
 });
-scrubber.addEventListener('input', () => {pause(); editingStill = false; video.hidden = false; seek(Number(scrubber.value));});
-video.addEventListener('ended', () => {pause(); paint(timing().duration - 1 / 30);});
-video.addEventListener('seeked', () => {paint(); if (ready) $('preview-loader').hidden = true;});
+scrubber.addEventListener('input', async () => {
+  const requested = Number(scrubber.value); pause();
+  const token = ++playToken; previewStarting = token;
+  $('play').disabled = true;
+  const controller = new AbortController(); previewController = controller;
+  currentTime = Math.max(0, Math.min(timing().duration - 1 / 30, requested));
+  try {
+    await preparePicture(currentTime, token, controller);
+    if (token !== playToken) return;
+    editingStill = false; poster.hidden = true; paint();
+  } catch (error) {
+    if (token === playToken && error.name !== 'AbortError') {pause(); showError('Your preview could not seek. Tap Play to try again.');}
+  } finally {
+    if (previewStarting === token) previewStarting = 0;
+    $('play').disabled = !ready || !input.value.trim() || renderBusy || !!previewStarting;
+    updateSoundControl();
+  }
+});
 document.addEventListener('visibilitychange', () => {if (document.hidden) {pause(); $('finished-video').pause();}});
 
 function busy(value) {
   renderBusy = value;
   $('export').disabled = value; input.disabled = value; delayInput.disabled = value; speedInput.disabled = value;
+  scrubber.disabled = value || !ready;
   document.querySelectorAll('[data-pace]').forEach(button => {button.disabled = value;});
   updateCustomControl();
   $('play').disabled = value || !ready || !input.value.trim() || !!previewStarting;
+  updateSoundControl();
   $('export').querySelector('span').textContent = value ? 'Exporting…' : 'Export MP4';
 }
 function validate() {
@@ -213,7 +327,7 @@ $('editor-form').addEventListener('submit', async event => {
   showError(''); if (!validate()) return;
   const request = {text: input.value, pace, delay, speed};
   const requestKey = JSON.stringify(request);
-  if (blobUrl && lastExportKey === requestKey) {downloadVideo('export_button'); return;}
+  if (blobUrl && lastExportKey === requestKey) {pause(); $('finished-video').pause(); downloadVideo('export_button'); return;}
   pause(); showEditorPreview(); busy(true); $('render-status').hidden = false;
   $('cancel-export').hidden = false; $('cancel-export').disabled = false;
   $('status-text').textContent = 'Preparing your video…'; $('progress').value = 0;
@@ -241,7 +355,7 @@ $('editor-form').addEventListener('submit', async event => {
     thumbnailContext.drawImage(poster, 0, 0, 540, 960); thumbnailContext.drawImage(overlay, 0, 0, 540, 960);
     finished.poster = thumbnail.toDataURL('image/jpeg', .85); thumbnail.width = 0; thumbnail.height = 0;
     finished.src = blobUrl; finished.hidden = false;
-    video.hidden = true; overlay.hidden = true; $('preview-empty').hidden = true; $('preview-loader').hidden = true; $('preview-controls').hidden = true;
+    overlay.hidden = true; $('preview-empty').hidden = true; $('preview-loader').hidden = true; $('preview-controls').hidden = true;
     $('preview-state').textContent = 'Your finished video';
     $('progress').value = 1;
     track('render_completed', {...lastExport, render_duration_ms: Math.round(performance.now() - started)});
@@ -273,7 +387,7 @@ try {
   tracking = await response.json();
   await poster.decode();
   ready = true; scrubber.disabled = false;
-  showEditorPreview(); seek(timing().duration - 1 / 30); setPlaying(false);
+  showEditorPreview(); setPlaying(false);
   $('preview-loader').hidden = true;
   persist();
 } catch (error) {

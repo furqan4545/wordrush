@@ -9,3 +9,9 @@ await build({
   bundle: true, minify: true, format: 'esm', platform: 'browser', target: ['es2022'],
   legalComments: 'linked', logLevel: 'info',
 });
+await build({
+  entryPoints: [path.join(root, 'ui/browser-typing-preview.js')],
+  outfile: path.join(root, 'public/browser-typing/preview.js'),
+  bundle: true, minify: true, format: 'esm', platform: 'browser', target: ['es2022'],
+  legalComments: 'linked', logLevel: 'info',
+});

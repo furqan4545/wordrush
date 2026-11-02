@@ -75,12 +75,14 @@ function triangle(ctx, image, src, dest) {
 }
 
 let plate;
-export function drawOverlay(ctx, {time, text, pace = 'natural', delay = DEFAULT_DELAY, speed = 1, tracking}) {
+export function drawOverlay(ctx, {time, text, pace = 'natural', delay = DEFAULT_DELAY, speed = 1, tracking, cameraTime, timing: preparedTiming}) {
   ctx.clearRect(0, 0, 1080, 1920);
   if (!tracking) return;
-  const timing = getTiming(text, pace, tracking.duration, delay, speed);
+  const timing = preparedTiming ?? getTiming(text, pace, tracking.duration, delay, speed);
   if (time < timing.focus) return;
-  const sourceTime = getSourceTime(time, timing);
+  // Preview geometry follows the exact decoded frame being presented. Export
+  // callers retain their existing deterministic output-time mapping by default.
+  const sourceTime = Number.isFinite(cameraTime) ? cameraTime : getSourceTime(time, timing);
   const entry = tracking.frames[Math.min(tracking.frames.length - 1, Math.round(sourceTime * tracking.fps))];
   if (!entry?.quad) return;
   const spec = tracking.plane ?? {width: tracking.planeWidth ?? 608, height: tracking.planeHeight ?? 38, textX: tracking.textX ?? 26, baseline: tracking.textBaseline ?? 24, fontSize: tracking.fontSize ?? 13};
