@@ -1,0 +1,125 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {AUDIO_DEFAULTS,normalizeAudioSettings,createAudioPlan,decodeWav,mixAudioPlan,prepareAudio,createPreviewAudio} from '../public/paper-trail/audio.js';
+import {createScene,getDuration} from '../public/paper-trail/engine.js';
+
+const sound=(duration=.56,{sampleRate=48000,channels=2,value=.7}={})=>({sampleRate,numberOfChannels:channels,frames:Math.round(duration*sampleRate),pcm:new Float32Array(Math.round(duration*sampleRate)*channels).fill(value)});
+const sounds={marker:sound(),whoosh:sound(1.72)};
+const sampleAt=(track,time,channel=0)=>track.pcm[Math.round(time*track.sampleRate)*track.numberOfChannels+channel];
+const near=(a,b,tolerance=1e-9)=>assert.ok(Math.abs(a-b)<tolerance,`${a} should equal ${b}`);
+const deferred=()=>{let resolve,reject;const promise=new Promise((a,b)=>{resolve=a;reject=b;});return {promise,resolve,reject};};
+
+class FakeContext {
+  constructor(){this.state='suspended';this.currentTime=12;this.destination={};this.sources=[];this.resumes=0;this.closed=0;}
+  resume(){this.resumes++;this.state='running';return Promise.resolve();}
+  close(){this.closed++;this.state='closed';return Promise.resolve();}
+  addEventListener(){}
+  createGain(){return {gain:{value:1},connect(){},disconnect(){}};}
+  createBuffer(channels,frames,sampleRate){const data=Array.from({length:channels},()=>new Float32Array(frames));return {duration:frames/sampleRate,getChannelData:channel=>data[channel]};}
+  createBufferSource(){const result={connect(){},disconnect(){},start(...args){this.started=args;},stop(){this.stopped=true;}};this.sources.push(result);return result;}
+}
+const tinyTrack=()=>({pcm:new Float32Array(48000*2),frames:48000,sampleRate:48000,numberOfChannels:2,peak:.5});
+
+test('audio defaults and volume bounds preserve explicit mute and zero values',()=>{
+  assert.deepEqual(AUDIO_DEFAULTS,{soundEnabled:true,highlightVolume:.8,whooshVolume:.5});
+  assert.deepEqual(normalizeAudioSettings({soundEnabled:false,highlightVolume:0,whooshVolume:2}),{soundEnabled:false,highlightVolume:0,whooshVolume:1});
+  assert.deepEqual(normalizeAudioSettings({soundEnabled:'false',highlightVolume:NaN,whooshVolume:-4}),{soundEnabled:true,highlightVolume:.8,whooshVolume:0});
+});
+
+test('effect cues use exact shared arrow and mark timing for every mode, shape, pace and frame rate',()=>{
+  for(const mode of ['tilted','crawl','topdown'])for(const highlightShape of ['circle','underline','box'])for(const pace of [1,1.8,4])for(const travel of [.45,.72,.9])for(const frameRate of [30,60]){
+    const raw={lines:['First','','Second','Third'],mode,highlightShape,pace,travel,frameRate};
+    const scene=createScene(raw),plan=createAudioPlan(raw);
+    assert.equal(plan.duration,getDuration(scene.settings));assert.equal(plan.events.length,5);
+    const markers=plan.events.filter(event=>event.type==='marker'),arrows=plan.events.filter(event=>event.type==='whoosh');
+    markers.forEach((event,index)=>{near(event.start,index*pace+pace*(index===0?.05:travel-.025));near(event.duration,pace*Math.min(.19,.98-travel));assert.equal(event.lineIndex,index);});
+    arrows.forEach((event,index)=>{near(event.start,(index+1)*pace);near(event.duration,pace*travel);assert.equal(event.lineIndex,index+1);});
+  }
+});
+
+test('muted and individually disabled effects do not fetch or create PCM',async()=>{
+  assert.equal(await prepareAudio({lines:['One'],soundEnabled:false}),null);
+  assert.equal(await prepareAudio({lines:['One','Two'],highlightVolume:0,whooshVolume:0}),null);
+  assert.deepEqual(createAudioPlan({lines:['One'],highlightVolume:0}).events,[]);
+  assert.deepEqual(createAudioPlan({lines:['One','Two'],whooshVolume:0}).events.map(event=>event.type),['marker','marker']);
+});
+
+test('PCM cues are sample aligned, natural pitch, cropped to windows, and faded at both ends',()=>{
+  const plan={duration:1,events:[{type:'marker',start:.10001,duration:.08,volume:1}]};
+  const track=mixAudioPlan(plan,sounds),start=Math.round(.10001*48000),length=Math.round(.08*48000);
+  assert.equal(track.frames,48000);assert.equal(track.sampleRate,48000);assert.equal(track.numberOfChannels,2);
+  assert.equal(track.pcm[(start-1)*2],0);assert.equal(track.pcm[start*2],0);
+  assert.ok(track.pcm[(start+1)*2]>0);near(track.pcm[(start+200)*2],.7,1e-6);
+  assert.equal(track.pcm[(start+length-1)*2],0);assert.equal(track.pcm[(start+length)*2],0);
+  for(let i=0;i<track.frames;i++)assert.equal(track.pcm[i*2],track.pcm[i*2+1]);
+});
+
+test('short source strokes never repeat or stretch during longer reveals',()=>{
+  const plan={duration:2,events:[{type:'marker',start:.1,duration:1.5,volume:1}]};
+  const track=mixAudioPlan(plan,sounds);
+  assert.ok(sampleAt(track,.3)>.6);assert.equal(sampleAt(track,.7),0);assert.equal(sampleAt(track,1.3),0);
+});
+
+test('mono source resampling stays stereo and overlapping cues cannot clip',()=>{
+  const mono=sound(.2,{sampleRate:24000,channels:1,value:1});
+  const plan={duration:.3,events:[{type:'marker',start:0,duration:.2,volume:1},{type:'whoosh',start:0,duration:.2,volume:1}]};
+  const track=mixAudioPlan(plan,{marker:mono,whoosh:mono});
+  near(track.peak,.98);near(sampleAt(track,.1),.98,1e-6);assert.equal(sampleAt(track,.1,0),sampleAt(track,.1,1));
+  assert.ok(track.pcm.every(Number.isFinite));assert.ok(track.pcm.every(value=>Math.abs(value)<=.980001));
+});
+
+test('prepared assets are the isolated marker stroke and whoosh, stereo48k PCM',async()=>{
+  for(const [name,duration]of [['marker',.56],['whoosh',1.72]]){
+    const bytes=await readFile(new URL(`../public/paper-trail/assets/audio/${name}.wav`,import.meta.url));
+    const audio=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+    assert.equal(audio.sampleRate,48000);assert.equal(audio.numberOfChannels,2);near(audio.frames/audio.sampleRate,duration);
+    const peak=audio.pcm.reduce((max,value)=>Math.max(max,Math.abs(value)),0);
+    assert.ok(peak>.69&&peak<.72,`${name} asset is normalized near-3dB`);
+  }
+});
+
+test('preparation preserves exact rounded export length and cancellation',async()=>{
+  const duration=6.233333333333333,track=await prepareAudio({lines:['One','Two','Three']},{sounds,duration});
+  assert.equal(track.frames,Math.round(duration*48000));assert.equal(track.pcm.length,track.frames*2);
+  const controller=new AbortController();controller.abort();
+  await assert.rejects(prepareAudio({lines:['One']},{sounds,signal:controller.signal}),{name:'AbortError'});
+});
+
+test('preview resumes in the click stack, then takes current visual position after pending preparation',async()=>{
+  const ready=deferred(),clock=new FakeContext(),audio=createPreviewAudio({createContext:()=>clock,prepare:()=>ready.promise});
+  const prepared=audio.prepare({lines:['One']});let position=.12;
+  const starting=audio.start({position:0,getPosition:()=>position,loop:true,duration:1});
+  assert.equal(clock.resumes,1,'resume happens before start returns its promise');
+  assert.equal(clock.sources.length,0);position=.37;ready.resolve(tinyTrack());await prepared;
+  assert.equal(await starting,true);assert.equal(clock.sources.length,1);
+  assert.deepEqual(clock.sources[0].started,[12,.37]);assert.equal(clock.sources[0].loop,true);assert.equal(clock.sources[0].loopStart,0);assert.equal(clock.sources[0].loopEnd,1);
+  clock.currentTime=13.2;near(audio.getTime(),.57);audio.pause();assert.equal(clock.sources[0].stopped,true);audio.dispose();
+});
+
+test('pause invalidates a start waiting for preparation, without a late sound',async()=>{
+  const ready=deferred(),clock=new FakeContext(),audio=createPreviewAudio({createContext:()=>clock,prepare:()=>ready.promise});
+  const prepared=audio.prepare({lines:['One']});const starting=audio.start({position:.1,duration:1});audio.pause();ready.resolve(tinyTrack());await prepared;
+  assert.equal(await starting,false);assert.equal(clock.sources.length,0);audio.dispose();
+});
+
+test('superseded starts cannot stop a newer playing source',async()=>{
+  const clock=new FakeContext(),audio=createPreviewAudio({createContext:()=>clock,prepare:async()=>tinyTrack()});
+  await audio.prepare({lines:['One']});
+  const old=audio.start({position:.1,duration:1}),current=audio.start({position:.4,duration:1});
+  assert.equal(await old,false);assert.equal(await current,true);assert.equal(clock.sources.length,1);assert.deepEqual(clock.sources[0].started,[12,.4,.6]);assert.equal(clock.sources[0].stopped,undefined);audio.dispose();
+});
+
+test('changed preparation retires old playback; failure can retry the same settings',async()=>{
+  const clock=new FakeContext();let calls=0;
+  const audio=createPreviewAudio({createContext:()=>clock,prepare:async()=>{if(++calls===2)throw new Error('temporary');return tinyTrack();}});
+  await audio.prepare({lines:['One']});await audio.start({duration:1});
+  await assert.rejects(audio.prepare({lines:['One','Two']}),/temporary/);assert.equal(clock.sources[0].stopped,true);
+  await audio.prepare({lines:['One','Two']});assert.equal(calls,3);assert.equal(await audio.start({duration:1}),true);audio.dispose();
+});
+
+test('muted preview schedules no source and disposal cancels pending work',async()=>{
+  const clock=new FakeContext(),audio=createPreviewAudio({createContext:()=>clock,prepare:async()=>null});
+  await audio.prepare({lines:['One'],soundEnabled:false});assert.equal(await audio.start({duration:1}),false);assert.equal(clock.sources.length,0);
+  audio.dispose();assert.equal(clock.resumes,0);assert.equal(clock.closed,0);assert.equal(await audio.start({duration:1}),false);
+});

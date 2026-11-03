@@ -96,3 +96,11 @@ Vercel rewrites `/press-events/static/*` and `/press-events/array/*` to the Post
 The prepared SDR Rec.709 movie and camera tracking preserve the Apple-native color conversion approved for the local template. Browser Typing renders H.264/AAC MP4s on the visitor's device, without the local Remotion server or upload of the entered website. Preview and export share timing, perspective and PCM sound code. Per-export generated files from the local development tool are excluded from the public bundle.
 
 Browser Typing downloads the MP4 automatically when export finishes. Export MP4 stays visible and reuses the completed file when its text and settings are unchanged.
+
+## Paper Trail
+
+`/paper-trail/` is the dedicated Paper Trail editor. It shares the Wordrush navigation and branding. Story lines and preview are immediately accessible; Scene, Arrow & highlight, Motion controls, Paper & export, and Sound effects are closed accordions below the player. On phones, Edit lines jumps directly to the text, and Reset settings and Export MP4 remain accessible in the bottom action bar. Reset preserves entered text.
+
+The V6 animation engine preserves the curved arrows, calm following camera, paper sway, independent stroke weights, dotted paths, underline, and centered bracket expansion. Settings use the isolated `wordrush.paper-trail.project.v1` storage key. MP4 export uses the same engine as the preview and runs locally with WebCodecs and Mediabunny. `ui/paper-trail-export.js` builds into the dedicated feature directory. The four `test/paper-trail-*.test.mjs` suites cover geometry, motion, strokes, and highlights.
+
+Paper Trail includes the supplied marker and whoosh effects. A single marker stroke accompanies each highlight; the whoosh starts with each arrow journey. Sound effects and independent highlight/arrow volumes live in a closed panel. Preview and MP4 use the same timed PCM mix, encoded to AAC with the bundled software encoder for Safari compatibility. Original supplied MP3s remain unchanged; asset preparation is documented beside the WAV files.

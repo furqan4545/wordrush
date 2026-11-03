@@ -12,6 +12,8 @@
 
 - [Browser Typing](https://wordrush.ing/browser-typing/): Make realistic Safari website-typing B-roll from a filmed MacBook shot. Enter an exact address, set typing pace, a one-second default pause, and preset or custom whole-video speed. Preview and export a vertical MP4 with synchronized click, typing and Enter sounds. Video generation runs locally in the browser.
 
+- [Paper Trail](https://wordrush.ing/paper-trail/): Animate multiple text lines on paper with a curved arrow and circle, underline, or expanding brackets. Preview and export an MP4 in the browser.
+
 ## How it works
 
 The opening types the query entered by the user. A leading “How to”, optionally followed by a colon or comma, is omitted from the phrase placed in the website montage; it remains in the opening search query. Other phrases are used in full. The limit is eight words after that optional prefix.

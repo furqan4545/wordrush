@@ -38,6 +38,10 @@ test('Wordrush tools use stable feature labels on the same site', () => {
   assert.equal(featureForPath('/words-in-motion/'), 'words_in_motion');
   assert.equal(featureForPath('/browser-typing'), 'browser_typing');
   assert.equal(featureForPath('/browser-typing/'), 'browser_typing');
+  assert.equal(featureForPath('/paper-trail'), 'paper_trail');
+  assert.equal(featureForPath('/paper-trail/'), 'paper_trail');
+  assert.equal(featureForPath('/paper-trail/index.html'), 'paper_trail');
+  assert.equal(featureForPath('/paper-trailing/'), 'site');
   assert.equal(featureForPath('/about.html'), 'about');
   assert.equal(featureForPath('/some-future-page'), 'site');
 });

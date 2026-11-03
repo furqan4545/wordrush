@@ -26,6 +26,7 @@ export function sanitizeElementChain(chain) {
 }
 
 export function featureForPath(pathname = '/') {
+  if (/^\/paper-trail(?:\/|$)/.test(pathname)) return 'paper_trail';
   if (/^\/browser-typing(?:\/|$)/.test(pathname)) return 'browser_typing';
   if (/^\/words-in-motion(?:\/|$)/.test(pathname)) return 'words_in_motion';
   if (pathname === '/' || pathname === '/index.html') return 'fast_cuts';

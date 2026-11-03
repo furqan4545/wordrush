@@ -1,0 +1,11 @@
+/* Shared feature navigation. All four tools remain visible with comfortable taps. */
+.site-header{max-width:1320px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.site-nav{display:flex;align-items:stretch;gap:4px;flex-shrink:0;padding:4px;border:1px solid #b7a7c43b;border-radius:14px;background:#ffffff55;box-shadow:0 2px 12px #684b7905}
+.site-nav a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:9px 14px;border-radius:10px;color:#80718b;text-decoration:none;font-size:12px;font-weight:550;line-height:1.35;white-space:nowrap;transition:background .16s,color .16s,box-shadow .16s}
+.site-nav a:hover{background:#ffffff78;color:#59446d}
+.site-nav a[aria-current=page]{background:#ffffffd9;color:#59446d;box-shadow:0 2px 9px #684b7912}
+.site-nav a:focus-visible{outline:3px solid #ad88d2;outline-offset:2px}
+@media(max-width:900px){.site-header{height:auto;min-height:0;padding:22px 24px 14px;flex-direction:column;align-items:flex-start;gap:16px}.site-nav{align-self:stretch;min-width:0;width:100%;box-sizing:border-box}.site-nav a{flex:1;min-width:0;padding:9px 10px;font-size:12px}}
+@media(max-width:600px){.site-header{padding:20px 16px 12px;gap:14px}.site-nav a{font-size:11px;padding:9px 6px}}
+@media(max-width:480px){.site-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}.site-nav a{font-size:12px;min-height:44px;padding:9px 8px}}
+@media(prefers-reduced-motion:reduce){.site-nav a{transition:none}}

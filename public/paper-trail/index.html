@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5eff8">
+  <title>Paper Trail — Wordrush</title>
+  <meta name="description" content="Create a Paper Trail video with moving arrows, text highlights and paper camera views. Export an MP4 in your browser.">
+  <link rel="canonical" href="https://wordrush.ing/paper-trail/">
+  <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/brand/wordrush-icon-180.png">
+  <meta property="og:site_name" content="Wordrush">
+  <meta property="og:title" content="Paper Trail — Wordrush">
+  <meta property="og:description" content="Give your story a paper trail.">
+  <meta property="og:url" content="https://wordrush.ing/paper-trail/">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="/feature-nav.css">
+  <script type="module" src="/analytics.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#your-lines">Skip to editor</a>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14" stroke-width="3"/></symbol>
+    <symbol id="i-restart" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 1 7M4 4v6h6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 18 19 4M5 4h14v14"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="m11 5-5 4H3v6h3l5 4V5ZM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M9 4v6M15 14v6"/></symbol>
+  </defs></svg>
+  <header class="site-header">
+    <a href="/" class="wordmark" aria-label="Wordrush home"><img src="/brand/wordrush-mark.svg" width="28" height="34" alt="">wordrush<span>.</span></a>
+    <nav class="site-nav" aria-label="Wordrush features"><a href="/">Fast cuts</a><a href="/words-in-motion/">Words in Motion</a><a href="/browser-typing/">Browser Typing</a><a href="/paper-trail/" aria-current="page">Paper Trail</a></nav>
+  </header>
+  <main class="studio">
+    <div class="workspace-heading">
+      <h1 id="editor-title">Give your story<br><em>a paper trail.</em></h1>
+      <div class="workspace-actions">
+        <button id="reset-all" class="header-reset" type="button" title="Reset all settings; keep your text lines" aria-label="Reset all settings"><svg><use href="#i-restart"/></svg><span>Reset settings</span></button>
+        <button id="top-export" class="header-export" type="button">Export MP4 <svg><use href="#i-download"/></svg></button>
+      </div>
+    </div>
+    <div class="workspace">
+      <section id="your-lines" class="editor" aria-label="Story editor">
+      <div class="section-heading"><h2>Your lines</h2><div class="line-heading-actions"><button id="example" class="text-button" type="button">Example</button><button id="preview-lines" class="text-button preview-lines" type="button">Preview ↑</button></div></div>
+      <div id="lines" class="line-list" aria-label="Story lines"></div>
+      <div class="line-tools"><button id="add-line" class="add-line" type="button"><svg><use href="#i-plus"/></svg> Add a line</button><span id="line-count">3 / 20 lines</span></div>
+      <div id="line-error" class="input-error" aria-live="polite"></div>
+
+      </section>
+    <div class="preview-stack">
+    <section class="preview-column" aria-label="Animation preview">
+      <div class="preview-top"><div class="preview-label"><span class="live-dot"></span> Preview</div><a class="edit-lines-link" href="#your-lines">Edit lines <span aria-hidden="true">↗</span></a></div>
+      <div class="preview-stage" id="stage"><div class="stage-grain"></div><div class="canvas-shell" id="canvas-shell"><canvas class="ph-no-capture" id="preview" width="720" height="1280" aria-label="Animated paper showing your story lines"></canvas><button id="canvas-play" class="canvas-play" type="button" aria-label="Play preview"><svg><use href="#i-play"/></svg></button></div><span class="stage-counter"><span id="active-number">01</span> <span>/</span> <span id="total-number">03</span></span></div>
+      <div class="transport"><button id="play" class="play-button" type="button" aria-label="Play preview"><svg><use href="#i-play"/></svg></button><button id="restart" class="icon-button" type="button" aria-label="Restart preview" title="Restart"><svg><use href="#i-restart"/></svg></button><span id="current-time" class="time">0:00.0</span><label class="sr-only" for="seek">Preview position</label><input id="seek" type="range" min="0" max="6.2" value="0" step="0.01"><span id="duration" class="time">0:06.2</span><button id="loop" class="loop-button active" type="button" aria-label="Loop preview" aria-pressed="true" title="Loop preview">↻</button></div>
+      <div id="sequence" class="sequence" aria-label="Jump to a story line"></div>
+    </section>
+      <section class="settings-stack" aria-label="Video settings">
+        <details id="scene-controls" class="scene-controls">
+          <summary><svg><use href="#i-settings"/></svg> Scene & timing <span>+</span></summary>
+          <div class="settings-content">
+            <div class="section-label">Camera view</div>
+      <div id="modes" class="mode-grid" role="group" aria-label="Camera move">
+        <button class="mode-card selected" type="button" data-mode="tilted" aria-pressed="true"><span class="mode-art tilted-art"><span class="mini-page"><i></i><i></i><b></b><i></i><i></i><em>↘</em></span></span><span class="mode-name">Tilted paper</span><span class="mode-check">✓</span></button>
+        <button class="mode-card" type="button" data-mode="crawl" aria-pressed="false"><span class="mode-art crawl-art"><span class="mini-page"><i></i><i></i><b></b><i></i><i></i><em>↘</em></span></span><span class="mode-name">Crawl</span><span class="mode-check">✓</span></button>
+        <button class="mode-card" type="button" data-mode="topdown" aria-pressed="false"><span class="mode-art topdown-art"><span class="mini-page"><i></i><i></i><b></b><i></i><i></i><em>↘</em></span></span><span class="mode-name">Top down</span><span class="mode-check">✓</span></button>
+      </div>
+      <div class="quick-controls">
+        <div class="control-label"><label for="pace">Time per line</label><output id="pace-value" for="pace">1.8 s</output></div><input id="pace" type="range" min="1" max="4" value="1.8" step="0.1">
+        <div class="color-row"><span>Line color</span><div class="swatches" role="group" aria-label="Arrow and highlight color"><button type="button" class="swatch selected" data-color="#d29a31" aria-label="Golden yellow" aria-pressed="true" style="--swatch:#d29a31"></button><button type="button" class="swatch" data-color="#242424" aria-label="Black ink" aria-pressed="false" style="--swatch:#242424"></button><button type="button" class="swatch" data-color="#a44739" aria-label="Terracotta" aria-pressed="false" style="--swatch:#a44739"></button><button type="button" class="swatch" data-color="#46674e" aria-label="Forest green" aria-pressed="false" style="--swatch:#46674e"></button><label class="custom-color" title="Choose a line color"><input id="custom-color" type="color" value="#d29a31" aria-label="Custom line color"><span>+</span></label></div></div>
+      </div><div class="field"><label for="aspect">Video shape</label><select id="aspect"><option value="9:16">Portrait · 9:16</option><option value="1:1">Square · 1:1</option><option value="16:9">Landscape · 16:9</option></select></div>
+          </div>
+        </details>
+      <details id="stroke-controls" class="motion-controls stroke-controls">
+        <summary><svg><use href="#i-settings"/></svg> Arrow & highlight <span>+</span></summary>
+        <fieldset class="motion-group"><legend>Arrow</legend>
+          <div class="motion-field"><div class="control-label"><label for="arrow-width">Arrow thickness</label><output id="arrow-width-value" for="arrow-width">8 px</output></div><input id="arrow-width" type="range" min="1" max="24" value="8" step="1"><div class="range-endpoints"><span>Fine</span><span>Bold</span></div></div>
+          <div class="field"><label for="arrow-style">Arrow style</label><select id="arrow-style"><option value="solid">Solid</option><option value="dotted">Dotted</option></select></div>
+        </fieldset>
+        <fieldset class="motion-group"><legend>Text highlight</legend>
+          <div class="shape-picker" role="group" aria-label="Highlight shape">
+            <button type="button" data-shape="circle" aria-label="Circle highlight" aria-pressed="true" class="selected"><svg viewBox="0 0 36 26"><ellipse cx="18" cy="13" rx="14" ry="8"/></svg><span>Circle</span></button>
+            <button type="button" data-shape="underline" aria-label="Underline highlight" aria-pressed="false"><svg viewBox="0 0 36 26"><path d="M4 14c9-2 16 1 28-1M7 18c8-1 14 1 20-1"/></svg><span>Underline</span></button>
+            <button type="button" data-shape="box" aria-label="Box highlight" aria-pressed="false"><svg viewBox="0 0 36 26"><rect x="10" y="6" width="17" height="14" fill="#e4bb50" stroke="none"/><path d="M10 4H5v18h5M26 4h5v18h-5"/></svg><span>Box</span></button>
+          </div>
+          <div class="motion-field"><div class="control-label"><label id="mark-width-label" for="circle-width">Circle thickness</label><output id="circle-width-value" for="circle-width">7 px</output></div><input id="circle-width" type="range" min="1" max="24" value="7" step="1"><div class="range-endpoints"><span>Fine</span><span>Bold</span></div></div>
+          <div class="field"><label id="mark-style-label" for="circle-style">Circle style</label><select id="circle-style"><option value="solid">Solid</option><option value="dotted">Dotted</option></select></div>
+          <div id="underline-options" hidden><div class="field"><label for="underline-passes">Underline strokes</label><select id="underline-passes"><option value="2">Double stroke</option><option value="1">Single stroke</option></select></div></div>
+          <div id="box-options" hidden>
+            <div class="field"><label for="box-edges">Box edges</label><select id="box-edges"><option value="brackets">Square brackets</option><option value="full">Full box</option></select></div>
+            <label class="fill-toggle"><input id="box-fill" type="checkbox" checked><span>Highlight fill</span></label>
+            <div id="box-fill-options"><div class="field"><label for="highlight-fill">Fill color</label><input id="highlight-fill" type="color" value="#f0ce45" aria-label="Fill color"></div><div class="motion-field"><div class="control-label"><label for="fill-opacity">Fill strength</label><output id="fill-opacity-value" for="fill-opacity">62%</output></div><input id="fill-opacity" type="range" min="0" max="1" value="0.62" step="0.01"></div></div>
+          </div>
+        </fieldset>
+        <div id="dot-spacing-field" class="motion-field" hidden><div class="control-label"><label for="dot-spacing">Dot spacing</label><output id="dot-spacing-value" for="dot-spacing">14 px</output></div><input id="dot-spacing" type="range" min="4" max="40" value="14" step="1"><div class="range-endpoints"><span>Closer</span><span>Further apart</span></div></div>
+      </details>      <details id="motion-controls" class="motion-controls">
+        <summary><svg><use href="#i-settings"/></svg> Motion controls <span>+</span></summary>
+        <div class="motion-toolbar"><button id="preview-move" class="preview-move" type="button"><svg><use href="#i-play"/></svg> Preview move</button></div>
+        <fieldset class="motion-group"><legend>Arrow path</legend>
+          <div class="motion-field"><div class="control-label"><label for="curve">Curve amount</label><output id="curve-value" for="curve">65%</output></div><input id="curve" type="range" min="0" max="1" value="0.65" step="0.01"><div class="range-endpoints"><span>Straight</span><span>More curved</span></div></div>
+          <div class="field"><label for="curve-direction">Curve direction</label><select id="curve-direction"><option value="alternate">Right, then left</option><option value="right">Always right</option><option value="left">Always left</option></select></div>
+          <div class="motion-field"><div class="control-label"><label for="spacing">Arrow travel distance</label><output id="spacing-value" for="spacing">1.15×</output></div><input id="spacing" type="range" min="1" max="1.8" value="1.15" step="0.05"><p class="control-help">Increase for a longer journey between sentences. The minimum keeps one sentence in view.</p></div>
+          <div class="motion-field"><div class="control-label"><label for="travel">Moving time</label><output id="travel-value" for="travel">72%</output></div><input id="travel" type="range" min="0.45" max="0.90" value="0.72" step="0.01"><p class="control-help">Share of each line’s time spent moving. The rest is a reading pause.</p></div>
+        </fieldset>
+        <fieldset class="motion-group"><legend>Start & stop</legend>
+          <div class="motion-field"><div class="control-label"><label for="ease-in">Start easing</label><output id="ease-in-value" for="ease-in">40%</output></div><input id="ease-in" type="range" min="0.1" max="0.75" value="0.4" step="0.01"><div class="range-endpoints"><span>Quick start</span><span>Gentle start</span></div></div>
+          <div class="motion-field"><div class="control-label"><label for="ease-out">Stop easing</label><output id="ease-out-value" for="ease-out">45%</output></div><input id="ease-out" type="range" min="0.1" max="0.75" value="0.45" step="0.01"><div class="range-endpoints"><span>Quick stop</span><span>Gentle stop</span></div></div>
+        </fieldset>
+        <fieldset class="motion-group"><legend>Camera</legend>
+          <div class="motion-field"><div class="control-label"><label for="camera-smooth">Camera smoothing</label><output id="camera-smooth-value" for="camera-smooth">70%</output></div><input id="camera-smooth" type="range" min="0" max="1" value="0.7" step="0.01"><div class="range-endpoints"><span>Direct</span><span>Soft follow</span></div></div>
+          <div class="motion-field"><div class="control-label"><label for="focus-y">Focus height</label><output id="focus-y-value" for="focus-y">50%</output></div><input id="focus-y" type="range" min="0.3" max="0.7" value="0.5" step="0.01"><div class="range-endpoints"><span>Higher</span><span>Lower</span></div></div>
+        </fieldset>
+        <fieldset class="motion-group"><legend>Paper movement</legend>
+          <div class="motion-field"><div class="control-label"><label for="paper-motion">Paper sway</label><output id="paper-motion-value" for="paper-motion">35%</output></div><input id="paper-motion" type="range" min="0" max="1" value="0.35" step="0.01"><div class="range-endpoints"><span>Still</span><span>More movement</span></div></div>
+          <div class="motion-field"><div class="control-label"><label for="paper-speed">Sway speed</label><output id="paper-speed-value" for="paper-speed">0.55×</output></div><input id="paper-speed" type="range" min="0.2" max="1.5" value="0.55" step="0.05"><div class="range-endpoints"><span>Slow</span><span>Faster</span></div></div>
+        </fieldset>
+        <fieldset class="motion-group"><legend>Edge motion blur</legend>
+          <div class="motion-field"><div class="control-label"><label for="edge-blur">Blur strength</label><output id="edge-blur-value" for="edge-blur">35%</output></div><input id="edge-blur" type="range" min="0" max="1" value="0.35" step="0.01"><div class="range-endpoints"><span>Off</span><span>Softer edges</span></div></div>
+          <div class="motion-field"><div class="control-label"><label for="blur-width">Blur width</label><output id="blur-width-value" for="blur-width">28%</output></div><input id="blur-width" type="range" min="0.1" max="0.48" value="0.28" step="0.01"><p class="control-help">Blur stays toward the sides while the camera moves.</p></div>
+        </fieldset>
+        <div class="motion-bottom"><button id="reset-motion" class="text-button" type="button">Reset motion defaults</button></div>
+      </details>      <details id="sound-controls" class="sound-controls">
+        <summary><svg><use href="#i-volume"/></svg> Sound effects <span>+</span></summary>
+        <div class="settings-content sound-content">
+          <label class="sound-toggle"><span>Sound effects</span><input id="sound-enabled" type="checkbox" role="switch" checked><span class="sound-switch" aria-hidden="true"></span></label>
+          <div id="sound-levels">
+            <div class="motion-field"><div class="control-label"><label for="highlight-volume">Highlight sound volume</label><output id="highlight-volume-value" for="highlight-volume">80%</output></div><input id="highlight-volume" type="range" min="0" max="1" value="0.8" step="0.05"><div class="range-endpoints"><span>Off</span><span>Louder</span></div></div>
+            <div class="motion-field"><div class="control-label"><label for="whoosh-volume">Arrow sound volume</label><output id="whoosh-volume-value" for="whoosh-volume">50%</output></div><input id="whoosh-volume" type="range" min="0" max="1" value="0.5" step="0.05"><div class="range-endpoints"><span>Off</span><span>Louder</span></div></div>
+          </div>
+          <p id="sound-status" class="sound-status" role="status" aria-live="polite"></p>
+        </div>
+      </details>
+      <details id="fine-tune"><summary><svg><use href="#i-settings"/></svg> Paper & export <span>+</span></summary><div class="fine-content">
+        <div class="field"><label for="paper">Paper</label><select id="paper"><option value="ivory">Warm ivory</option><option value="white">Clean white</option><option value="aged">Vintage cream</option></select></div>
+        <div class="field"><label for="text-size">Text size</label><div class="range-field"><input id="text-size" type="range" min="36" max="76" step="2" value="54"><output id="text-size-value">54</output></div></div>
+        <div class="field"><label for="texture">Paper texture</label><div class="range-field"><input id="texture" type="range" min="0" max="0.7" step="0.05" value="0.35"><output id="texture-value">35%</output></div></div>
+        <div class="field"><label for="hold">Ending hold</label><select id="hold"><option value="0.8">0.8 seconds</option><option value="1.5">1.5 seconds</option><option value="3">3 seconds</option></select></div>
+        <div class="field"><label for="quality">Export quality</label><select id="quality"><option value="1080">1080p · Full HD</option><option value="720">720p · Smaller file</option></select></div>
+        <div class="field"><label for="frame-rate">Frame rate</label><select id="frame-rate"><option value="60">60 fps · Smoother motion</option><option value="30">30 fps · Smaller file</option></select></div>
+        <button id="reset-look" type="button" class="text-button">Reset the look</button>
+      </div></details>
+      </section>
+    </div>
+    </div>
+    <button id="export" type="button" hidden>Export video</button>
+  </main>
+  <dialog id="export-dialog" aria-labelledby="export-title"><button id="close-export" class="dialog-close icon-button" type="button" aria-label="Close export"><svg><use href="#i-close"/></svg></button><span id="export-eyebrow" class="eyebrow">EXPORTING MP4</span><h2 id="export-title">Exporting your video</h2><p id="export-description">Keep this tab open until export finishes.</p><div class="progress-track"><span id="export-progress"></span></div><div id="export-progress-label" role="status" aria-live="polite">Preparing video…</div><div class="dialog-actions"><button id="cancel-export" class="secondary-button" type="button">Cancel</button><button id="download-export" class="export-button" type="button" hidden><svg><use href="#i-download"/></svg><span>Download MP4</span></button></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <noscript>Enable JavaScript to edit, preview and export your Paper Trail video.</noscript>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
