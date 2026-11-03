@@ -32,6 +32,7 @@
     <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
     <symbol id="i-volume" viewBox="0 0 24 24"><path d="m11 5-5 4H3v6h3l5 4V5ZM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-fullscreen" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/></symbol>
     <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16M9 4v6M15 14v6"/></symbol>
   </defs></svg>
   <header class="site-header">
@@ -50,15 +51,17 @@
 
       </section>
     <div class="preview-stack">
-    <section class="preview-column" aria-label="Animation preview">
-      <div class="preview-top"><h1 id="editor-title">Paper Trail</h1><a class="edit-lines-link" href="#your-lines">Edit lines</a><div class="workspace-actions">
-        <button id="reset-all" class="header-reset" type="button" title="Reset all settings; keep your text lines" aria-label="Reset all settings"><svg><use href="#i-restart"/></svg><span>Reset settings</span></button>
-        <button id="top-export" class="header-export" type="button">Export MP4 <svg><use href="#i-download"/></svg></button>
-      </div></div>
+    <section id="preview-panel" class="preview-column" aria-label="Animation preview">
+      <div class="preview-top"><h1 id="editor-title">Paper Trail</h1><a class="edit-lines-link" href="#your-lines">Edit lines</a><button id="fullscreen-preview" class="fullscreen-button icon-button" type="button" aria-label="Full screen preview" title="Full screen preview"><svg><use href="#i-fullscreen"/></svg></button></div>
       <div class="preview-stage" id="stage"><div class="stage-grain"></div><div class="canvas-shell" id="canvas-shell"><canvas class="ph-no-capture" id="preview" width="720" height="1280" aria-label="Animated paper showing your story lines"></canvas><button id="canvas-play" class="canvas-play" type="button" aria-label="Play preview"><svg><use href="#i-play"/></svg></button></div><span class="stage-counter"><span id="active-number">01</span> <span>/</span> <span id="total-number">03</span></span></div>
-      <div class="transport"><button id="play" class="play-button" type="button" aria-label="Play preview"><svg><use href="#i-play"/></svg></button><button id="restart" class="icon-button" type="button" aria-label="Restart preview" title="Restart"><svg><use href="#i-restart"/></svg></button><span id="current-time" class="time">0:00.0</span><label class="sr-only" for="seek">Preview position</label><input id="seek" type="range" min="0" max="6.2" value="0" step="0.01"><span id="duration" class="time">0:06.2</span><button id="loop" class="loop-button active" type="button" aria-label="Loop preview" aria-pressed="true" title="Loop preview">↻</button></div>
+      <div class="transport"><button id="play" class="play-button" type="button" aria-label="Play preview"><svg><use href="#i-play"/></svg></button><span id="current-time" class="time">0:00.0</span><label class="sr-only" for="seek">Preview position</label><input id="seek" type="range" min="0" max="6.2" value="0" step="0.01"><span id="duration" class="time">0:06.2</span></div>
       <div id="sequence" class="sequence" aria-label="Jump to a story line"></div>
     </section>
+      <div class="control-column">
+<div class="workspace-actions">
+        <button id="reset-all" class="header-reset" type="button" title="Reset all settings; keep your text lines" aria-label="Reset all settings"><svg><use href="#i-restart"/></svg><span>Reset settings</span></button>
+        <button id="top-export" class="header-export" type="button">Export MP4 <svg><use href="#i-download"/></svg></button>
+      </div>
       <section class="settings-stack" aria-label="Video settings">
         <details id="scene-controls" class="scene-controls">
           <summary><svg><use href="#i-settings"/></svg> Scene & timing <span>+</span></summary>
@@ -144,6 +147,7 @@
         <button id="reset-look" type="button" class="text-button">Reset the look</button>
       </div></details>
       </section>
+      </div>
     </div>
     </div>
     <button id="export" type="button" hidden>Export video</button>

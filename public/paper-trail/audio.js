@@ -23,7 +23,7 @@ export function createAudioPlan(raw={}) {
     const timing=getLineTiming(settings,lineIndex);
     if(lineIndex&&audio.whooshVolume>0)events.push({type:'whoosh',lineIndex,start:timing.start,duration:settings.pace*settings.travel,volume:audio.whooshVolume,peakAt:travelPeak});
     if(audio.highlightVolume>0)events.push({type:'marker',lineIndex,
-      start:timing.highlightStart,duration:timing.highlightDuration,volume:audio.highlightVolume,peakAt:.5});
+      start:timing.highlightStart,duration:Math.max(0,timing.end-timing.highlightStart),animationDuration:timing.highlightDuration,volume:audio.highlightVolume,peakAt:.5});
   });
   return {duration:getDuration(settings),sampleRate:SAMPLE_RATE,numberOfChannels:CHANNELS,events:events.sort((a,b)=>a.start-b.start)};
 }
@@ -61,7 +61,7 @@ export function decodeWav(buffer) {
 let soundsPromise;
 async function loadSounds() {
   soundsPromise??=Promise.all(['marker','whoosh'].map(async name=>{
-    const response=await fetch(new URL(`./assets/audio/${name}.wav?v=20261103-sync2`,import.meta.url));
+    const response=await fetch(new URL(`./assets/audio/${name}.wav?v=${name==='marker'?'20261103-native-marker':'20261103-sync2'}`,import.meta.url));
     if(!response.ok)throw new Error('Sound effects could not load. Reload and try again.');
     const sound=decodeWav(await response.arrayBuffer());
     if(!sound.frames)throw new Error('A sound effect is empty. Reload and try again.');
@@ -100,7 +100,7 @@ function mapCuePhase(u,sourcePeak,targetPeak) {
   return clamp((2*x**3-3*x*x+1)*a+(x**3-2*x*x+x)*width*m0+(-2*x**3+3*x*x)*b+(x**3-x*x)*width*m1,0,1);
 }
 
-/** Fit the complete active cue into the exact animation window, with no silent lead or spill. */
+/** Preserve the provided marker at native speed; fit the unchanged whoosh to its travel window. */
 export function mixAudioPlan(plan,sounds,{duration=plan.duration,signal}={}) {
   checkAbort(signal);
   const frames=Math.max(0,Math.round(duration*SAMPLE_RATE));
@@ -111,14 +111,17 @@ export function mixAudioPlan(plan,sounds,{duration=plan.duration,signal}={}) {
     const sound=sounds[event.type];
     if(!sound?.frames)throw new Error('A sound effect is unavailable. Reload and try again.');
     const start=Math.round(event.start*SAMPLE_RATE),targetLength=Math.round(event.duration*SAMPLE_RATE);
-    const length=Math.min(targetLength,frames-start);
+    const nativeMarker=event.type==='marker';
+    const sourceLength=Math.round(sound.frames/sound.sampleRate*SAMPLE_RATE);
+    const length=Math.min(targetLength,frames-start,nativeMarker?sourceLength:Infinity);
     if(length<=0)continue;
     const attack=Math.max(1,Math.min(Math.round(SAMPLE_RATE*.0015),Math.floor(length/4)));
     const release=Math.max(1,Math.min(Math.round(SAMPLE_RATE*.003),Math.floor(length/4)));
     const sourcePeak=cuePeak(sound),targetPeak=clamp(event.peakAt??.5,.05,.95);
     for(let frame=0;frame<length;frame++){
       const phase=targetLength>1?frame/(targetLength-1):0;
-      const sourceFrame=mapCuePhase(phase,sourcePeak,targetPeak)*(sound.frames-1),left=Math.floor(sourceFrame),right=Math.min(sound.frames-1,left+1),fraction=sourceFrame-left;
+      const sourceFrame=nativeMarker?Math.min(sound.frames-1,frame*sound.sampleRate/SAMPLE_RATE):mapCuePhase(phase,sourcePeak,targetPeak)*(sound.frames-1);
+      const left=Math.floor(sourceFrame),right=Math.min(sound.frames-1,left+1),fraction=sourceFrame-left;
       const fadeIn=Math.min(1,frame/attack),fadeOut=Math.min(1,(length-1-frame)/release);
       const gain=event.volume*fadeIn*fadeOut;
       for(let channel=0;channel<CHANNELS;channel++){

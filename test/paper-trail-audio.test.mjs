@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
 import {AUDIO_DEFAULTS,normalizeAudioSettings,createAudioPlan,decodeWav,mixAudioPlan,prepareAudio,createPreviewAudio} from '../public/paper-trail/audio.js';
 import {createScene,getDuration,getLineTiming} from '../public/paper-trail/engine.js';
 
@@ -33,7 +34,7 @@ test('effect cues use exact shared arrow and mark timing for every mode, shape, 
     const scene=createScene(raw),plan=createAudioPlan(raw);
     assert.equal(plan.duration,getDuration(scene.settings));assert.equal(plan.events.length,5);
     const markers=plan.events.filter(event=>event.type==='marker'),arrows=plan.events.filter(event=>event.type==='whoosh');
-    markers.forEach((event,index)=>{const timing=getLineTiming(scene.settings,index);near(event.start,timing.highlightStart);near(event.duration,timing.highlightDuration);assert.equal(event.lineIndex,index);});
+    markers.forEach((event,index)=>{const timing=getLineTiming(scene.settings,index);near(event.start,timing.highlightStart);near(event.duration,timing.end-timing.highlightStart);near(event.animationDuration,timing.highlightDuration);assert.equal(event.lineIndex,index);});
     arrows.forEach((event,index)=>{near(event.start,getLineTiming(scene.settings,index+1).start);near(event.duration,pace*travel);assert.equal(event.lineIndex,index+1);});
   }
 });
@@ -55,10 +56,10 @@ test('PCM cues fill their exact sample-aligned windows and fade at both ends',()
   for(let i=0;i<track.frames;i++)assert.equal(track.pcm[i*2],track.pcm[i*2+1]);
 });
 
-test('complete source strokes stretch into long reveals instead of ending early',()=>{
+test('marker strokes retain native speed and stop at source end in long windows',()=>{
   const plan={duration:2,events:[{type:'marker',start:.1,duration:1.5,volume:1}]};
   const track=mixAudioPlan(plan,sounds);
-  assert.ok(sampleAt(track,.3)>.6);assert.ok(sampleAt(track,.7)>.6);assert.ok(sampleAt(track,1.3)>.6);assert.equal(sampleAt(track,1.6),0);
+  assert.ok(sampleAt(track,.3)>.6);assert.equal(sampleAt(track,.7),0);assert.equal(sampleAt(track,1.3),0);assert.equal(sampleAt(track,1.6),0);
 });
 
 test('mono source resampling stays stereo and overlapping cues cannot clip',()=>{
@@ -135,15 +136,17 @@ test('cleaned real cues are audible within5ms of every event and finish inside e
     const plan=createAudioPlan({lines:['One','Two'],pace,travel,easeIn,easeOut});
     for(const event of [plan.events.find(e=>e.type==='marker'),plan.events.find(e=>e.type==='whoosh')]){
       const track=mixAudioPlan({duration:event.duration+.02,events:[{...event,start:.01}]},assets);
-      const firstFrame=480,lastFrame=firstFrame+Math.round(event.duration*48000),threshold=track.peak*10**(-35/20);
+      const firstFrame=480,windowFrames=Math.round(event.duration*48000);
+      const cueFrames=event.type==='marker'?Math.min(windowFrames,assets.marker.frames):windowFrames;
+      const lastFrame=firstFrame+cueFrames,threshold=track.peak*10**(-35/20);
       let audibleStart=-1,audibleEnd=-1;
       for(let frame=0;frame<track.frames;frame++){
         const amplitude=Math.max(Math.abs(track.pcm[frame*2]),Math.abs(track.pcm[frame*2+1]));
-        if(frame<firstFrame||frame>=lastFrame)assert.equal(amplitude,0,'no cue leaks into a reading pause');
+        if(frame<firstFrame||frame>=lastFrame)assert.equal(amplitude,0,'no cue leaks beyond its permitted window or the next arrow');
         if(amplitude>=threshold){if(audibleStart<0)audibleStart=frame;audibleEnd=frame;}
       }
       assert.ok(audibleStart>=firstFrame&&audibleStart-firstFrame<=240,`${event.type} starts within5ms at pace${pace}/travel${travel}`);
-      assert.ok(audibleEnd<lastFrame&&lastFrame-1-audibleEnd<=576,`${event.type} fills its complete event through the final12ms fade`);
+      assert.ok(audibleEnd<lastFrame&&lastFrame-1-audibleEnd<=576,`${event.type} finishes its natural cue or event window within the final12ms fade`);
     }
   }
 });
@@ -181,4 +184,49 @@ test('preview clock falls back to reported hardware latency without introducing 
   await audio.prepare({lines:['One']});await audio.start({position:.2,duration:1});
   clock.currentTime=12.1;near(audio.getTime(),.25);clock.currentTime=12.3;near(audio.getTime(),.45);
   audio.dispose();
+});
+
+
+test('provided marker PCM plays sample-for-sample at native rate through its full default stroke',async()=>{
+  const bytes=await readFile(new URL('../public/paper-trail/assets/audio/marker.wav',import.meta.url));
+  const marker=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+  const plan=createAudioPlan({lines:['One','Two','Three'],whooshVolume:0,highlightVolume:.8});
+  assert.equal(marker.frames,24629);assert.equal(marker.sampleRate,48000);
+  const track=mixAudioPlan(plan,{marker});
+  for(const event of plan.events){
+    assert.ok(event.duration>marker.frames/marker.sampleRate,'default reading window fits the whole original stroke');
+    assert.equal(event.animationDuration,.342);
+    const start=Math.round(event.start*48000),length=marker.frames,attack=72,release=144;
+    for(let frame=0;frame<length;frame++)for(let channel=0;channel<2;channel++){
+      const gain=event.volume*Math.min(1,frame/attack)*Math.min(1,(length-1-frame)/release);
+      const expected=Math.fround(marker.pcm[frame*2+channel]*gain);
+      assert.equal(track.pcm[(start+frame)*2+channel],expected,'no phase warp, repeat, speed change or pitch conversion');
+    }
+    assert.equal(track.pcm[(start+length)*2],0);
+  }
+});
+
+test('fast marker windows clip the original source at native speed and fade before the next arrow',async()=>{
+  const bytes=await readFile(new URL('../public/paper-trail/assets/audio/marker.wav',import.meta.url));
+  const marker=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+  const plan=createAudioPlan({lines:['One','Two'],pace:1,travel:.9,highlightVolume:1,whooshVolume:0});
+  const track=mixAudioPlan(plan,{marker});
+  for(const event of plan.events){
+    const start=Math.round(event.start*48000),length=Math.round(event.duration*48000);
+    assert.ok(length<marker.frames);near(event.duration,.125);
+    for(let frame=72;frame<length-144;frame++)for(let channel=0;channel<2;channel++)assert.equal(track.pcm[(start+frame)*2+channel],marker.pcm[frame*2+channel]);
+    assert.equal(track.pcm[(start+length-1)*2],0);assert.equal(track.pcm[(start+length)*2],0);
+  }
+});
+
+
+test('approved whoosh PCM remains bit-for-bit unchanged after the native-marker correction',async()=>{
+  const bytes=await readFile(new URL('../public/paper-trail/assets/audio/whoosh.wav',import.meta.url));
+  const whoosh=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+  const fixtures=[{"pace": 1, "travel": 0.45, "easeIn": 0.1, "easeOut": 0.75, "hash": "ebb4dc254898e9653c6309d63e109d9221a422ff659eb714292f0c22c51a2a19"}, {"pace": 1.8, "travel": 0.72, "easeIn": 0.4, "easeOut": 0.45, "hash": "7c3cdc77f269309026ed8a2389f6623d6a1e70bdb9126691b0fb309725616091"}, {"pace": 4, "travel": 0.9, "easeIn": 0.75, "easeOut": 0.1, "hash": "82ff88b709223d6ce0ae3a8bdfb853609cb60e424bbdcc7ba0b7ebcf5e014ae8"}];
+  for(const fixture of fixtures){
+    const plan=createAudioPlan({...fixture,lines:['One','Two','Three'],highlightVolume:0});
+    const track=mixAudioPlan(plan,{whoosh});
+    assert.equal(createHash('sha256').update(new Uint8Array(track.pcm.buffer)).digest('hex'),fixture.hash);
+  }
 });

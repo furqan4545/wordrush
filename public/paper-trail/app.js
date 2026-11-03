@@ -24,7 +24,7 @@ try {
   }
 } catch { /* The editor also works when browser storage is unavailable. */ }
 const canvas = $('preview'), ctx = canvas.getContext('2d', {alpha:false});
-let scene, time = getLineTiming(settings,0).highlightStart+getLineTiming(settings,0).highlightDuration, playing = false, loop = true, lastTick = 0, raf = 0, rebuildTimer;
+let scene, time = getLineTiming(settings,0).highlightStart+getLineTiming(settings,0).highlightDuration, playing = false, loop = false, lastTick = 0, raf = 0, rebuildTimer;
 let exportController, exportResult, resultUrl, exporting = false, lastActive = -2, toastTimer;
 const previewAudio = createPreviewAudio({onInterrupted:()=>{if(playing)pause();}});
 let audioStartRequest=0,audioClockActive=false,audioStarting=false;
@@ -124,7 +124,11 @@ function resizePreview() {
   const stage=$('stage'),style=getComputedStyle(stage);const availW=stage.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight),availH=stage.clientHeight-parseFloat(style.paddingTop)-parseFloat(style.paddingBottom);
   const [w,h]=settings.aspect.split(':').map(Number),width=Math.min(availW,availH*w/h);
   $('canvas-shell').style.width=`${width}px`;$('canvas-shell').style.aspectRatio=`${w} / ${h}`;
+  const raster=isFullscreenPreview()?1080:720;
+  const pixelWidth=w>=h?Math.round(raster*w/h):raster,pixelHeight=w>=h?raster:Math.round(raster*h/w);
+  if(scene&&(canvas.width!==pixelWidth||canvas.height!==pixelHeight)){scene.dispose?.();canvas.width=pixelWidth;canvas.height=pixelHeight;scene=createScene(settings,{width:pixelWidth,height:pixelHeight});draw();}
 }
+
 function rebuild(reset=false) {
   clearTimeout(rebuildTimer);scene?.dispose?.();const [w,h]=settings.aspect.split(':').map(Number);const width=w>=h?Math.round(720*w/h):720,height=w>=h?720:Math.round(720*h/w);
   canvas.width=width;canvas.height=height;scene=createScene(settings,{width,height});time=reset?Math.min(getLineTiming(settings,0).highlightStart+getLineTiming(settings,0).highlightDuration,scene.duration):Math.min(time,scene.duration);lastActive=-2;
@@ -162,14 +166,13 @@ $('frame-rate').addEventListener('change',()=>{settings.frameRate=Number($('fram
 $('preview-move').addEventListener('click',()=>{if(scene.layout.length<2)return;time=Math.max(0,scene.layout[1].start-.2);draw();if(matchMedia('(max-width:620px)').matches)$('stage').scrollIntoView({behavior:'auto',block:'center'});play();});
 $('reset-motion').addEventListener('click',()=>{for(const [,key] of MOTION_FIELDS)settings[key]=DEFAULTS[key];settings.curveDirection=DEFAULTS.curveDirection;settings.frameRate=DEFAULTS.frameRate;syncControls();rebuild(false);save();toast('Motion defaults restored. Your words and timing are kept.');});
 $('reset-look').addEventListener('click',()=>{for(const key of ['paper','textSize','texture','arrowSize','arrowWidth','circleWidth','arrowStyle','circleStyle','dotSpacing','highlightShape','underlinePasses','boxEdges','boxFill','highlightFill','fillOpacity','accent','ink'])settings[key]=DEFAULTS[key];syncControls();rebuild(false);save();toast('Paper and ink reset. Your words are kept.');});
-$('reset-all').addEventListener('click',()=>{pause();const words=[...settings.lines];settings={...normalizeSettings(DEFAULTS),...AUDIO_DEFAULTS,lines:words};quality='1080';loop=true;$('loop').classList.add('active');$('loop').setAttribute('aria-pressed','true');syncControls();rebuild(true);save();toast('All settings reset. Your text lines are kept.');});
+$('reset-all').addEventListener('click',()=>{pause();const words=[...settings.lines];settings={...normalizeSettings(DEFAULTS),...AUDIO_DEFAULTS,lines:words};quality='1080';loop=false;syncControls();rebuild(true);save();toast('All settings reset. Your text lines are kept.');});
 $('sound-enabled').addEventListener('change',()=>{settings.soundEnabled=$('sound-enabled').checked;syncControls();save();preparePreviewAudio();});
 for(const [id,key] of [['highlight-volume','highlightVolume'],['whoosh-volume','whooshVolume']]){
   $(id).addEventListener('input',()=>{settings[key]=Number($(id).value);syncControls();save();previewAudio.pause();clearTimeout(audioPreparationTimer);audioPreparationTimer=setTimeout(preparePreviewAudio,70);});
   $(id).addEventListener('change',preparePreviewAudio);
 }
-$('play').addEventListener('click',toggle);$('canvas-play').addEventListener('click',toggle);$('restart').addEventListener('click',()=>{time=0;draw();previewAudio.pause();if(playing){lastTick=0;startPreviewAudio();}});
-$('loop').addEventListener('click',()=>{loop=!loop;$('loop').classList.toggle('active',loop);$('loop').setAttribute('aria-pressed',loop);previewAudio.pause();if(playing)startPreviewAudio();});
+$('play').addEventListener('click',toggle);$('canvas-play').addEventListener('click',toggle);
 $('seek').addEventListener('input',()=>{pause();time=Number($('seek').value);draw();});
 document.addEventListener('keydown',event=>{if(event.code==='Space'&&!['INPUT','TEXTAREA','SELECT','BUTTON','SUMMARY'].includes(document.activeElement.tagName)&&!$('export-dialog').open){event.preventDefault();toggle();}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&playing)pause();lastTick=0;});
@@ -201,3 +204,44 @@ document.querySelector('.edit-lines-link').addEventListener('click',event=>{even
 
 function fitViewport(){const height=window.visualViewport?.height||window.innerHeight;document.documentElement.style.setProperty('--app-height',`${height}px`);document.body.classList.toggle('viewport-short',height<=520);document.body.classList.toggle('viewport-tiny',height<=380);}
 fitViewport();window.addEventListener('resize',fitViewport);window.visualViewport?.addEventListener('resize',fitViewport);
+
+let fullscreenRestoreFocus=null,fullscreenSiblings=[];
+function isFullscreenPreview(){const panel=$('preview-panel');return document.fullscreenElement===panel||panel.classList.contains('is-fullscreen');}
+function restoreFullscreenSiblings(){for(const [element,previous]of fullscreenSiblings)element.inert=previous;fullscreenSiblings=[];}
+function isolateFullscreenPreview(){
+  restoreFullscreenSiblings();let current=$('preview-panel');
+  while(current?.parentElement&&current.parentElement!==document.documentElement){
+    for(const sibling of current.parentElement.children)if(sibling!==current&&sibling instanceof HTMLElement){fullscreenSiblings.push([sibling,sibling.inert]);sibling.inert=true;}
+    current=current.parentElement;
+  }
+}
+function syncFullscreenPreview(){
+  const active=isFullscreenPreview(),button=$('fullscreen-preview');
+  button.innerHTML=icon(active?'close':'fullscreen');button.setAttribute('aria-label',active?'Exit full screen preview':'Full screen preview');button.setAttribute('aria-pressed',String(active));button.title=active?'Exit full screen (Esc)':'Full screen preview';
+  if(active){isolateFullscreenPreview();button.focus({preventScroll:true});}
+  else{restoreFullscreenSiblings();if(fullscreenRestoreFocus?.isConnected)fullscreenRestoreFocus.focus({preventScroll:true});fullscreenRestoreFocus=null;}
+  resizePreview();draw();
+}
+async function toggleFullscreenPreview(){
+  const panel=$('preview-panel');
+  if(isFullscreenPreview()){
+    if(document.fullscreenElement===panel){await document.exitFullscreen();}
+    else{panel.classList.remove('is-fullscreen');syncFullscreenPreview();}
+    return;
+  }
+  fullscreenRestoreFocus=document.activeElement;
+  try{if(!panel.requestFullscreen||document.fullscreenEnabled===false)throw new Error('Use expanded preview');await panel.requestFullscreen();}
+  catch{panel.classList.add('is-fullscreen');syncFullscreenPreview();}
+}
+$('fullscreen-preview').addEventListener('click',()=>{void toggleFullscreenPreview().catch(()=>toast('Close the expanded preview and try again.'));});
+document.addEventListener('fullscreenchange',syncFullscreenPreview);
+document.addEventListener('keydown',event=>{
+  if(!isFullscreenPreview())return;
+  if(event.key==='Escape'&&!document.fullscreenElement){event.preventDefault();$('preview-panel').classList.remove('is-fullscreen');syncFullscreenPreview();}
+  if(event.key==='Tab'){
+    const controls=[...$('preview-panel').querySelectorAll('button,input,a[href]')].filter(element=>!element.disabled&&!element.hidden&&element.getClientRects().length);
+    const first=controls[0],last=controls.at(-1);
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}
+  }
+});
