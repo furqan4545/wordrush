@@ -11,14 +11,14 @@
   <link rel="apple-touch-icon" href="/brand/wordrush-icon-180.png">
   <meta property="og:site_name" content="Wordrush">
   <meta property="og:title" content="Paper Trail — Wordrush">
-  <meta property="og:description" content="Give your story a paper trail.">
+  <meta property="og:description" content="Create a Paper Trail video with moving arrows and text highlights.">
   <meta property="og:url" content="https://wordrush.ing/paper-trail/">
   <meta property="og:type" content="website">
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="/feature-nav.css">
   <script type="module" src="/analytics.js"></script>
 </head>
-<body>
+<body class="paper-trail-app">
   <a class="skip-link" href="#your-lines">Skip to editor</a>
   <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
     <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
@@ -37,16 +37,11 @@
   <header class="site-header">
     <a href="/" class="wordmark" aria-label="Wordrush home"><img src="/brand/wordrush-mark.svg" width="28" height="34" alt="">wordrush<span>.</span></a>
     <nav class="site-nav" aria-label="Wordrush features"><a href="/">Fast cuts</a><a href="/words-in-motion/">Words in Motion</a><a href="/browser-typing/">Browser Typing</a><a href="/paper-trail/" aria-current="page">Paper Trail</a></nav>
+    <details class="feature-menu"><summary>Paper Trail <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></summary><nav aria-label="Wordrush features"><a href="/">Fast cuts</a><a href="/words-in-motion/">Words in Motion</a><a href="/browser-typing/">Browser Typing</a><a href="/paper-trail/" aria-current="page">Paper Trail</a></nav></details>
   </header>
   <main class="studio">
-    <div class="workspace-heading">
-      <h1 id="editor-title">Give your story<br><em>a paper trail.</em></h1>
-      <div class="workspace-actions">
-        <button id="reset-all" class="header-reset" type="button" title="Reset all settings; keep your text lines" aria-label="Reset all settings"><svg><use href="#i-restart"/></svg><span>Reset settings</span></button>
-        <button id="top-export" class="header-export" type="button">Export MP4 <svg><use href="#i-download"/></svg></button>
-      </div>
-    </div>
     <div class="workspace">
+      <div class="mobile-panel-tabs" role="group" aria-label="Editor panel"><input class="panel-tab-input" type="radio" name="editor-panel" id="panel-lines" checked><label for="panel-lines">Lines</label><input class="panel-tab-input" type="radio" name="editor-panel" id="panel-settings"><label for="panel-settings">Settings</label></div>
       <section id="your-lines" class="editor" aria-label="Story editor">
       <div class="section-heading"><h2>Your lines</h2><div class="line-heading-actions"><button id="example" class="text-button" type="button">Example</button><button id="preview-lines" class="text-button preview-lines" type="button">Preview ↑</button></div></div>
       <div id="lines" class="line-list" aria-label="Story lines"></div>
@@ -56,7 +51,10 @@
       </section>
     <div class="preview-stack">
     <section class="preview-column" aria-label="Animation preview">
-      <div class="preview-top"><div class="preview-label"><span class="live-dot"></span> Preview</div><a class="edit-lines-link" href="#your-lines">Edit lines <span aria-hidden="true">↗</span></a></div>
+      <div class="preview-top"><h1 id="editor-title">Paper Trail</h1><a class="edit-lines-link" href="#your-lines">Edit lines</a><div class="workspace-actions">
+        <button id="reset-all" class="header-reset" type="button" title="Reset all settings; keep your text lines" aria-label="Reset all settings"><svg><use href="#i-restart"/></svg><span>Reset settings</span></button>
+        <button id="top-export" class="header-export" type="button">Export MP4 <svg><use href="#i-download"/></svg></button>
+      </div></div>
       <div class="preview-stage" id="stage"><div class="stage-grain"></div><div class="canvas-shell" id="canvas-shell"><canvas class="ph-no-capture" id="preview" width="720" height="1280" aria-label="Animated paper showing your story lines"></canvas><button id="canvas-play" class="canvas-play" type="button" aria-label="Play preview"><svg><use href="#i-play"/></svg></button></div><span class="stage-counter"><span id="active-number">01</span> <span>/</span> <span id="total-number">03</span></span></div>
       <div class="transport"><button id="play" class="play-button" type="button" aria-label="Play preview"><svg><use href="#i-play"/></svg></button><button id="restart" class="icon-button" type="button" aria-label="Restart preview" title="Restart"><svg><use href="#i-restart"/></svg></button><span id="current-time" class="time">0:00.0</span><label class="sr-only" for="seek">Preview position</label><input id="seek" type="range" min="0" max="6.2" value="0" step="0.01"><span id="duration" class="time">0:06.2</span><button id="loop" class="loop-button active" type="button" aria-label="Loop preview" aria-pressed="true" title="Loop preview">↻</button></div>
       <div id="sequence" class="sequence" aria-label="Jump to a story line"></div>

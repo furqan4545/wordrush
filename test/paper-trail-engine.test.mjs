@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {DEFAULTS, normalizeSettings, getDuration, createScene, getActiveLine} from '../public/paper-trail/engine.js';
+import {DEFAULTS, normalizeSettings, getDuration, createScene, getActiveLine, getLineTiming} from '../public/paper-trail/engine.js';
 
 test('normalization retains complete Unicode text and entered colors', () => {
   const phrase = '한 번의 생각, a new beginning — 你好';
@@ -12,11 +12,11 @@ test('normalization retains complete Unicode text and entered colors', () => {
 
 test('timing includes each phrase and final hold, with stable final selection', () => {
   const scene = createScene({lines: ['One', 'Two', 'Three'], pace: 2, hold: 1.25});
-  assert.equal(getDuration(scene.settings), 7.25);
+  assert.equal(getDuration(scene.settings), 5.96);
   assert.equal(getActiveLine(scene, -2), 0);
-  assert.equal(getActiveLine(scene, 1.99), 0);
-  assert.equal(getActiveLine(scene, 2), 1);
-  assert.equal(getActiveLine(scene, 4), 2);
+  assert.equal(getActiveLine(scene, scene.layout[1].start-.001), 0);
+  assert.equal(getActiveLine(scene, scene.layout[1].start), 1);
+  assert.equal(getActiveLine(scene, scene.layout[2].start), 2);
   assert.equal(getActiveLine(scene, 100), 2);
 });
 
@@ -84,4 +84,19 @@ test('motion controls reject nonnumeric and out-of-range values without introduc
   assert.equal(settings.curveDirection,DEFAULTS.curveDirection);
   assert.equal(settings.cameraSmooth,DEFAULTS.cameraSmooth);
   assert.equal(settings.paperMotion,DEFAULTS.paperMotion);
+});
+
+test('the first reading pause matches every later pause and the ending hold stays unchanged',()=>{
+  for(const pace of [.6,1.8,4,6])for(const travel of [.45,.72,.9])for(const count of [1,2,4,20]){
+    const raw={lines:Array.from({length:count},(_,i)=>`Line ${i+1}`),pace,travel,hold:1.5};
+    const first=getLineTiming(raw,0),firstGap=first.end-first.highlightStart-first.highlightDuration;
+    for(let i=1;i<count;i++){
+      const current=getLineTiming(raw,i),gap=current.end-current.highlightStart-current.highlightDuration;
+      assert.ok(Math.abs(gap-firstGap)<1e-10,'every highlighted line gets the same reading pause');
+      assert.ok(Math.abs(current.start-(i===1?first.end:getLineTiming(raw,i-1).end))<1e-10);
+    }
+    const last=getLineTiming(raw,count-1);
+    assert.ok(Math.abs(getDuration(raw)-last.end-raw.hold)<1e-10,'selected ending hold is preserved');
+    assert.ok(first.end<pace*.7,'opening skips the nonexistent incoming trip');
+  }
 });

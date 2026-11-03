@@ -1,4 +1,4 @@
-import {normalizeSettings, getDuration} from './engine.js';
+import {normalizeSettings, getDuration, getLineTiming} from './engine.js';
 
 export const AUDIO_DEFAULTS = Object.freeze({soundEnabled:true, highlightVolume:0.8, whooshVolume:0.5});
 const SAMPLE_RATE=48000, CHANNELS=2;
@@ -16,11 +16,14 @@ export function normalizeAudioSettings(raw={}) {
 /** Events follow the same line/arrow/reveal timing used by the drawing engine. */
 export function createAudioPlan(raw={}) {
   const settings=normalizeSettings(raw), audio=normalizeAudioSettings(raw), events=[];
+  const easingRatio=settings.easeIn+settings.easeOut>.9?.9/(settings.easeIn+settings.easeOut):1;
+  // The whoosh's strongest RMS section follows the middle of the engine's top-speed plateau.
+  const travelPeak=(settings.easeIn*easingRatio+1-settings.easeOut*easingRatio)/2;
   if(audio.soundEnabled)settings.lines.forEach((_,lineIndex)=>{
-    if(lineIndex&&audio.whooshVolume>0)events.push({type:'whoosh',lineIndex,start:lineIndex*settings.pace,duration:settings.pace*settings.travel,volume:audio.whooshVolume});
+    const timing=getLineTiming(settings,lineIndex);
+    if(lineIndex&&audio.whooshVolume>0)events.push({type:'whoosh',lineIndex,start:timing.start,duration:settings.pace*settings.travel,volume:audio.whooshVolume,peakAt:travelPeak});
     if(audio.highlightVolume>0)events.push({type:'marker',lineIndex,
-      start:lineIndex*settings.pace+settings.pace*(lineIndex===0?.05:settings.travel-.025),
-      duration:settings.pace*Math.min(.19,.98-settings.travel),volume:audio.highlightVolume});
+      start:timing.highlightStart,duration:timing.highlightDuration,volume:audio.highlightVolume,peakAt:.5});
   });
   return {duration:getDuration(settings),sampleRate:SAMPLE_RATE,numberOfChannels:CHANNELS,events:events.sort((a,b)=>a.start-b.start)};
 }
@@ -58,7 +61,7 @@ export function decodeWav(buffer) {
 let soundsPromise;
 async function loadSounds() {
   soundsPromise??=Promise.all(['marker','whoosh'].map(async name=>{
-    const response=await fetch(new URL(`./assets/audio/${name}.wav`,import.meta.url));
+    const response=await fetch(new URL(`./assets/audio/${name}.wav?v=20261103-sync2`,import.meta.url));
     if(!response.ok)throw new Error('Sound effects could not load. Reload and try again.');
     const sound=decodeWav(await response.arrayBuffer());
     if(!sound.frames)throw new Error('A sound effect is empty. Reload and try again.');
@@ -73,7 +76,31 @@ async function abortable(promise,signal) {
   try{return await Promise.race([promise,aborted]);}finally{signal.removeEventListener('abort',cancel);}
 }
 
-/** Natural-pitch clips are trimmed to their animation window and faded, never looped. */
+const cueShapes=new WeakMap();
+function cuePeak(sound) {
+  let peak=cueShapes.get(sound);if(peak!==undefined)return peak;
+  const block=Math.max(1,Math.round(sound.sampleRate*.005));
+  let strongest=-1,weakest=Infinity,at=0;
+  for(let frame=0;frame<sound.frames;frame+=block){
+    const end=Math.min(sound.frames,frame+block);let power=0;
+    for(let i=frame*sound.numberOfChannels;i<end*sound.numberOfChannels;i++)power+=sound.pcm[i]**2;
+    power/=(end-frame)*sound.numberOfChannels;
+    if(power>strongest){strongest=power;at=(frame+end)/2;}weakest=Math.min(weakest,power);
+  }
+  peak=strongest<=0||weakest/strongest>.95?.5:clamp(at/sound.frames,.02,.98);
+  cueShapes.set(sound,peak);return peak;
+}
+function mapCuePhase(u,sourcePeak,targetPeak) {
+  // Monotonic Hermite sections meet with one shared slope: no abrupt playback-rate step.
+  const leftSlope=sourcePeak/targetPeak,rightSlope=(1-sourcePeak)/(1-targetPeak);
+  const middleSlope=2*leftSlope*rightSlope/(leftSlope+rightSlope);
+  const before=u<=targetPeak,width=before?targetPeak:1-targetPeak;
+  const x=before?u/width:(u-targetPeak)/width;
+  const a=before?0:sourcePeak,b=before?sourcePeak:1,m0=before?leftSlope:middleSlope,m1=before?middleSlope:rightSlope;
+  return clamp((2*x**3-3*x*x+1)*a+(x**3-2*x*x+x)*width*m0+(-2*x**3+3*x*x)*b+(x**3-x*x)*width*m1,0,1);
+}
+
+/** Fit the complete active cue into the exact animation window, with no silent lead or spill. */
 export function mixAudioPlan(plan,sounds,{duration=plan.duration,signal}={}) {
   checkAbort(signal);
   const frames=Math.max(0,Math.round(duration*SAMPLE_RATE));
@@ -83,13 +110,15 @@ export function mixAudioPlan(plan,sounds,{duration=plan.duration,signal}={}) {
     checkAbort(signal);
     const sound=sounds[event.type];
     if(!sound?.frames)throw new Error('A sound effect is unavailable. Reload and try again.');
-    const start=Math.round(event.start*SAMPLE_RATE), available=Math.round(sound.frames/sound.sampleRate*SAMPLE_RATE);
-    const length=Math.min(Math.round(event.duration*SAMPLE_RATE),available,frames-start);
+    const start=Math.round(event.start*SAMPLE_RATE),targetLength=Math.round(event.duration*SAMPLE_RATE);
+    const length=Math.min(targetLength,frames-start);
     if(length<=0)continue;
-    const attack=Math.max(1,Math.min(Math.round(SAMPLE_RATE*.003),Math.floor(length/4)));
-    const release=Math.max(1,Math.min(Math.round(SAMPLE_RATE*.012),Math.floor(length/4)));
+    const attack=Math.max(1,Math.min(Math.round(SAMPLE_RATE*.0015),Math.floor(length/4)));
+    const release=Math.max(1,Math.min(Math.round(SAMPLE_RATE*.003),Math.floor(length/4)));
+    const sourcePeak=cuePeak(sound),targetPeak=clamp(event.peakAt??.5,.05,.95);
     for(let frame=0;frame<length;frame++){
-      const sourceFrame=frame*sound.sampleRate/SAMPLE_RATE,left=Math.floor(sourceFrame),right=Math.min(sound.frames-1,left+1),fraction=sourceFrame-left;
+      const phase=targetLength>1?frame/(targetLength-1):0;
+      const sourceFrame=mapCuePhase(phase,sourcePeak,targetPeak)*(sound.frames-1),left=Math.floor(sourceFrame),right=Math.min(sound.frames-1,left+1),fraction=sourceFrame-left;
       const fadeIn=Math.min(1,frame/attack),fadeOut=Math.min(1,(length-1-frame)/release);
       const gain=event.volume*fadeIn*fadeOut;
       for(let channel=0;channel<CHANNELS;channel++){
@@ -113,14 +142,25 @@ export async function prepareAudio(raw={}, {duration,signal,sounds}={}) {
 }
 
 /** One continuous PCM source makes preview seeking and looping match the export. */
-export function createPreviewAudio({createContext,prepare=prepareAudio,onInterrupted,onEnded}={}) {
+export function createPreviewAudio({createContext,prepare=prepareAudio,onInterrupted,onEnded,now=()=>globalThis.performance?.now?.()??0}={}) {
   let context,gain,source,buffer,track,pending=Promise.resolve(),signature,prepareSerial=0,playSerial=0,disposed=false,enabled=false;
-  let anchorTime=0,anchorOffset=0,activeDuration=0,isLoop=false,position=0,previousSessionType,claimedSession=false;
+  let anchorTime=0,anchorOffset=0,activeDuration=0,isLoop=false,position=0,previousSessionType,claimedSession=false,endTimer;
   const releaseSession=()=>{try{const session=globalThis.navigator?.audioSession;if(claimedSession&&session?.type==='playback')session.type=previousSessionType??'auto';}catch{}claimedSession=false;};
   const claimSession=()=>{try{const session=globalThis.navigator?.audioSession;if(session&&!claimedSession){previousSessionType=session.type;if(session.type!=='playback')session.type='playback';claimedSession=true;}}catch{}};
-  const getTime=()=>{if(source&&context){const value=anchorOffset+Math.max(0,context.currentTime-anchorTime);return isLoop&&activeDuration>0?value%activeDuration:Math.min(activeDuration,value);}return position;};
+  const audibleTime=()=>{
+    const current=context.currentTime;
+    try{
+      const stamp=context.getOutputTimestamp?.(),present=now();
+      if(stamp&&Number.isFinite(stamp.contextTime)&&stamp.contextTime>0&&Number.isFinite(stamp.performanceTime)&&stamp.performanceTime>0&&Number.isFinite(present)&&present>=stamp.performanceTime&&present-stamp.performanceTime<1000){
+        return clamp(stamp.contextTime+(present-stamp.performanceTime)/1000,0,current);
+      }
+    }catch{/* Fall back when this browser does not expose its speaker clock. */}
+    const latency=[context.baseLatency,context.outputLatency].reduce((sum,value)=>sum+(Number.isFinite(value)&&value>0?value:0),0);
+    return Math.max(0,current-latency);
+  };
+  const getTime=()=>{if(source&&context){const value=anchorOffset+Math.max(0,audibleTime()-anchorTime);return isLoop&&activeDuration>0?value%activeDuration:Math.min(activeDuration,value);}return position;};
   function stopSource(){
-    position=getTime();if(!source)return;
+    clearTimeout(endTimer);position=getTime();if(!source)return;
     const current=source;source=null;current.onended=null;
     try{current.stop();}catch{}try{current.disconnect();}catch{}
   }
@@ -171,7 +211,11 @@ export function createPreviewAudio({createContext,prepare=prepareAudio,onInterru
         const current=clock.createBufferSource();current.buffer=buffer;current.loop=isLoop;
         if(isLoop){current.loopStart=0;current.loopEnd=activeDuration;}
         current.connect(gain);source=current;anchorTime=clock.currentTime;anchorOffset=position;
-        current.onended=()=>{if(source!==current)return;source=null;position=activeDuration;current.disconnect();releaseSession();onEnded?.();};
+        current.onended=()=>{
+          // The node finishes on the processing clock; keep visuals on the speaker clock through the final output buffer.
+          const finish=()=>{if(source!==current)return;const remaining=activeDuration-getTime();if(remaining>.001){endTimer=setTimeout(finish,Math.max(1,remaining*1000));return;}source=null;position=activeDuration;current.disconnect();releaseSession();onEnded?.();};
+          finish();
+        };
         if(isLoop)current.start(anchorTime,position);else current.start(anchorTime,position,activeDuration-position);
         return true;
       }catch(error){if(serial!==playSerial||disposed)return false;pause();throw error;}

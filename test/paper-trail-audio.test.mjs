@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {AUDIO_DEFAULTS,normalizeAudioSettings,createAudioPlan,decodeWav,mixAudioPlan,prepareAudio,createPreviewAudio} from '../public/paper-trail/audio.js';
-import {createScene,getDuration} from '../public/paper-trail/engine.js';
+import {createScene,getDuration,getLineTiming} from '../public/paper-trail/engine.js';
 
 const sound=(duration=.56,{sampleRate=48000,channels=2,value=.7}={})=>({sampleRate,numberOfChannels:channels,frames:Math.round(duration*sampleRate),pcm:new Float32Array(Math.round(duration*sampleRate)*channels).fill(value)});
 const sounds={marker:sound(),whoosh:sound(1.72)};
@@ -33,8 +33,8 @@ test('effect cues use exact shared arrow and mark timing for every mode, shape, 
     const scene=createScene(raw),plan=createAudioPlan(raw);
     assert.equal(plan.duration,getDuration(scene.settings));assert.equal(plan.events.length,5);
     const markers=plan.events.filter(event=>event.type==='marker'),arrows=plan.events.filter(event=>event.type==='whoosh');
-    markers.forEach((event,index)=>{near(event.start,index*pace+pace*(index===0?.05:travel-.025));near(event.duration,pace*Math.min(.19,.98-travel));assert.equal(event.lineIndex,index);});
-    arrows.forEach((event,index)=>{near(event.start,(index+1)*pace);near(event.duration,pace*travel);assert.equal(event.lineIndex,index+1);});
+    markers.forEach((event,index)=>{const timing=getLineTiming(scene.settings,index);near(event.start,timing.highlightStart);near(event.duration,timing.highlightDuration);assert.equal(event.lineIndex,index);});
+    arrows.forEach((event,index)=>{near(event.start,getLineTiming(scene.settings,index+1).start);near(event.duration,pace*travel);assert.equal(event.lineIndex,index+1);});
   }
 });
 
@@ -45,7 +45,7 @@ test('muted and individually disabled effects do not fetch or create PCM',async(
   assert.deepEqual(createAudioPlan({lines:['One','Two'],whooshVolume:0}).events.map(event=>event.type),['marker','marker']);
 });
 
-test('PCM cues are sample aligned, natural pitch, cropped to windows, and faded at both ends',()=>{
+test('PCM cues fill their exact sample-aligned windows and fade at both ends',()=>{
   const plan={duration:1,events:[{type:'marker',start:.10001,duration:.08,volume:1}]};
   const track=mixAudioPlan(plan,sounds),start=Math.round(.10001*48000),length=Math.round(.08*48000);
   assert.equal(track.frames,48000);assert.equal(track.sampleRate,48000);assert.equal(track.numberOfChannels,2);
@@ -55,10 +55,10 @@ test('PCM cues are sample aligned, natural pitch, cropped to windows, and faded 
   for(let i=0;i<track.frames;i++)assert.equal(track.pcm[i*2],track.pcm[i*2+1]);
 });
 
-test('short source strokes never repeat or stretch during longer reveals',()=>{
+test('complete source strokes stretch into long reveals instead of ending early',()=>{
   const plan={duration:2,events:[{type:'marker',start:.1,duration:1.5,volume:1}]};
   const track=mixAudioPlan(plan,sounds);
-  assert.ok(sampleAt(track,.3)>.6);assert.equal(sampleAt(track,.7),0);assert.equal(sampleAt(track,1.3),0);
+  assert.ok(sampleAt(track,.3)>.6);assert.ok(sampleAt(track,.7)>.6);assert.ok(sampleAt(track,1.3)>.6);assert.equal(sampleAt(track,1.6),0);
 });
 
 test('mono source resampling stays stereo and overlapping cues cannot clip',()=>{
@@ -70,7 +70,7 @@ test('mono source resampling stays stereo and overlapping cues cannot clip',()=>
 });
 
 test('prepared assets are the isolated marker stroke and whoosh, stereo48k PCM',async()=>{
-  for(const [name,duration]of [['marker',.56],['whoosh',1.72]]){
+  for(const [name,duration]of [['marker',24629/48000],['whoosh',66121/48000]]){
     const bytes=await readFile(new URL(`../public/paper-trail/assets/audio/${name}.wav`,import.meta.url));
     const audio=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
     assert.equal(audio.sampleRate,48000);assert.equal(audio.numberOfChannels,2);near(audio.frames/audio.sampleRate,duration);
@@ -122,4 +122,63 @@ test('muted preview schedules no source and disposal cancels pending work',async
   const clock=new FakeContext(),audio=createPreviewAudio({createContext:()=>clock,prepare:async()=>null});
   await audio.prepare({lines:['One'],soundEnabled:false});assert.equal(await audio.start({duration:1}),false);assert.equal(clock.sources.length,0);
   audio.dispose();assert.equal(clock.resumes,0);assert.equal(clock.closed,0);assert.equal(await audio.start({duration:1}),false);
+});
+
+
+test('cleaned real cues are audible within5ms of every event and finish inside each pace/travel window',async()=>{
+  const assets={};
+  for(const name of ['marker','whoosh']){
+    const bytes=await readFile(new URL(`../public/paper-trail/assets/audio/${name}.wav`,import.meta.url));
+    assets[name]=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+  }
+  for(const pace of [1,1.8,4])for(const travel of [.45,.72,.9])for(const [easeIn,easeOut]of [[.1,.75],[.4,.45],[.75,.1]]){
+    const plan=createAudioPlan({lines:['One','Two'],pace,travel,easeIn,easeOut});
+    for(const event of [plan.events.find(e=>e.type==='marker'),plan.events.find(e=>e.type==='whoosh')]){
+      const track=mixAudioPlan({duration:event.duration+.02,events:[{...event,start:.01}]},assets);
+      const firstFrame=480,lastFrame=firstFrame+Math.round(event.duration*48000),threshold=track.peak*10**(-35/20);
+      let audibleStart=-1,audibleEnd=-1;
+      for(let frame=0;frame<track.frames;frame++){
+        const amplitude=Math.max(Math.abs(track.pcm[frame*2]),Math.abs(track.pcm[frame*2+1]));
+        if(frame<firstFrame||frame>=lastFrame)assert.equal(amplitude,0,'no cue leaks into a reading pause');
+        if(amplitude>=threshold){if(audibleStart<0)audibleStart=frame;audibleEnd=frame;}
+      }
+      assert.ok(audibleStart>=firstFrame&&audibleStart-firstFrame<=240,`${event.type} starts within5ms at pace${pace}/travel${travel}`);
+      assert.ok(audibleEnd<lastFrame&&lastFrame-1-audibleEnd<=576,`${event.type} fills its complete event through the final12ms fade`);
+    }
+  }
+});
+
+test('whoosh RMS peak follows the engine top-speed plateau, including asymmetric easing',async()=>{
+  const bytes=await readFile(new URL('../public/paper-trail/assets/audio/whoosh.wav',import.meta.url));
+  const whoosh=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+  for(const [easeIn,easeOut]of [[.1,.75],[.4,.45],[.75,.1]]){
+    const event=createAudioPlan({lines:['One','Two'],easeIn,easeOut}).events.find(e=>e.type==='whoosh');
+    const track=mixAudioPlan({duration:event.duration,events:[{...event,start:0}]},{whoosh});
+    let maxPower=0,peakFrame=0;
+    for(let frame=0;frame<track.frames;frame+=240){
+      const end=Math.min(track.frames,frame+240);let power=0;
+      for(let i=frame*2;i<end*2;i++)power+=track.pcm[i]**2;
+      power/=(end-frame)*2;if(power>maxPower){maxPower=power;peakFrame=(frame+end)/2;}
+    }
+    assert.ok(Math.abs(peakFrame/track.frames-event.peakAt)<.025,'strongest whoosh body tracks fastest arrow motion');
+  }
+});
+
+test('preview clock uses the audible output timestamp and clamps interpolation to render time',async()=>{
+  const clock=new FakeContext();let present=1010;
+  clock.getOutputTimestamp=()=>({contextTime:11.98,performanceTime:1000});
+  const audio=createPreviewAudio({createContext:()=>clock,prepare:async()=>tinyTrack(),now:()=>present});
+  await audio.prepare({lines:['One']});await audio.start({position:.2,duration:1});
+  clock.currentTime=12.1;near(audio.getTime(),.2);
+  present=1070;near(audio.getTime(),.25);
+  present=1300;near(audio.getTime(),.3);
+  audio.dispose();
+});
+
+test('preview clock falls back to reported hardware latency without introducing RAF drift',async()=>{
+  const clock=new FakeContext();clock.baseLatency=.02;clock.outputLatency=.03;
+  const audio=createPreviewAudio({createContext:()=>clock,prepare:async()=>tinyTrack()});
+  await audio.prepare({lines:['One']});await audio.start({position:.2,duration:1});
+  clock.currentTime=12.1;near(audio.getTime(),.25);clock.currentTime=12.3;near(audio.getTime(),.45);
+  audio.dispose();
 });

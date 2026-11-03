@@ -64,7 +64,21 @@ export function normalizeSettings(raw = {}) {
     frameRate: Number(raw.frameRate) === 30 ? 30 : 60,
   };
 }
-export function getDuration(raw = DEFAULTS) {const s = normalizeSettings(raw); return Math.max(0.6, s.lines.length * s.pace + s.hold);}
+/** The opening has no incoming journey, so it only needs a reveal and the same reading pause as later lines. */
+export function getLineTiming(raw = DEFAULTS, index = 0) {
+  const s=normalizeSettings(raw),i=Math.max(0,Math.floor(index));
+  const highlightDuration=s.pace*Math.min(.19,.98-s.travel);
+  const readingPause=s.pace*(1-s.travel+.025)-highlightDuration;
+  const firstHighlightStart=s.pace*.05;
+  const openingDuration=firstHighlightStart+highlightDuration+readingPause;
+  const start=i===0?0:openingDuration+(i-1)*s.pace;
+  const highlightStart=i===0?firstHighlightStart:start+s.pace*(s.travel-.025);
+  return {start,highlightStart,highlightDuration,readingPause,end:i===0?openingDuration:start+s.pace};
+}
+export function getDuration(raw = DEFAULTS) {
+  const s=normalizeSettings(raw);
+  return Math.max(.6,(s.lines.length?getLineTiming(s,s.lines.length-1).end:0)+s.hold);
+}
 
 let measureContext;
 function makeCanvas(width, height) {
@@ -126,7 +140,8 @@ export function createScene(raw = DEFAULTS, options = {}) {
     const phraseHeight = size * 1.25 + (rows.length - 1) * lineHeight;
     // Each sentence returns to the same reading column after the curved journey.
     const x = 0; const y = 0;
-    return {index, text, rows, widths, x, y, width: phraseWidth, height: phraseHeight, lineHeight, rx: phraseWidth / 2 + 27, ry: phraseHeight / 2 + 12, start: index * settings.pace};
+    const timing=getLineTiming(settings,index);
+    return {index, text, rows, widths, x, y, width: phraseWidth, height: phraseHeight, lineHeight, rx: phraseWidth / 2 + 27, ry: phraseHeight / 2 + 12, start:timing.start,highlightStart:timing.highlightStart,highlightDuration:timing.highlightDuration};
   });
   let framing = frameForLayout(settings, layout, width, height);
   // Give wrapped underlines their own inter-line space, including the selected
@@ -206,7 +221,7 @@ export function createScene(raw = DEFAULTS, options = {}) {
   return scene;
 }
 
-export function getActiveLine(scene, time) {return scene.layout.length ? clamp(Math.floor(Math.max(0, time) / scene.settings.pace), 0, scene.layout.length - 1) : -1;}
+export function getActiveLine(scene,time) {if(!scene.layout.length)return -1;for(let i=scene.layout.length-1;i>0;i--)if(time>=scene.layout[i].start)return i;return 0;}
 
 function modeAngles(mode) {
   return {rotation: mode === 'tilted' ? -0.20 : mode === 'crawl' ? -0.035 : 0,
@@ -462,8 +477,7 @@ export function getHighlightPaths(scene, item) {
 }
 function highlightProgress(scene, item, time) {
   const {settings} = scene;
-  const start = item.start + (item.index === 0 ? settings.pace * 0.05 : settings.pace * (settings.travel - 0.025));
-  return smoother((time - start) / (settings.pace * Math.min(0.19, 0.98 - settings.travel)));
+  return smoother((time-item.highlightStart)/item.highlightDuration);
 }
 /** The already-eased reveal moves complete bracket marks apart around one fixed centre. */
 export function getBoxReveal(scene, item, progress) {

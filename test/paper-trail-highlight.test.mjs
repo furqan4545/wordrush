@@ -229,7 +229,7 @@ test('selected shapes fit the view and preserve one-sentence framing throughout 
     const [a,b]=aspect.split(':').map(Number),scene=createScene({lines,highlightShape:shape,mode,aspect,pace:2.4,paperMotion:.35,boxEdges:'full'},{width:a>=b?720*a/b:720,height:a>=b?720:720*b/a});
     const geometry=item=>[...pathsFor(scene,item).flat(),...[-1,1].flatMap(sx=>[-1,1].map(sy=>({x:item.x+sx*item.width/2,y:item.y+sy*item.height/2})))];
     for(let i=0;i<scene.layout.length;i++){
-      const time=i*scene.settings.pace+scene.settings.pace*.94,bounds=bbox(geometry(scene.layout[i]).map(p=>projectPoint(scene,time,p)));
+      const time=i===0?scene.layout[1].start*.95:scene.layout[i].start+scene.settings.pace*.94,bounds=bbox(geometry(scene.layout[i]).map(p=>projectPoint(scene,time,p)));
       assert.ok(bounds.left>=scene.width*.02&&bounds.right<=scene.width*.98&&bounds.top>=scene.height*.02&&bounds.bottom<=scene.height*.98,`${shape}/${mode}/${aspect}: full highlight must remain safely visible`);
     }
     for(let step=0;step<=72;step++){

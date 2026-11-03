@@ -1,4 +1,4 @@
-import {AudioSample, AudioSampleSource, BufferTarget, CanvasSource, Mp4OutputFormat, Output, Quality, canEncodeAudio, canEncodeVideo} from 'mediabunny';
+import {AudioSample, AudioSampleSource, BufferTarget, CanvasSource, EncodedAudioPacketSource, Mp4OutputFormat, NullTarget, Output, Quality, canEncodeAudio, canEncodeVideo} from 'mediabunny';
 import {registerAacEncoder} from '@mediabunny/aac-encoder';
 // The animation engine is shared by the live preview and the finished video.
 // The build keeps this relative import external beside public/paper-trail/export.js.
@@ -56,6 +56,73 @@ export async function getExportSupport(settings = {}, {quality = '1080'} = {}) {
         : 'This browser could not export at 1080p. Choose 720p, or try the latest Chrome, Edge, or Safari.'};
 }
 
+// This installed software encoder wraps FFmpeg's AAC-LC encoder, whose initial_padding is 1024 samples:
+// https://www.ffmpeg.org/doxygen/8.1/aacenc_8c_source.html
+// aac-encoder 1.61.3 discards the worker's negative pts and starts packet timestamps at zero.
+// Preserve every encoded priming packet, then let the MP4 edit list exclude its negative presentation interval.
+const AAC_PRIMING_SAMPLES = 1024;
+
+/** Encode the unchanged PCM once and retain its decoder warmup outside the visible video timeline. */
+export async function encodeAacForTimeline(audio, {signal} = {}) {
+  abortIfNeeded(signal);
+  if (!registeredAudio) {registerAacEncoder(); registeredAudio = true;}
+  const quality = new Quality({bitrate: 160_000});
+  if (!await canEncodeAudio('aac', {sampleRate: audio.sampleRate, numberOfChannels: audio.numberOfChannels, quality})) {
+    throw unsupported('The sound encoder could not start. Turn off Sound effects or try a current browser.');
+  }
+  abortIfNeeded(signal);
+  const packets = [];
+  let inputFrames = 0, bytes = 0, endFrame = 0, decoderConfig, encoderOutput, source;
+  try {
+    // NullTarget is Mediabunny's public encoder-events path. Only AAC bytes are retained, never a second movie.
+    encoderOutput = new Output({format: new Mp4OutputFormat({fastStart: false}), target: new NullTarget()});
+    source = new AudioSampleSource({codec: 'aac', quality, onEncodedPacket: (packet, metadata) => {
+      const packetFrames = Math.round(packet.duration * audio.sampleRate);
+      if (packetFrames !== AAC_PRIMING_SAMPLES) {
+        throw Object.assign(new Error('The sound encoder returned an unexpected frame size.'), {code: 'AUDIO_ENCODING_FAILED'});
+      }
+      const startFrame = Math.round(packet.timestamp * audio.sampleRate) - AAC_PRIMING_SAMPLES;
+      if (startFrame >= audio.frames) return; // Extra flush padding has no presentation interval.
+      const frames = Math.min(packetFrames, audio.frames - startFrame);
+      const aligned = packet.clone({timestamp: startFrame / audio.sampleRate, duration: frames / audio.sampleRate});
+      packets.push({packet: aligned, metadata});
+      bytes += aligned.data.byteLength;
+      endFrame = Math.max(endFrame, startFrame + frames);
+      if (metadata?.decoderConfig) decoderConfig = metadata.decoderConfig;
+    }});
+    encoderOutput.addAudioTrack(source);
+    await encoderOutput.start();
+    for (let start = 0; start < audio.frames; start += 4096) {
+      abortIfNeeded(signal);
+      const end = Math.min(start + 4096, audio.frames);
+      const sample = new AudioSample({
+        // Own each chunk buffer: avoids the 1.61.3 PCM offset bridge bug without removing samples.
+        data: audio.pcm.slice(start * audio.numberOfChannels, end * audio.numberOfChannels),
+        format: 'f32', sampleRate: audio.sampleRate, numberOfChannels: audio.numberOfChannels,
+        timestamp: start / audio.sampleRate,
+      });
+      try {await source.add(sample);} finally {sample.close();}
+      inputFrames = end;
+    }
+    abortIfNeeded(signal);
+    source.close();
+    await encoderOutput.finalize();
+    abortIfNeeded(signal);
+    if (!(inputFrames === audio.frames && packets.length > 1 && bytes > 0 && endFrame === audio.frames
+      && decoderConfig?.numberOfChannels === audio.numberOfChannels
+      && decoderConfig?.sampleRate === audio.sampleRate && decoderConfig?.description?.byteLength > 0)) {
+      throw Object.assign(new Error('Sound effects could not be included. Please export again.'), {code: 'AUDIO_ENCODING_FAILED'});
+    }
+    return {packets, bytes, end: endFrame / audio.sampleRate, primingSamples: AAC_PRIMING_SAMPLES};
+  } catch (error) {
+    if (encoderOutput && encoderOutput.state !== 'finalized' && encoderOutput.state !== 'canceled') await encoderOutput.cancel().catch(() => {});
+    abortIfNeeded(signal);
+    throw error;
+  } finally {
+    try {source?.close();} catch { /* Already finalized or canceled. */ }
+  }
+}
+
 /**
  * Render every 30/60fps frame at a deterministic timestamp, then mux H.264 video with optional synchronized AAC effects.
  * Progress callbacks receive {progress: 0..1, stage, frame?, totalFrames?}.
@@ -91,14 +158,8 @@ export async function exportVideo(rawSettings, {quality = '1080', onProgress, si
     progress(.01, 'Preparing sound effects');
     const audio = await prepareAudio(settings, {duration: exportedDuration, signal});
     abortIfNeeded(signal);
-    const audioQuality = new Quality({bitrate: 160_000});
-    if (audio) {
-      // Match Wordrush's software AAC path; WebKit native AAC may emit invalid descriptions.
-      if (!registeredAudio) {registerAacEncoder(); registeredAudio = true;}
-      if (!await canEncodeAudio('aac', {sampleRate: audio.sampleRate, numberOfChannels: audio.numberOfChannels, quality: audioQuality})) {
-        throw unsupported('The sound encoder could not start. Turn off Sound effects or try a current browser.');
-      }
-    }
+    // Keep the software AAC description valid on Safari, and account for its encoder priming in the container.
+    const encodedAudio = audio ? await encodeAacForTimeline(audio, {signal}) : null;
     abortIfNeeded(signal);
     const {width, height} = support;
     canvas = typeof OffscreenCanvas !== 'undefined'
@@ -115,15 +176,9 @@ export async function exportVideo(rawSettings, {quality = '1080', onProgress, si
       keyFrameInterval: 2, alpha: 'discard',
     });
     output.addVideoTrack(source, {frameRate: fps});
-    let audioFrame = 0, audioPackets = 0, audioBytes = 0, audioPacketEnd = 0, audioConfig;
-    if (audio) {
-      audioSource = new AudioSampleSource({codec: 'aac', quality: audioQuality,
-        onEncodedPacket: (packet, metadata) => {
-          audioPackets++; audioBytes += packet.data.byteLength;
-          audioPacketEnd = Math.max(audioPacketEnd, packet.timestamp + packet.duration);
-          if (metadata?.decoderConfig) audioConfig = metadata.decoderConfig;
-        },
-      });
+    let audioPacketIndex = 0;
+    if (encodedAudio) {
+      audioSource = new EncodedAudioPacketSource('aac');
       output.addAudioTrack(audioSource);
     }
     output.setMetadataTags({title: 'Paper Trail', comment: 'Created with Wordrush Paper Trail.'});
@@ -133,17 +188,12 @@ export async function exportVideo(rawSettings, {quality = '1080', onProgress, si
       abortIfNeeded(signal);
       renderFrame(context, scene, frame / fps);
       await source.add(frame / fps, 1 / fps);
-      if (audio) {
-        const end = Math.min(audio.frames, Math.round((frame + 1) / fps * audio.sampleRate));
-        if (end > audioFrame) {
-          const sample = new AudioSample({
-            // Chunks own their buffers to avoid the Mediabunny1.61.3 offset bridge bug.
-            data: audio.pcm.slice(audioFrame * audio.numberOfChannels, end * audio.numberOfChannels),
-            format: 'f32', sampleRate: audio.sampleRate, numberOfChannels: audio.numberOfChannels,
-            timestamp: audioFrame / audio.sampleRate,
-          });
-          try {await audioSource.add(sample);} finally {sample.close();}
-          audioFrame = end;
+      if (encodedAudio) {
+        const frameEnd = (frame + 1) / fps;
+        while (audioPacketIndex < encodedAudio.packets.length
+          && encodedAudio.packets[audioPacketIndex].packet.timestamp < frameEnd) {
+          const {packet, metadata} = encodedAudio.packets[audioPacketIndex++];
+          await audioSource.add(packet, metadata);
         }
       }
       if (frame % 2 === 0 || frame === frameCount - 1) {
@@ -157,11 +207,8 @@ export async function exportVideo(rawSettings, {quality = '1080', onProgress, si
     progress(0.97, 'Finishing your MP4');
     await output.finalize();
     abortIfNeeded(signal);
-    if (audio && !(audioFrame >= audio.frames - 1 && audioPackets > 0 && audioBytes > 0
-      && audioPacketEnd >= exportedDuration - .05
-      && audioConfig?.numberOfChannels === audio.numberOfChannels
-      && audioConfig?.sampleRate === audio.sampleRate && audioConfig?.description?.byteLength > 0)) {
-      throw Object.assign(new Error('Sound effects could not be included. Please export again.'), {code:'AUDIO_ENCODING_FAILED'});
+    if (encodedAudio && audioPacketIndex !== encodedAudio.packets.length) {
+      throw Object.assign(new Error('Sound effects could not be included. Please export again.'), {code: 'AUDIO_ENCODING_FAILED'});
     }
     if (!target.buffer?.byteLength) throw new Error('The MP4 could not be finished. Please try exporting again.');
     const blob = new Blob([target.buffer], {type: 'video/mp4'});
@@ -169,7 +216,7 @@ export async function exportVideo(rawSettings, {quality = '1080', onProgress, si
     const mode = String(settings.mode).replace(/[^a-z0-9-]/g, '') || 'paper';
     progress(1, 'Your video is ready', {frame: frameCount, totalFrames: frameCount});
     return {blob, filename: `paper-trail-${mode}-${stamp}.mp4`, width, height, duration: exportedDuration, fps, hasAudio: Boolean(audio),
-      audio: audio ? {codec: 'aac', sampleRate: audio.sampleRate, channels: audio.numberOfChannels, peak: audio.peak, packets: audioPackets, bytes: audioBytes, end: audioPacketEnd} : null};
+      audio: audio ? {codec: 'aac', sampleRate: audio.sampleRate, channels: audio.numberOfChannels, peak: audio.peak, packets: encodedAudio.packets.length, bytes: encodedAudio.bytes, end: encodedAudio.end, primingSamples: encodedAudio.primingSamples} : null};
   } catch (error) {
     if (output && output.state !== 'finalized' && output.state !== 'canceled') await output.cancel().catch(() => {});
     abortIfNeeded(signal);

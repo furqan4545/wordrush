@@ -1,4 +1,4 @@
-import {DEFAULTS, normalizeSettings, getDuration, createScene, renderFrame, getActiveLine} from './engine.js';
+import {DEFAULTS, normalizeSettings, getDuration, createScene, renderFrame, getActiveLine, getLineTiming} from './engine.js';
 import {track, trackError, textMetrics} from '/analytics.js';
 import {AUDIO_DEFAULTS, normalizeAudioSettings, createPreviewAudio} from './audio.js';
 const $ = id => document.getElementById(id);
@@ -24,9 +24,10 @@ try {
   }
 } catch { /* The editor also works when browser storage is unavailable. */ }
 const canvas = $('preview'), ctx = canvas.getContext('2d', {alpha:false});
-let scene, time = 0.8, playing = false, loop = true, lastTick = 0, raf = 0, rebuildTimer;
+let scene, time = getLineTiming(settings,0).highlightStart+getLineTiming(settings,0).highlightDuration, playing = false, loop = true, lastTick = 0, raf = 0, rebuildTimer;
 let exportController, exportResult, resultUrl, exporting = false, lastActive = -2, toastTimer;
 const previewAudio = createPreviewAudio({onInterrupted:()=>{if(playing)pause();}});
+let audioStartRequest=0,audioClockActive=false,audioStarting=false;
 let audioGeneration = 0, audioPreparationFailed = false, audioPreparationTimer;
 const icon = name => `<svg aria-hidden="true"><use href="#i-${name}"/></svg>`;
 const stamp = value => {const n=Math.max(0,value);return `${Math.floor(n/60)}:${Math.floor(n%60).toString().padStart(2,'0')}.${Math.floor((n%1)*10)}`;};
@@ -35,14 +36,18 @@ function storyMetrics(){return {...textMetrics(settings.lines.join(' ')),line_co
 function save() {try {localStorage.setItem(STORAGE,JSON.stringify({version:1,settings,quality}));}catch { /* Do not interrupt editing for storage. */ }}
 function audioStatus(message='') {$('sound-status').textContent=message;}
 function startPreviewAudio() {
+  const request=++audioStartRequest;
+  audioClockActive=false;audioStarting=false;
   if(!playing||!settings.soundEnabled||(settings.highlightVolume<=0&&settings.whooshVolume<=0))return;
-  const generation=audioGeneration;
-  // Call start inside the gesture; the audio module resumes its context before waiting.
+  const generation=audioGeneration;audioStarting=true;
+  // Resume synchronously in the gesture, then run both picture and sound from the heard-audio clock.
   void previewAudio.start({position:time,loop,duration:scene.duration,getPosition:()=>time}).then(started=>{
-    if(generation!==audioGeneration||!playing)return;
+    if(request!==audioStartRequest||generation!==audioGeneration||!playing)return;
+    audioStarting=false;audioClockActive=started;lastTick=0;
     if(!started&&settings.soundEnabled)audioStatus('Sound preview is unavailable. Try playing again.');
   }).catch(error=>{
-    if(generation!==audioGeneration||!playing)return;
+    if(request!==audioStartRequest||generation!==audioGeneration||!playing)return;
+    audioStarting=false;audioClockActive=false;lastTick=0;
     audioStatus('Sound preview is unavailable. Try playing again.');
     trackError(error,'paper_trail_audio_preview');
   });
@@ -51,7 +56,7 @@ function preparePreviewAudio() {
   clearTimeout(audioPreparationTimer);
   const generation=++audioGeneration;
   audioPreparationFailed=false;
-  previewAudio.pause();
+  audioStartRequest++;audioClockActive=false;audioStarting=false;previewAudio.pause();
   audioStatus(settings.soundEnabled?'Preparing sound effects…':'');
   const snapshot={...settings,lines:[...settings.lines]};
   void previewAudio.prepare(snapshot).then(()=>{
@@ -65,14 +70,14 @@ function preparePreviewAudio() {
   if(playing)startPreviewAudio();
 }
 function fillRange(input) {const p=(Number(input.value)-Number(input.min))/(Number(input.max)-Number(input.min))*100;input.style.background=`linear-gradient(to right,var(--purple) ${p}%,var(--range-track) ${p}%)`;}
-function resizeInput(input) {input.style.height='20px';input.style.height=`${Math.max(46,input.scrollHeight)}px`;}
+function resizeInput(input) {input.style.height='28px';}
 function editLine(index,value) {settings.lines[index]=value;clearTimeout(rebuildTimer);rebuildTimer=setTimeout(()=>rebuild(false),100);save();}
 function renderLines(focusIndex) {
   const fragment=document.createDocumentFragment();
   settings.lines.forEach((value,index)=>{
     const row=document.createElement('div');row.className='line-row';row.dataset.index=index;
     const number=document.createElement('span');number.className='line-number';number.textContent=String(index+1).padStart(2,'0');number.setAttribute('aria-hidden','true');
-    const input=document.createElement('textarea');input.value=value;input.rows=1;input.maxLength=220;input.placeholder=index===0?'First line…':'Next line…';input.setAttribute('aria-label',`Story line ${index+1}`);
+    const input=document.createElement('textarea');input.value=value;input.rows=1;input.wrap='off';input.maxLength=220;input.placeholder=index===0?'First line…':'Next line…';input.setAttribute('aria-label',`Story line ${index+1}`);
     input.addEventListener('input',()=>{resizeInput(input);editLine(index,input.value);});
     input.addEventListener('paste',event=>{
       const text=event.clipboardData?.getData('text/plain');
@@ -122,18 +127,18 @@ function resizePreview() {
 }
 function rebuild(reset=false) {
   clearTimeout(rebuildTimer);scene?.dispose?.();const [w,h]=settings.aspect.split(':').map(Number);const width=w>=h?Math.round(720*w/h):720,height=w>=h?720:Math.round(720*h/w);
-  canvas.width=width;canvas.height=height;scene=createScene(settings,{width,height});time=reset?Math.min(.8,scene.duration):Math.min(time,scene.duration);lastActive=-2;
+  canvas.width=width;canvas.height=height;scene=createScene(settings,{width,height});time=reset?Math.min(getLineTiming(settings,0).highlightStart+getLineTiming(settings,0).highlightDuration,scene.duration):Math.min(time,scene.duration);lastActive=-2;
   $('seek').max=scene.duration;$('duration').textContent=stamp(scene.duration);$('total-number').textContent=String(scene.layout.length).padStart(2,'0');$('export').disabled=scene.layout.length===0||exporting;
   $('top-export').disabled=scene.layout.length===0||exporting;
   $('preview-move').disabled=scene.layout.length<2||exporting;
   $('line-error').textContent=!scene.layout.length?'Add a line to begin your story.':settings.lines.some(v=>!v.trim())?'Empty lines are skipped in your video.':'';
-  const fragment=document.createDocumentFragment();scene.layout.forEach((item,i)=>{const b=document.createElement('button');b.type='button';b.className='sequence-item';b.setAttribute('aria-label',`Jump to line ${i+1}: ${item.text}`);const n=document.createElement('span');n.textContent=String(i+1).padStart(2,'0');const text=document.createElement('b');text.textContent=item.text;b.append(n,text);b.addEventListener('click',()=>{pause();time=Math.min(i*settings.pace+settings.pace*.98,scene.duration);draw();});fragment.append(b);});$('sequence').replaceChildren(fragment);resizePreview();draw();preparePreviewAudio();
+  const fragment=document.createDocumentFragment();scene.layout.forEach((item,i)=>{const b=document.createElement('button');b.type='button';b.className='sequence-item';b.setAttribute('aria-label',`Jump to line ${i+1}: ${item.text}`);const n=document.createElement('span');n.textContent=String(i+1).padStart(2,'0');const text=document.createElement('b');text.textContent=item.text;b.append(n,text);b.addEventListener('click',()=>{pause();time=Math.min(getLineTiming(settings,i).end-settings.pace*.02,scene.duration);draw();});fragment.append(b);});$('sequence').replaceChildren(fragment);resizePreview();draw();preparePreviewAudio();
 }
 function draw(){if(!scene||!ctx)return;renderFrame(ctx,scene,time);$('seek').value=time;fillRange($('seek'));$('current-time').textContent=stamp(time);const active=getActiveLine(scene,time);if(active!==lastActive){lastActive=active;$('active-number').textContent=String(active+1).padStart(2,'0');document.querySelectorAll('.sequence-item').forEach((b,i)=>{b.classList.toggle('selected',i===active);b.setAttribute('aria-current',i===active?'step':'false');});const rawIndex=settings.lines.map((v,i)=>v.trim()?i:null).filter(v=>v!==null)[active];document.querySelectorAll('.line-row').forEach((r,i)=>r.classList.toggle('active-line',i===rawIndex));}}
 function syncPlayback(){$('play').innerHTML=icon(playing?'pause':'play');$('play').setAttribute('aria-label',playing?'Pause preview':'Play preview');$('canvas-play').innerHTML=icon(playing?'pause':'play');$('canvas-play').setAttribute('aria-label',playing?'Pause preview':'Play preview');}
-function tick(now){if(!playing)return;if(lastTick)time+=(now-lastTick)/1000;lastTick=now;if(time>=scene.duration){if(loop)time%=scene.duration;else{time=scene.duration;pause();}}draw();if(playing)raf=requestAnimationFrame(tick);}
+function tick(now){if(!playing)return;if(audioClockActive)time=previewAudio.getTime();else if(!audioStarting&&lastTick)time+=(now-lastTick)/1000;lastTick=now;if(time>=scene.duration){if(loop)time%=scene.duration;else{time=scene.duration;pause();}}draw();if(playing)raf=requestAnimationFrame(tick);}
 function play(){if(!scene.layout.length)return;if(audioPreparationFailed)preparePreviewAudio();track('preview_played',{position_seconds:time,duration_seconds:scene.duration});if(time>=scene.duration-.01)time=0;playing=true;lastTick=0;syncPlayback();cancelAnimationFrame(raf);startPreviewAudio();raf=requestAnimationFrame(tick);}
-function pause(){playing=false;lastTick=0;cancelAnimationFrame(raf);previewAudio.pause();syncPlayback();}
+function pause(){playing=false;lastTick=0;audioStartRequest++;audioStarting=false;audioClockActive=false;cancelAnimationFrame(raf);previewAudio.pause();syncPlayback();}
 function toggle(){playing?pause():play();}
 $('add-line').addEventListener('click',addLine);
 $('preview-lines').addEventListener('click',()=>{rebuild(false);$('play').focus({preventScroll:true});$('stage').scrollIntoView({behavior:'auto',block:'center'});play();});
@@ -154,7 +159,7 @@ for(const [id,key] of [['highlight-fill','highlightFill'],['fill-opacity','fillO
 for(const [id,key] of MOTION_FIELDS){$(id).addEventListener('input',()=>{settings[key]=Number($(id).value);syncControls();save();clearTimeout(rebuildTimer);rebuildTimer=setTimeout(()=>rebuild(false),70);});$(id).addEventListener('change',()=>rebuild(false));}
 $('curve-direction').addEventListener('change',()=>{settings.curveDirection=$('curve-direction').value;rebuild(false);save();});
 $('frame-rate').addEventListener('change',()=>{settings.frameRate=Number($('frame-rate').value);save();});
-$('preview-move').addEventListener('click',()=>{if(scene.layout.length<2)return;time=Math.max(0,settings.pace-.2);draw();if(matchMedia('(max-width:620px)').matches)$('stage').scrollIntoView({behavior:'auto',block:'center'});play();});
+$('preview-move').addEventListener('click',()=>{if(scene.layout.length<2)return;time=Math.max(0,scene.layout[1].start-.2);draw();if(matchMedia('(max-width:620px)').matches)$('stage').scrollIntoView({behavior:'auto',block:'center'});play();});
 $('reset-motion').addEventListener('click',()=>{for(const [,key] of MOTION_FIELDS)settings[key]=DEFAULTS[key];settings.curveDirection=DEFAULTS.curveDirection;settings.frameRate=DEFAULTS.frameRate;syncControls();rebuild(false);save();toast('Motion defaults restored. Your words and timing are kept.');});
 $('reset-look').addEventListener('click',()=>{for(const key of ['paper','textSize','texture','arrowSize','arrowWidth','circleWidth','arrowStyle','circleStyle','dotSpacing','highlightShape','underlinePasses','boxEdges','boxFill','highlightFill','fillOpacity','accent','ink'])settings[key]=DEFAULTS[key];syncControls();rebuild(false);save();toast('Paper and ink reset. Your words are kept.');});
 $('reset-all').addEventListener('click',()=>{pause();const words=[...settings.lines];settings={...normalizeSettings(DEFAULTS),...AUDIO_DEFAULTS,lines:words};quality='1080';loop=true;$('loop').classList.add('active');$('loop').setAttribute('aria-pressed','true');syncControls();rebuild(true);save();toast('All settings reset. Your text lines are kept.');});
@@ -193,3 +198,6 @@ document.addEventListener('click',event=>{const button=event.target.closest('but
 renderLines();syncControls();rebuild(false);
 
 document.querySelector('.edit-lines-link').addEventListener('click',event=>{event.preventDefault();$('your-lines').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth',block:'start'});$('lines').querySelector('textarea')?.focus({preventScroll:true});});
+
+function fitViewport(){const height=window.visualViewport?.height||window.innerHeight;document.documentElement.style.setProperty('--app-height',`${height}px`);document.body.classList.toggle('viewport-short',height<=520);document.body.classList.toggle('viewport-tiny',height<=380);}
+fitViewport();window.addEventListener('resize',fitViewport);window.visualViewport?.addEventListener('resize',fitViewport);
