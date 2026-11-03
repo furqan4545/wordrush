@@ -1,10 +1,11 @@
 /** Paper Trail's deterministic paper-camera renderer. Times are seconds; layout uses paper coordinates. */
+export const MAX_LINES = 50;
 export const DEFAULTS = Object.freeze({
   lines: Object.freeze(['My name is', 'Ali and I will blow', 'Your mind']),
   mode: 'tilted', pace: 1.8, hold: 0.8, paper: 'ivory', ink: '#242424',
   accent: '#d29a31', textSize: 54, arrowSize: 1, texture: 0.35, aspect: '9:16', seed: 17,
-  curve: 0.65, curveDirection: 'alternate', travel: 0.72, easeIn: 0.40, easeOut: 0.45,
-  cameraSmooth: 0.70, paperMotion: 0.35, paperSpeed: 0.55, edgeBlur: 0.35,
+  curve: 0.65, curveDirection: 'alternate', travel: 0.66, easeIn: 0.40, easeOut: 0.45,
+  cameraSmooth: 0.70, paperMotion: 0.38, paperSpeed: 0.70, edgeBlur: 0.35,
   blurWidth: 0.28, focusY: 0.50, spacing: 1.15, frameRate: 60,
   arrowWidth: 8, circleWidth: 7, arrowStyle: 'solid', circleStyle: 'solid', dotSpacing: 14,
   highlightShape: 'circle', underlinePasses: 2, boxEdges: 'brackets', boxFill: true,
@@ -27,7 +28,7 @@ function random(seed) {let a = seed >>> 0; return () => {a += 0x6D2B79F5; let t 
 export function normalizeSettings(raw = {}) {
   const source = Array.isArray(raw.lines) ? raw.lines : typeof raw.lines === 'string' ? raw.lines.split(/\r?\n/) : DEFAULTS.lines;
   return {
-    lines: source.filter((v) => typeof v === 'string' && v.trim()).slice(0, 20),
+    lines: source.filter((v) => typeof v === 'string' && v.trim()).slice(0, MAX_LINES),
     mode: ['tilted', 'crawl', 'topdown', 'top-down'].includes(raw.mode) ? (raw.mode === 'top-down' ? 'topdown' : raw.mode) : DEFAULTS.mode,
     pace: number(raw.pace, DEFAULTS.pace, 0.6, 6),
     hold: number(raw.hold, DEFAULTS.hold, 0, 5),

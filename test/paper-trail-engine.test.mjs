@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {DEFAULTS, normalizeSettings, getDuration, createScene, getActiveLine, getLineTiming} from '../public/paper-trail/engine.js';
+import {DEFAULTS, MAX_LINES, normalizeSettings, getDuration, createScene, getActiveLine, getLineTiming} from '../public/paper-trail/engine.js';
 
 test('normalization retains complete Unicode text and entered colors', () => {
   const phrase = '한 번의 생각, a new beginning — 你好';
@@ -12,7 +12,7 @@ test('normalization retains complete Unicode text and entered colors', () => {
 
 test('timing includes each phrase and final hold, with stable final selection', () => {
   const scene = createScene({lines: ['One', 'Two', 'Three'], pace: 2, hold: 1.25});
-  assert.equal(getDuration(scene.settings), 5.96);
+  assert.equal(getDuration(scene.settings), getLineTiming(scene.settings, 2).end + 1.25);
   assert.equal(getActiveLine(scene, -2), 0);
   assert.equal(getActiveLine(scene, scene.layout[1].start-.001), 0);
   assert.equal(getActiveLine(scene, scene.layout[1].start), 1);
@@ -30,14 +30,39 @@ test('long phrases and unbroken strings wrap without dropping content', () => {
   }
 });
 
-test('twenty stops receive separate paper positions and seeded repeatable geometry', () => {
-  const lines = Array.from({length:20}, (_, i) => `This is phrase ${i + 1}`);
+test('fifty stops receive separate paper positions and seeded repeatable geometry', () => {
+  const lines = Array.from({length:50}, (_, i) => `This is phrase ${i + 1}`);
   const a = createScene({lines, seed: 94});
   const b = createScene({lines, seed: 94});
   assert.deepEqual(a.layout, b.layout);
-  assert.equal(a.layout.length, 20);
+  assert.equal(a.layout.length, 50);
   assert.ok(a.layout.every((item, i) => !i || item.y > a.layout[i - 1].y + item.height));
   assert.ok(a.layout.slice(1).every((item) => item.connector.length === 101));
+  a.dispose(); b.dispose();
+});
+
+test('all fifty entered lines survive normalization, saving and final-stop selection', () => {
+  assert.equal(MAX_LINES, 50);
+  const lines = Array.from({length:50}, (_, i) => `Line ${i + 1} — 한글`);
+  const normalized = normalizeSettings({lines:['', ...lines, 'Line 51 must be excluded'], pace:2, hold:1.5});
+  assert.deepEqual(normalized.lines, lines, 'the cap applies after empty lines are skipped');
+  assert.deepEqual(normalizeSettings({lines:[...lines, 'Line 51'].join('\n')}).lines, lines);
+  assert.deepEqual(normalizeSettings(JSON.parse(JSON.stringify(normalized))).lines, lines, 'saved stories retain lines 21–50');
+  const scene = createScene(normalized), last = getLineTiming(normalized, 49);
+  assert.equal(scene.layout[49].text, lines[49]);
+  assert.equal(scene.layout[49].start, last.start);
+  assert.equal(getActiveLine(scene, last.start - .001), 48);
+  assert.equal(getActiveLine(scene, last.start), 49);
+  assert.equal(getActiveLine(scene, scene.duration), 49);
+  assert.equal(scene.duration, last.end + normalized.hold, 'the fiftieth stop and selected ending hold are exported');
+  scene.dispose();
+});
+
+test('the requested motion preset is used for fresh and reset settings', () => {
+  const settings = normalizeSettings({});
+  assert.equal(settings.travel, .66);
+  assert.equal(settings.paperMotion, .38);
+  assert.equal(settings.paperSpeed, .70);
 });
 
 test('output dimensions and controls validate independently', () => {

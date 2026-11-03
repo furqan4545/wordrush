@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {AUDIO_DEFAULTS,normalizeAudioSettings,createAudioPlan,decodeWav,mixAudioPlan,prepareAudio,createPreviewAudio} from '../public/paper-trail/audio.js';
+import {AUDIO_DEFAULTS,MARKER_GAIN,normalizeAudioSettings,createAudioPlan,decodeWav,mixAudioPlan,prepareAudio,createPreviewAudio} from '../public/paper-trail/audio.js';
 import {createScene,getDuration,getLineTiming} from '../public/paper-trail/engine.js';
 
 const sound=(duration=.56,{sampleRate=48000,channels=2,value=.7}={})=>({sampleRate,numberOfChannels:channels,frames:Math.round(duration*sampleRate),pcm:new Float32Array(Math.round(duration*sampleRate)*channels).fill(value)});
@@ -51,7 +51,7 @@ test('PCM cues fill their exact sample-aligned windows and fade at both ends',()
   const track=mixAudioPlan(plan,sounds),start=Math.round(.10001*48000),length=Math.round(.08*48000);
   assert.equal(track.frames,48000);assert.equal(track.sampleRate,48000);assert.equal(track.numberOfChannels,2);
   assert.equal(track.pcm[(start-1)*2],0);assert.equal(track.pcm[start*2],0);
-  assert.ok(track.pcm[(start+1)*2]>0);near(track.pcm[(start+200)*2],.7,1e-6);
+  assert.ok(track.pcm[(start+1)*2]>0);near(track.pcm[(start+200)*2],.7*MARKER_GAIN,1e-6);
   assert.equal(track.pcm[(start+length-1)*2],0);assert.equal(track.pcm[(start+length)*2],0);
   for(let i=0;i<track.frames;i++)assert.equal(track.pcm[i*2],track.pcm[i*2+1]);
 });
@@ -59,7 +59,7 @@ test('PCM cues fill their exact sample-aligned windows and fade at both ends',()
 test('marker strokes retain native speed and stop at source end in long windows',()=>{
   const plan={duration:2,events:[{type:'marker',start:.1,duration:1.5,volume:1}]};
   const track=mixAudioPlan(plan,sounds);
-  assert.ok(sampleAt(track,.3)>.6);assert.equal(sampleAt(track,.7),0);assert.equal(sampleAt(track,1.3),0);assert.equal(sampleAt(track,1.6),0);
+  assert.ok(sampleAt(track,.3)>.3);assert.equal(sampleAt(track,.7),0);assert.equal(sampleAt(track,1.3),0);assert.equal(sampleAt(track,1.6),0);
 });
 
 test('mono source resampling stays stereo and overlapping cues cannot clip',()=>{
@@ -195,10 +195,10 @@ test('provided marker PCM plays sample-for-sample at native rate through its ful
   const track=mixAudioPlan(plan,{marker});
   for(const event of plan.events){
     assert.ok(event.duration>marker.frames/marker.sampleRate,'default reading window fits the whole original stroke');
-    assert.equal(event.animationDuration,.342);
+    assert.equal(event.animationDuration,getLineTiming({lines:['One','Two','Three']},event.lineIndex).highlightDuration);
     const start=Math.round(event.start*48000),length=marker.frames,attack=72,release=144;
     for(let frame=0;frame<length;frame++)for(let channel=0;channel<2;channel++){
-      const gain=event.volume*Math.min(1,frame/attack)*Math.min(1,(length-1-frame)/release);
+      const gain=event.volume*Math.min(1,frame/attack)*Math.min(1,(length-1-frame)/release)*MARKER_GAIN;
       const expected=Math.fround(marker.pcm[frame*2+channel]*gain);
       assert.equal(track.pcm[(start+frame)*2+channel],expected,'no phase warp, repeat, speed change or pitch conversion');
     }
@@ -214,7 +214,7 @@ test('fast marker windows clip the original source at native speed and fade befo
   for(const event of plan.events){
     const start=Math.round(event.start*48000),length=Math.round(event.duration*48000);
     assert.ok(length<marker.frames);near(event.duration,.125);
-    for(let frame=72;frame<length-144;frame++)for(let channel=0;channel<2;channel++)assert.equal(track.pcm[(start+frame)*2+channel],marker.pcm[frame*2+channel]);
+    for(let frame=72;frame<length-144;frame++)for(let channel=0;channel<2;channel++)assert.equal(track.pcm[(start+frame)*2+channel],Math.fround(marker.pcm[frame*2+channel]*MARKER_GAIN));
     assert.equal(track.pcm[(start+length-1)*2],0);assert.equal(track.pcm[(start+length)*2],0);
   }
 });
@@ -228,5 +228,23 @@ test('approved whoosh PCM remains bit-for-bit unchanged after the native-marker 
     const plan=createAudioPlan({...fixture,lines:['One','Two','Three'],highlightVolume:0});
     const track=mixAudioPlan(plan,{whoosh});
     assert.equal(createHash('sha256').update(new Uint8Array(track.pcm.buffer)).digest('hex'),fixture.hash);
+  }
+});
+
+
+test('marker calibration halves amplitude at every relative volume without changing its native samples or timing',async()=>{
+  assert.equal(MARKER_GAIN,.5);assert.equal(AUDIO_DEFAULTS.highlightVolume,.8);
+  const bytes=await readFile(new URL('../public/paper-trail/assets/audio/marker.wav',import.meta.url));
+  const marker=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+  for(const volume of [.1,.35,.8,1]){
+    const plan=createAudioPlan({lines:['One'],highlightVolume:volume,whooshVolume:0});
+    const event=plan.events[0],track=mixAudioPlan(plan,{marker});
+    assert.equal(event.volume,volume,'saved user volume remains unchanged');
+    const start=Math.round(event.start*48000),length=Math.min(marker.frames,Math.round(event.duration*48000));
+    for(let frame=0;frame<length;frame++)for(let channel=0;channel<2;channel++){
+      const originalGain=volume*Math.min(1,frame/72)*Math.min(1,(length-1-frame)/144);
+      const previousSample=Math.fround(marker.pcm[frame*2+channel]*originalGain);
+      assert.equal(track.pcm[(start+frame)*2+channel],previousSample*.5,'exact50% amplitude reduction with identical pitch/rate/envelope');
+    }
   }
 });

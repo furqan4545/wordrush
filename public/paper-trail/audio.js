@@ -1,6 +1,8 @@
 import {normalizeSettings, getDuration, getLineTiming} from './engine.js';
 
 export const AUDIO_DEFAULTS = Object.freeze({soundEnabled:true, highlightVolume:0.8, whooshVolume:0.5});
+// Base marker calibration is half amplitude (-6.02dB); saved volume sliders remain relative.
+export const MARKER_GAIN = 0.5;
 const SAMPLE_RATE=48000, CHANNELS=2;
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
 const abortError=()=>new DOMException('Sound preparation canceled.','AbortError');
@@ -123,7 +125,7 @@ export function mixAudioPlan(plan,sounds,{duration=plan.duration,signal}={}) {
       const sourceFrame=nativeMarker?Math.min(sound.frames-1,frame*sound.sampleRate/SAMPLE_RATE):mapCuePhase(phase,sourcePeak,targetPeak)*(sound.frames-1);
       const left=Math.floor(sourceFrame),right=Math.min(sound.frames-1,left+1),fraction=sourceFrame-left;
       const fadeIn=Math.min(1,frame/attack),fadeOut=Math.min(1,(length-1-frame)/release);
-      const gain=event.volume*fadeIn*fadeOut;
+      const gain=event.volume*fadeIn*fadeOut*(nativeMarker?MARKER_GAIN:1);
       for(let channel=0;channel<CHANNELS;channel++){
         const sourceChannel=Math.min(channel,sound.numberOfChannels-1);
         const a=sound.pcm[left*sound.numberOfChannels+sourceChannel],b=sound.pcm[right*sound.numberOfChannels+sourceChannel];

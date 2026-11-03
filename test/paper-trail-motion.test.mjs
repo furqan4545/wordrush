@@ -54,6 +54,21 @@ test('long crawl stories keep distant sentences beyond the horizon',()=>{
   for(const aspect of SHAPES){const scene=sceneFor(lines,'crawl',aspect);for(const{index,time}of holds(scene))for(const item of scene.layout)if(item.index!==index)assert.ok(!intersects(phraseBounds(scene,item,time),scene),`${aspect}: stop ${index+1} exposes distant stop ${item.index+1}`);scene.dispose();}
 });
 
+test('the fiftieth sentence is the final complete resting view in every camera',()=>{
+  const lines=Array.from({length:50},(_,i)=>`Story line ${i+1}`);
+  for(const mode of MODES){
+    const scene=sceneFor(lines,mode),last=scene.layout[49],time=scene.duration-scene.settings.hold-.01;
+    assert.equal(last.text,lines[49]);
+    const state=getFrameState(scene,time),bounds=phraseBounds(scene,last,time);
+    assert.equal(state.activeIndex,49,'the renderer selects the fiftieth stop');
+    assert.equal(state.phase,'hold');
+    assert.ok(bounds.left>=0&&bounds.right<=scene.width&&bounds.top>=0&&bounds.bottom<=scene.height,'the complete final phrase fits');
+    for(const item of scene.layout)if(item!==last)assert.ok(!intersects(phraseBounds(scene,item,time),scene),`${mode}: line 50 must not expose line ${item.index+1}`);
+    assert.ok(distance(projectPoint(scene,time,last),state.focalPoint)<Math.min(scene.width,scene.height)*.025,'line 50 arrives at the same calm focus point');
+    scene.dispose();
+  }
+});
+
 test('the default arrow has a visible curve, with independent bend and direction controls',()=>{
   for(const mode of MODES)for(const aspect of SHAPES){
     const curved=sceneFor(STORIES[0],mode,aspect,{paperMotion:0});

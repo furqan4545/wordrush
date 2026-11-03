@@ -1,4 +1,4 @@
-import {DEFAULTS, normalizeSettings, getDuration, createScene, renderFrame, getActiveLine, getLineTiming} from './engine.js';
+import {DEFAULTS, MAX_LINES, normalizeSettings, getDuration, createScene, renderFrame, getActiveLine, getLineTiming} from './engine.js';
 import {track, trackError, textMetrics} from '/analytics.js';
 import {AUDIO_DEFAULTS, normalizeAudioSettings, createPreviewAudio} from './audio.js';
 const $ = id => document.getElementById(id);
@@ -18,7 +18,7 @@ let quality = '1080', exampleIndex = 0;
 try {
   const saved = JSON.parse(localStorage.getItem(STORAGE));
   if (saved && saved.version === 1 && Array.isArray(saved.settings?.lines)) {
-    settings = {...normalizeSettings(saved.settings), ...normalizeAudioSettings(saved.settings), lines: saved.settings.lines.filter(v => typeof v === 'string').slice(0,20)};
+    settings = {...normalizeSettings(saved.settings), ...normalizeAudioSettings(saved.settings), lines: saved.settings.lines.filter(v => typeof v === 'string').slice(0,MAX_LINES)};
     if (!settings.lines.length) settings.lines = [''];
     quality = saved.quality === '720' ? '720' : '1080';
   }
@@ -83,22 +83,20 @@ function renderLines(focusIndex) {
       const text=event.clipboardData?.getData('text/plain');
       if(text?.includes('\n')&&(!input.value||(input.selectionStart===0&&input.selectionEnd===input.value.length))){
         const items=text.split(/\r?\n/).filter(v=>v.trim());
-        if(items.length>1){event.preventDefault();if(items.some(v=>v.length>220)){toast('Keep each line under 220 characters.');return;}if(settings.lines.length-1+items.length>20){toast('A story can have up to 20 lines.');return;}settings.lines.splice(index,1,...items);renderLines(index+items.length-1);rebuild(false);save();}
+        if(items.length>1){event.preventDefault();if(items.some(v=>v.length>220)){toast('Keep each line under 220 characters.');return;}if(settings.lines.length-1+items.length>MAX_LINES){toast(`A story can have up to ${MAX_LINES} lines.`);return;}settings.lines.splice(index,1,...items);renderLines(index+items.length-1);rebuild(false);save();}
       }
     });
     input.addEventListener('keydown',event=>{if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();if(index===settings.lines.length-1)addLine();else $('lines').children[index+1]?.querySelector('textarea')?.focus();}});
     const actions=document.createElement('div');actions.className='line-actions';
-    for(const [action,title,glyph] of [['up','Move line up','up'],['down','Move line down','down'],['remove','Remove line','close']]){
-      const button=document.createElement('button');button.type='button';button.title=title;button.setAttribute('aria-label',`${title} ${index+1}`);button.innerHTML=icon(glyph);
-      button.disabled=action==='up'?index===0:action==='down'?index===settings.lines.length-1:settings.lines.length===1;
-      button.addEventListener('click',()=>{pause();if(action==='remove')settings.lines.splice(index,1);else {const next=index+(action==='up'?-1:1);[settings.lines[index],settings.lines[next]]=[settings.lines[next],settings.lines[index]];}renderLines();rebuild(true);save();});actions.append(button);
-    }
+    const remove=document.createElement('button');remove.type='button';remove.title='Remove line';remove.setAttribute('aria-label',`Remove line ${index+1}`);remove.innerHTML=icon('close');
+    remove.disabled=settings.lines.length===1;
+    remove.addEventListener('click',()=>{pause();settings.lines.splice(index,1);renderLines();rebuild(true);save();});actions.append(remove);
     row.append(number,input,actions);fragment.append(row);
   });
-  $('lines').replaceChildren(fragment);$('line-count').textContent=`${settings.lines.length} / 20 lines`;$('add-line').disabled=settings.lines.length>=20;
+  $('lines').replaceChildren(fragment);$('line-count').textContent=`${settings.lines.length} / ${MAX_LINES} lines`;$('add-line').disabled=settings.lines.length>=MAX_LINES;
   requestAnimationFrame(()=>{document.querySelectorAll('.line-row textarea').forEach(resizeInput);if(Number.isInteger(focusIndex))$('lines').children[focusIndex]?.querySelector('textarea')?.focus();});
 }
-function addLine(){if(settings.lines.length>=20)return;settings.lines.push('');renderLines(settings.lines.length-1);rebuild(false);save();}
+function addLine(){if(settings.lines.length>=MAX_LINES){toast(`A story can have up to ${MAX_LINES} lines.`);return;}settings.lines.push('');renderLines(settings.lines.length-1);rebuild(false);save();}
 function syncControls() {
   $('sound-enabled').checked=settings.soundEnabled;
   for(const [id,key] of [['highlight-volume','highlightVolume'],['whoosh-volume','whooshVolume']]){$(id).value=settings[key];$(id+'-value').textContent=`${Math.round(settings[key]*100)}%`;$(id).disabled=!settings.soundEnabled;}

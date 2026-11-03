@@ -112,3 +112,13 @@ html:has(.paper-trail-app){height:100%;overflow:hidden;scroll-behavior:auto}.pap
 .paper-trail-app #preview-panel:fullscreen #editor-title,.paper-trail-app #preview-panel.is-fullscreen #editor-title{font-size:14px}
 @media(max-width:760px){.paper-trail-app #preview-panel:fullscreen,.paper-trail-app #preview-panel.is-fullscreen{padding:7px 10px calc(8px + env(safe-area-inset-bottom))}.paper-trail-app #preview-panel:fullscreen .preview-stage,.paper-trail-app #preview-panel.is-fullscreen .preview-stage{padding:8px}.paper-trail-app #preview-panel:fullscreen .preview-top,.paper-trail-app #preview-panel.is-fullscreen .preview-top{margin-bottom:5px}}
 .paper-trail-app #fullscreen-preview{min-width:44px;min-height:44px}
+
+/* Short lists keep Add directly after their last row; long lists scroll above it. */
+.paper-trail-app .line-list{flex:0 1 auto;min-height:0}
+.paper-trail-app .line-tools{flex:none;align-self:stretch;margin-top:0}
+@media(max-width:760px){
+  .paper-trail-app.viewport-tiny .editor>.line-tools{display:flex;min-height:32px;height:32px}
+  .paper-trail-app.viewport-tiny .add-line{min-height:32px;padding-top:5px;padding-bottom:5px}
+  .paper-trail-app.viewport-tiny .line-list{min-height:36px}
+  .paper-trail-app.viewport-tiny .line-row{min-height:36px;padding-top:2px;padding-bottom:2px}
+}
