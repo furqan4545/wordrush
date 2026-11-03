@@ -1,8 +1,8 @@
 import {normalizeSettings, getDuration, getLineTiming} from './engine.js';
 
 export const AUDIO_DEFAULTS = Object.freeze({soundEnabled:true, highlightVolume:0.8, whooshVolume:0.5});
-// Base marker calibration is half amplitude (-6.02dB); saved volume sliders remain relative.
-export const MARKER_GAIN = 0.5;
+// Base marker calibration is 10% amplitude (-20dB); saved volume sliders remain relative.
+export const MARKER_GAIN = 0.1;
 const SAMPLE_RATE=48000, CHANNELS=2;
 const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
 const abortError=()=>new DOMException('Sound preparation canceled.','AbortError');

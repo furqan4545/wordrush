@@ -59,7 +59,7 @@ test('PCM cues fill their exact sample-aligned windows and fade at both ends',()
 test('marker strokes retain native speed and stop at source end in long windows',()=>{
   const plan={duration:2,events:[{type:'marker',start:.1,duration:1.5,volume:1}]};
   const track=mixAudioPlan(plan,sounds);
-  assert.ok(sampleAt(track,.3)>.3);assert.equal(sampleAt(track,.7),0);assert.equal(sampleAt(track,1.3),0);assert.equal(sampleAt(track,1.6),0);
+  near(sampleAt(track,.3),.7*MARKER_GAIN,1e-6);assert.equal(sampleAt(track,.7),0);assert.equal(sampleAt(track,1.3),0);assert.equal(sampleAt(track,1.6),0);
 });
 
 test('mono source resampling stays stereo and overlapping cues cannot clip',()=>{
@@ -232,8 +232,8 @@ test('approved whoosh PCM remains bit-for-bit unchanged after the native-marker 
 });
 
 
-test('marker calibration halves amplitude at every relative volume without changing its native samples or timing',async()=>{
-  assert.equal(MARKER_GAIN,.5);assert.equal(AUDIO_DEFAULTS.highlightVolume,.8);
+test('marker calibration keeps ten percent amplitude at every relative volume without changing its native samples or timing',async()=>{
+  assert.equal(MARKER_GAIN,.1);assert.equal(AUDIO_DEFAULTS.highlightVolume,.8);
   const bytes=await readFile(new URL('../public/paper-trail/assets/audio/marker.wav',import.meta.url));
   const marker=decodeWav(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
   for(const volume of [.1,.35,.8,1]){
@@ -243,8 +243,8 @@ test('marker calibration halves amplitude at every relative volume without chang
     const start=Math.round(event.start*48000),length=Math.min(marker.frames,Math.round(event.duration*48000));
     for(let frame=0;frame<length;frame++)for(let channel=0;channel<2;channel++){
       const originalGain=volume*Math.min(1,frame/72)*Math.min(1,(length-1-frame)/144);
-      const previousSample=Math.fround(marker.pcm[frame*2+channel]*originalGain);
-      assert.equal(track.pcm[(start+frame)*2+channel],previousSample*.5,'exact50% amplitude reduction with identical pitch/rate/envelope');
+      const calibratedSample=Math.fround(marker.pcm[frame*2+channel]*(originalGain*.1));
+      assert.equal(track.pcm[(start+frame)*2+channel],calibratedSample,'10% amplitude with identical pitch/rate/envelope');
     }
   }
 });
