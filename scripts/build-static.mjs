@@ -22,6 +22,7 @@ await cp(path.join(publicDir, 'words-in-motion'), path.join(dist, 'words-in-moti
 await cp(path.join(publicDir, 'browser-typing'), path.join(dist, 'browser-typing'), {recursive: true});
 // Paper Trail keeps its preview, export engine and fonts on its own route.
 await cp(path.join(publicDir, 'paper-trail'), path.join(dist, 'paper-trail'), {recursive: true});
+await cp(path.join(publicDir, 'fingerfont'), path.join(dist, 'fingerfont'), {recursive: true});
 for (const dir of ['user-sfx-v1', 'transition-sax-v1']) {
   const source = path.join(publicDir, 'audio', dir), target = path.join(dist, 'audio', dir);
   await mkdir(target, {recursive: true});

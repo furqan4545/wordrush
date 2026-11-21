@@ -10,6 +10,10 @@ The header connects two dedicated video tools: **Fast cuts** at `/` and **Words 
 
 The sentence editor is contained in `public/words-in-motion/`, with its own modules, styles and assets. Keep its asset URLs inside that directory so the root Wordrush scripts and renderer remain independent. Browser settings retain their existing storage keys.
 
+## FingerFont
+
+At `/fingerfont/`, draw the 94 printable ASCII characters for a named TrueType or OpenType font. Space is supplied automatically. Live text previews distinguish undrawn letters and unsupported characters. Compatible applications use contextual alternates when variation is enabled. Signature Studio uses the same drawing engine to export a cropped SVG or PNG. Drafts stay in IndexedDB on the current browser.
+
 ## Run and build
 
 ```sh

@@ -4,8 +4,6 @@ import {fileURLToPath} from 'node:url';
 import {createHash, randomUUID} from 'node:crypto';
 import {createReadStream} from 'node:fs';
 import {access, mkdir, readFile, readdir, rename, stat, writeFile} from 'node:fs/promises';
-import {bundle} from '@remotion/bundler';
-import {renderMedia, selectComposition} from '@remotion/renderer';
 import {parsePhrase, MAX_WORDS} from './public/phrase.js';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
@@ -172,6 +170,7 @@ async function sendFile(req, res, location, downloadName) {
 }
 
 async function getBundle(job) {
+  const {bundle} = await import('@remotion/bundler');
   if (!bundlePromise) {
     bundlePromise = bundle({
       entryPoint: path.join(ROOT, 'video', 'index.tsx'),
@@ -223,6 +222,7 @@ async function runQueue() {
     const {getTiming} = await import('./public/scene.js');
     job.duration = getTiming(job.word).duration;
     await synthesizeAudio(job.word, path.join(EXPORTS, `${job.id}.wav`));
+    const {renderMedia, selectComposition} = await import('@remotion/renderer');
     const serveUrl = await getBundle(job);
     const inputProps = {word: job.word, intensity: job.intensity, sources: job.sources,
       audioFile: `http://${HOST}:${PORT}/media/${job.id}.wav`};
@@ -328,7 +328,7 @@ const server = http.createServer(async (req, res) => {
     let relative;
     try { relative = decodeURIComponent(url.pathname); }
     catch { return json(res, 400, {error: 'Invalid file address.'}); }
-    const location = path.resolve(PUBLIC, `.${relative === '/' ? '/index.html' : relative}`);
+    const location = path.resolve(PUBLIC, `.${relative}${relative.endsWith('/') ? 'index.html' : ''}`);
     if (!location.startsWith(`${PUBLIC}${path.sep}`)) return json(res, 403, {error: 'File not available.'});
     return sendFile(req, res, location);
   } catch (error) {

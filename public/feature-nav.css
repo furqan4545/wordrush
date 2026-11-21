@@ -1,4 +1,4 @@
-/* Shared feature navigation. All four tools remain visible with comfortable taps. */
+/* Shared feature navigation. All tools remain visible with comfortable taps. */
 .site-header{max-width:1320px;margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
 .site-nav{display:flex;align-items:stretch;gap:4px;flex-shrink:0;padding:4px;border:1px solid #b7a7c43b;border-radius:14px;background:#ffffff55;box-shadow:0 2px 12px #684b7905}
 .site-nav a{display:flex;align-items:center;justify-content:center;min-height:44px;padding:9px 14px;border-radius:10px;color:#80718b;text-decoration:none;font-size:12px;font-weight:550;line-height:1.35;white-space:nowrap;transition:background .16s,color .16s,box-shadow .16s}
