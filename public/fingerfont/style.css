@@ -301,10 +301,12 @@ input[type=range] { width: 100%; margin: 4px 0; }
   #workspace, #workspace:has(.tools-column[hidden]) { display: flex; flex-direction: column; align-items: stretch; }
   .tools-column, .review-column { display: contents; }
   #editor { order: 0; }
-  #workspace:has(.tools-column:not([hidden]) #font-styles[popover]) .style-trigger {
+  :where(#workspace:has(.tools-column:not([hidden]) #font-styles[popover])) .history .style-trigger {
     display: inline-flex; align-items: center; padding-inline: 10px; margin-right: 4px;
-    border-color: var(--line); color: var(--accent); background: var(--tint); font-weight: 600;
+    border-color: var(--line); color: var(--ink); font-weight: 600;
   }
+  .history .style-trigger:not(:disabled):hover { background: var(--cream); }
+  #workspace:has(#font-styles:popover-open) .style-trigger { background: var(--tint); color: var(--accent); }
   #font-styles[popover] { width: min(360px, calc(100% - 24px)); max-height: calc(100svh - 24px); overflow-y: auto; margin: auto; color: var(--ink); background: var(--cream); box-shadow: 0 14px 56px #3b254338; }
   #font-styles[popover]::backdrop { background: #34233d38; }
   #font-styles[popover] .style-done { display: block; width: auto; margin-left: 4px; padding-inline: 9px; font-family: inherit; font-weight: 600; font-size: 12px; color: var(--accent); }
