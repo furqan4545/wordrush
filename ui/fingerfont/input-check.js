@@ -43,6 +43,9 @@ for (const kind of ['pointerover','pointerout','pointerdown','pointerup','pointe
     } else if (kind === 'click') {
       data = e.isTrusted ? 'native' : 'recovered';
     }
+    if (kind === 'pointerdown' || kind === 'pointerup' || (kind === 'click' && e.detail)) {
+      data += ' hit=' + surface(document.elementFromPoint(e.clientX, e.clientY));
+    }
     write(kind, from, data);
   }, {capture: true, passive: true});
 }
