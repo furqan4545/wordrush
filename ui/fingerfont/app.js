@@ -556,6 +556,10 @@ let releasedWheel = null;
 let afterInk = false;
 let buttonPress;
 let buttonClickTimer;
+const displayTapSlop = 6;
+let displayTapUntil = 0;
+let parkedPointer;
+let displayContact;
 
 function insidePad(x, y, rect = pad.getBoundingClientRect()) {
   return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
@@ -577,6 +581,8 @@ function paintWet() {
 }
 
 function beginStroke(source, id, contact, timeStamp) {
+  displayTapUntil = 0;
+  parkedPointer = displayContact = null;
   pointer = {source, id, type: contact.pointerType, stroke: {points: [], pen: contact.pointerType === 'pen'}};
   sample(contact, timeStamp);
   paintWet();
@@ -593,6 +599,7 @@ function cancelPointer() {
 
 function finishStroke() {
   const stroke = pointer.stroke;
+  if (pointer.source === 'swipe') displayTapUntil = performance.now() + 2000;
   cancelPointer();
   afterInk = true;
   edit([...strokes(), stroke]);
@@ -666,6 +673,46 @@ paper.addEventListener('wheel', (e) => {
 // even if the display hasn't delivered the terminal drawing event yet.
 document.addEventListener('pointerover', e => {
   if (!paper.contains(e.target)) releaseSwipe();
+  if (!parkedPointer || performance.now() > displayTapUntil || e.pointerType !== 'mouse' || e.buttons) return;
+  const button = e.target.closest?.('#workspace button, .studios button, #workspace summary, #workspace label, #workspace input[type="checkbox"]');
+  if (!button || button.disabled || button.contains(e.relatedTarget)) return;
+  if (button.matches('label') && (button.control?.type !== 'checkbox' || button.control.disabled)) return;
+  if (Math.hypot(e.clientX - parkedPointer.x, e.clientY - parkedPointer.y) <= 8) return;
+  displayContact = {button, x: e.clientX, y: e.clientY, time: e.timeStamp, travel: 0, left: strip.scrollLeft};
+}, true);
+
+// The touch display can briefly move the mouse to a button, deliver a tiny
+// pixel-wheel gesture instead of a click, then restore the exact parked mouse
+// location. Leave normal wheel scrolling native throughout the gesture.
+document.addEventListener('wheel', e => {
+  const contact = displayContact;
+  if (!contact) return;
+  contact.travel += Math.hypot(e.deltaX, e.deltaY);
+  if (!contact.button.contains(e.target) || e.momentum || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL ||
+      e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || contact.travel > displayTapSlop ||
+      Math.hypot(e.clientX - contact.x, e.clientY - contact.y) > displayTapSlop) displayContact = null;
+}, {capture: true, passive: true});
+
+document.addEventListener('pointerout', e => {
+  if (e.pointerType !== 'mouse') return;
+  if (paper.contains(e.target) && !paper.contains(e.relatedTarget) &&
+      (pointer?.source === 'swipe' || performance.now() <= displayTapUntil)) {
+    parkedPointer = {x: e.clientX, y: e.clientY};
+  }
+  const contact = displayContact;
+  if (!contact || !contact.button.contains(e.target) || contact.button.contains(e.relatedTarget)) return;
+  displayContact = null;
+  if (!contact.travel || e.buttons || e.timeStamp - contact.time > 220 ||
+      Math.hypot(e.clientX - parkedPointer.x, e.clientY - parkedPointer.y) > 2) return;
+  if (strip.contains(contact.button)) {
+    if (Math.abs(strip.scrollLeft - contact.left) > displayTapSlop + 1) return;
+    strip.scrollLeft = contact.left;
+  }
+  displayTapUntil = 0;
+  afterInk = false;
+  clearButtonPress();
+  buttonPress = {button: contact.button, recovered: true};
+  contact.button.click();
 }, true);
 
 function clearButtonPress() {
@@ -674,6 +721,8 @@ function clearButtonPress() {
 }
 
 document.addEventListener('pointerdown', (e) => {
+  displayContact = null;
+  displayTapUntil = 0;
   clearButtonPress();
   if (!e.isPrimary) return;
   releasedWheel = null;
@@ -687,10 +736,14 @@ document.addEventListener('pointerdown', (e) => {
   }
 }, true);
 document.addEventListener('pointermove', e => {
+  if (displayContact && Math.hypot(e.clientX - displayContact.x, e.clientY - displayContact.y) > displayTapSlop) displayContact = null;
   if (buttonPress?.id === e.pointerId &&
       Math.hypot(e.clientX - buttonPress.x, e.clientY - buttonPress.y) > 8) clearButtonPress();
 }, true);
-document.addEventListener('pointercancel', clearButtonPress, true);
+document.addEventListener('pointercancel', () => {
+  displayContact = null;
+  clearButtonPress();
+}, true);
 document.addEventListener('pointerup', e => {
   const press = buttonPress;
   if (!press || press.id !== e.pointerId) return;
@@ -710,6 +763,8 @@ document.addEventListener('pointerup', e => {
   }, 40);
 }, true);
 document.addEventListener('click', e => {
+  displayContact = null;
+  displayTapUntil = 0;
   if (!buttonPress || !buttonPress.button.contains(e.target)) return;
   // A late native click from the recovered press mustn't advance Next twice.
   // A fresh pointerdown always clears this guard, including rapid repeat taps.
@@ -832,6 +887,8 @@ window.addEventListener('blur', () => {
   hoverPoint = null;
   if (pointer?.source === 'space' || pointer?.source === 'swipe') finishStroke();
   else cancelPointer();
+  displayContact = null;
+  displayTapUntil = 0;
 });
 
 $('sentence').oninput = (e) => {
