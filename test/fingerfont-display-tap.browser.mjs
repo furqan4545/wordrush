@@ -12,7 +12,7 @@ try {
   const heading = () => page.$eval('#draw-heading', el => el.textContent);
 
   async function replay(selector, overrides = {}) {
-    return page.evaluate(({selector, delta = [2, 1], momentum = false, returns = true, zoom = false, nativeClick = false, parkOnPaper = false}) => {
+    return page.evaluate(({selector, delta = [2, 1], momentum = false, returns = true, zoom = false, nativeClick = false, parkOnPaper = false, overlappingTail = false}) => {
       const pad = document.querySelector('#pad');
       const control = document.querySelector(selector);
       const strip = document.querySelector('#upcoming');
@@ -33,7 +33,7 @@ try {
         return event.defaultPrevented;
       }
       wheel(pad, at(pad), -3, 1, false);
-      wheel(pad, at(pad), -5, -2, true);
+      if (!overlappingTail) wheel(pad, at(pad), -5, -2, true);
       // If the mouse rests inside the paper, the cursor returns there without
       // leaving the SVG. The later transition to the tile carries tile coordinates.
       if (parkOnPaper) {
@@ -44,7 +44,12 @@ try {
       }
       pointer(control, 'pointerover', contact, parkOnPaper ? pad : null);
       pointer(control, 'pointermove', contact);
+      if (overlappingTail) wheel(pad, at(pad), -5, -2, true);
       const canceled = wheel(control, contact, ...delta, momentum, zoom);
+      if (overlappingTail) {
+        wheel(pad, at(pad), -2, -1, true);
+        wheel(pad, at(pad), 0, 0, false);
+      }
       wheel(control, contact, 0, 0, false);
       // dispatchEvent does not run the browser's default wheel scrolling.
       if (!canceled && strip.contains(control)) strip.scrollLeft += delta[0];
@@ -54,11 +59,14 @@ try {
         control.dispatchEvent(new MouseEvent('click', {bubbles: true, detail: 1}));
       }
       pointer(control, 'pointerout', returns ? park : {clientX: contact.clientX + 12, clientY: contact.clientY});
-      return {canceled, initialScroll, finalScroll: strip.scrollLeft};
+      const beforeTailEnded = document.querySelector('#draw-heading').textContent;
+      if (overlappingTail) wheel(pad, at(pad), 0, -1, true);
+      return {canceled, initialScroll, finalScroll: strip.scrollLeft, beforeTailEnded};
     }, {selector, ...overrides});
   }
   const tile = char => '#upcoming [data-char="' + char + '"]';
-  const b = await replay(tile('B'));
+  const b = await replay(tile('B'), {overlappingTail: true});
+  assert.equal(b.beforeTailEnded, 'Draw B', 'the first tap must work while the previous stroke is still sending momentum');
   assert.equal(await heading(), 'Draw B', 'the recorded wheel-only contact on B must select B');
   assert.equal(b.finalScroll, b.initialScroll, 'a recovered interior tap keeps the strip still');
   await replay('#next');

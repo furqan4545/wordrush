@@ -44,16 +44,16 @@ try {
 
     // The Mac can deliver wheel ink right up to the edge, then a complete
     // press/release on a button, with the compatibility click missing or late.
-    const canceled = await page.$eval('#pad', pad => {
+    const strokesAfterEdge = await page.$eval('#pad', pad => {
       const rect = pad.getBoundingClientRect();
-      return [-2, -14, -5].map(deltaX => {
+      for (const deltaX of [-2, -14, -5]) {
         const wheel = new WheelEvent('wheel', {bubbles: true, cancelable: true,
           clientX: rect.right - 6, clientY: rect.top + rect.height / 2, deltaX});
         pad.dispatchEvent(wheel);
-        return wheel.defaultPrevented;
-      });
+      }
+      return document.querySelectorAll('#ink path').length;
     });
-    assert.deepEqual(canceled, [true, true, true], 'edge crossing and tail must stay on the pad');
+    assert.equal(strokesAfterEdge, 2, 'crossing the edge must commit exactly one additional stroke');
     await page.$eval('#next', button => {
       const rect = button.getBoundingClientRect();
       for (const type of ['pointerdown', 'pointerup']) {

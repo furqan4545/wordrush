@@ -626,17 +626,21 @@ function releaseSwipe() {
 // pointerdown. The first such event inside the pad can start a stroke.
 paper.addEventListener('wheel', (e) => {
   if (e.ctrlKey || e.metaKey) return;
+  // The paper's CSS scroll boundary contains wheel input. Let the browser
+  // finish its native gesture without waiting for JS to acknowledge each packet.
+  if (e.momentum) {
+    if (releasedWheel && e.clientX === releasedWheel.x && e.clientY === releasedWheel.y) releasedWheel = null;
+    const swipe = pointer?.swipe;
+    if (swipe) {
+      const x = swipe.absolute ? swipe.x : swipe.startX;
+      const y = swipe.absolute ? swipe.y : swipe.startY;
+      if (Math.hypot(e.clientX - x, e.clientY - y) <= 1) endSwipe();
+    }
+    return;
+  }
   const rect = pad.getBoundingClientRect();
   if (!insidePad(e.clientX, e.clientY, rect)) {
     releaseSwipe();
-    return;
-  }
-  preventPan(e);
-  // macOS can send a long train of inertial events after finger-up. Finish
-  // the ink on the first one, but keep the entire tail out of native scrolling.
-  if (e.momentum) {
-    endSwipe();
-    releasedWheel = null;
     return;
   }
   const now = performance.now();
@@ -665,7 +669,7 @@ paper.addEventListener('wheel', (e) => {
   if (!frame) frame = requestAnimationFrame(paintWet);
   clearTimeout(swipeTimer);
   swipeTimer = setTimeout(endSwipe, swipeIdleMs);
-}, {passive: false});
+}, {passive: true});
 
 function hitAt(point) {
   return document.elementFromPoint(point.clientX, point.clientY);
@@ -713,6 +717,10 @@ document.addEventListener('pointerover', e => {
 // Real pans and their momentum scroll natively. A tiny wheel packet can be a
 // tap only when the pointer also completes the round trip to its prior spot.
 document.addEventListener('wheel', e => {
+  // Packets from the last stroke can arrive between contact and release on
+  // a control. Let the paper handle its own input, including its momentum.
+  if (paper.contains(e.target) && (e.momentum || insidePad(e.clientX, e.clientY))) return;
+  if (!e.momentum && pointer?.source === 'swipe' && !insidePad(e.clientX, e.clientY)) releaseSwipe();
   if (!displayContact && awaitingDisplayTap && !e.momentum) startDisplayContact(e);
   const contact = displayContact;
   if (!contact) {
@@ -811,7 +819,7 @@ function endOutsidePress(point, id, target) {
   }
   press.released = true;
   if (!press.button.contains(target)) recoverPress(press);
-  else buttonClickTimer = setTimeout(() => recoverPress(press), 40);
+  else buttonClickTimer = setTimeout(() => recoverPress(press), 0);
 }
 
 document.addEventListener('pointerup', e => endOutsidePress(e, e.pointerId, e.target), true);

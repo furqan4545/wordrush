@@ -54,9 +54,9 @@ try {
   // momentum parameter, so set it explicitly for this part of the test.
   const tail = await page.$eval('#pad', pad => {
     const r = pad.getBoundingClientRect();
-    const wheel = momentum => {
+    const wheel = (momentum, offsetX = 0) => {
       const event = new WheelEvent('wheel', {
-        clientX: r.left + r.width / 2, clientY: r.top + r.height / 2,
+        clientX: r.left + r.width / 2 + offsetX, clientY: r.top + r.height / 2,
         deltaX: -4, deltaY: -6, bubbles: true, cancelable: true,
       });
       Object.defineProperty(event, 'momentum', {value: momentum});
@@ -64,9 +64,11 @@ try {
       return event.defaultPrevented;
     };
     wheel(false);
+    wheel(true, -40); // The previous stroke's tail reaches a different position.
+    wheel(false);
     return [wheel(true), wheel(true), wheel(true)];
   });
-  assert.deepEqual(tail, [true, true, true], 'every inertial event from the pad should be canceled');
+  assert.deepEqual(tail, [false, false, false], 'pad momentum should finish without waiting for JavaScript cancellation');
   assert.equal(await count(), 2);
   const next = await page.$eval('#next', button => {
     const r = button.getBoundingClientRect();
@@ -107,6 +109,20 @@ try {
   await quickSwipe();
   await new Promise(resolve => setTimeout(resolve, 250));
   assert.equal(await count(), 2, 'an explicit opt-out should survive reload');
+  // Native scrolling must still work outside the paper. A positive starting
+  // offset catches leaks in both directions even when the pad is near the top.
+  await read('scrollTo(0, 80)');
+  const scrolled = await read('scrollY');
+  assert(scrolled > 0);
+  const rect = await page.$eval('#pad', p => p.getBoundingClientRect().toJSON());
+  const x = rect.left + rect.width / 2, y = rect.top + rect.height / 2;
+  for (const deltaY of [100, -100]) {
+    await cdp.send('Input.dispatchMouseEvent', {type: 'mouseWheel', x, y, deltaX: 0, deltaY});
+    await new Promise(resolve => setTimeout(resolve, 150));
+    assert.equal(await read('scrollY'), scrolled, 'passive wheel input stays inside the paper');
+  }
+  await cdp.send('Input.dispatchMouseEvent', {type: 'mouseWheel', x: 10, y, deltaX: 0, deltaY: 100});
+  await waitUntil('scrollY > ' + scrolled);
   assert.deepEqual(errors, []);
   console.log('Passed first swipe without activation, legacy draft migration, and explicit opt-out.');
 } finally {
