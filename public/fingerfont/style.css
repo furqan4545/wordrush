@@ -77,7 +77,7 @@ h2 { font-size: clamp(26px, 2.4vw, 34px); line-height: 1.14; letter-spacing: -.0
 .history button { min-width: 33px; min-height: 33px; padding: 5px; font-size: 12px; border-radius: 7px; }
 .history .clear { margin-left: 5px; color: var(--muted); }
 .paper-pad {
-  touch-action: none; overscroll-behavior: contain; user-select: none; -webkit-user-select: none;
+  touch-action: none; -webkit-touch-callout: none; overscroll-behavior: contain; user-select: none; -webkit-user-select: none;
   overflow: hidden; margin-top: 17px; border: 1px solid #d9cfdf; border-radius: 12px;
   background: radial-gradient(circle, #ac9fb954 .8px, transparent 1px) 0 0/14px 14px, #fffdfe;
 }

@@ -628,8 +628,11 @@ paper.addEventListener('touchcancel', (e) => {
   if (pointer?.source === 'touch' && Array.from(e.changedTouches).some(t => t.identifier === pointer.id)) cancelPointer();
 });
 
+paper.addEventListener('contextmenu', preventPan);
 pad.onpointerdown = (e) => {
   if (pointer || !e.isPrimary || e.button !== 0) return;
+  // Keep compatibility mouse events from moving focus as a contact ends.
+  preventPan(e);
   // Native touch and pen may capture implicitly. Let normal hit testing take
   // over as soon as the contact leaves the drawable area.
   if (e.target.hasPointerCapture(e.pointerId)) e.target.releasePointerCapture(e.pointerId);
