@@ -214,7 +214,7 @@ function paintTiles() {
   requestTiles();
 }
 function showGlyph(button, char) {
-  const source = glyphInk(char);
+  const source = glyphInk(char) ?? null;
   const previous = tileSources.get(button);
   pendingTiles.delete(button);
   if (previous?.char === char && previous.source === source) return;
@@ -240,6 +240,92 @@ function paintGlyph(button, char, source) {
   }
   button.replaceChildren(cached.miniature.cloneNode(true));
 }
+
+const strip = $('upcoming');
+const stripTiles = new Map();
+const visibleTiles = new Set();
+const tileVisibility = new IntersectionObserver(entries => {
+  for (const {target, isIntersecting} of entries) {
+    if (isIntersecting) {
+      visibleTiles.add(target);
+      showGlyph(target, target.dataset.char);
+    } else {
+      visibleTiles.delete(target);
+      pendingTiles.delete(target);
+    }
+  }
+}, {root: strip, rootMargin: '0px 20%'});
+for (const char of CHARACTERS) {
+  const tile = document.createElement('button');
+  tile.dataset.char = tile.textContent = char;
+  tile.setAttribute('aria-label', 'Draw ' + char);
+  tile.onclick = () => selectChar(char);
+  strip.append(tile);
+  stripTiles.set(char, tile);
+  tileVisibility.observe(tile);
+}
+
+function revealCharacter(stepAtEdge) {
+  const view = strip.getBoundingClientRect();
+  if (!view.width) return;
+  const rect = stripTiles.get(session.char).getBoundingClientRect();
+  const gap = parseFloat(getComputedStyle(strip).columnGap);
+  const step = rect.width + gap;
+  // An explicit jump from the full glyph grid (or restoring a saved draft)
+  // can land outside the viewport. Ordinary interior taps never move the strip.
+  if (rect.right <= view.left || rect.left >= view.right) {
+    strip.scrollLeft += rect.left - view.left;
+  } else if (stepAtEdge && rect.left <= view.left + gap + 1) {
+    strip.scrollLeft -= step;
+  } else if (stepAtEdge && rect.right >= view.right - gap - 1) {
+    strip.scrollLeft += step;
+  }
+}
+strip.addEventListener('keydown', event => {
+  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+  const index = CHARACTERS.indexOf(event.target.dataset.char);
+  if (index < 0) return;
+  event.preventDefault();
+  const char = CHARACTERS[index + (event.key === 'ArrowLeft' ? -1 : 1)];
+  if (char) {
+    selectChar(char);
+    stripTiles.get(char).focus({preventScroll: true});
+  }
+});
+
+// Touch and wheel swipes scroll natively. A display which emulates a held
+// mouse button can also drag the strip, without activating a tile on release.
+let mouseDrag;
+let suppressDragClick = false;
+strip.addEventListener('pointerdown', e => {
+  suppressDragClick = false;
+  mouseDrag = e.pointerType === 'mouse' && e.button === 0
+    ? {id: e.pointerId, x: e.clientX, y: e.clientY, left: strip.scrollLeft, moved: false} : null;
+});
+strip.addEventListener('pointermove', e => {
+  if (!mouseDrag || e.pointerId !== mouseDrag.id || !(e.buttons & 1)) return;
+  const dx = e.clientX - mouseDrag.x;
+  if (!mouseDrag.moved) {
+    if (Math.abs(dx) <= 8 || Math.abs(dx) <= Math.abs(e.clientY - mouseDrag.y)) return;
+    mouseDrag.moved = true;
+    strip.setPointerCapture(e.pointerId);
+  }
+  strip.scrollLeft = mouseDrag.left - dx;
+});
+window.addEventListener('pointerup', e => {
+  if (mouseDrag?.id !== e.pointerId) return;
+  suppressDragClick = mouseDrag.moved;
+  mouseDrag = null;
+}, true);
+strip.addEventListener('pointercancel', () => { mouseDrag = null; });
+strip.addEventListener('click', e => {
+  if (suppressDragClick && e.detail > 0) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  suppressDragClick = false;
+}, true);
+
 function refreshGrid() {
   const activeGroup = group();
   for (const b of document.querySelector('.group-row').children)
@@ -278,26 +364,13 @@ function refreshGrid() {
   $('position').textContent = (index + 1) + ' of ' + chars.length;
   $('prev').disabled = index === 0;
   $('next').disabled = index === chars.length - 1;
-  const first = Math.min(index, chars.length - 6);
-  // Reuse buttons across strokes so keyboard focus stays on the selected tile.
-  for (let i = 0; i < 6; i++) {
-    let tile = $('upcoming').children[i];
-    if (!tile) {
-      tile = document.createElement('button');
-      tile.onclick = () => {
-        selectChar(tile.dataset.char);
-        $('upcoming').querySelector('[aria-pressed="true"]').focus({preventScroll: true});
-      };
-      $('upcoming').append(tile);
-    }
-    const c = chars[first + i];
-    tile.dataset.char = c;
-    showGlyph(tile, c);
-    tile.setAttribute('aria-label', 'Draw ' + c);
+  for (const [c, tile] of stripTiles) {
     tile.setAttribute('aria-pressed', c === session.char);
+    tile.tabIndex = c === session.char ? 0 : -1;
     tile.classList.toggle('drawn', handDrawn(c));
     tile.classList.toggle('generated', !handDrawn(c) && Boolean(generated[c]));
   }
+  for (const tile of visibleTiles) showGlyph(tile, tile.dataset.char);
 }
 
 let proofWorker;
@@ -412,10 +485,11 @@ function render() {
 
 function selectChar(char) {
   if (!char) return;
-  cancelPointer();
+  if (pointer) finishStroke();
   session.char = char;
   save('session', session);
   render();
+  revealCharacter(true);
 }
 function openStudio(mode) {
   cancelPointer();
@@ -423,6 +497,7 @@ function openStudio(mode) {
   save('session', session);
   $('feedback').textContent = '';
   render();
+  if (isFont()) revealCharacter(false);
 }
 $('generate').onclick = () => {
   generated = generateSet(drawings);
@@ -478,7 +553,9 @@ let frame = 0;
 let swipeTimer;
 const swipeIdleMs = 150;
 let releasedWheel = null;
-let wheelStartedOnPad = false;
+let afterInk = false;
+let buttonPress;
+let buttonClickTimer;
 
 function insidePad(x, y, rect = pad.getBoundingClientRect()) {
   return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
@@ -517,6 +594,7 @@ function cancelPointer() {
 function finishStroke() {
   const stroke = pointer.stroke;
   cancelPointer();
+  afterInk = true;
   edit([...strokes(), stroke]);
 }
 
@@ -539,12 +617,15 @@ function releaseSwipe() {
 // pointerdown. The first such event inside the pad can start a stroke.
 paper.addEventListener('wheel', (e) => {
   if (e.ctrlKey || e.metaKey) return;
+  // The browser latches the originating surface for the entire gesture. Keep
+  // edge crossings and the inertial tail on the paper out of native scrolling.
+  // A fresh swipe on the character strip uses its own native scroll surface.
+  preventPan(e);
   const rect = pad.getBoundingClientRect();
   const onPad = insidePad(e.clientX, e.clientY, rect);
   // macOS can send a long train of inertial events after finger-up. Finish
   // the ink on the first one, but keep the entire tail out of native scrolling.
   if (e.momentum) {
-    if (wheelStartedOnPad || onPad) preventPan(e);
     endSwipe();
     releasedWheel = null;
     return;
@@ -556,14 +637,11 @@ paper.addEventListener('wheel', (e) => {
       e.clientX === releasedWheel.x && e.clientY === releasedWheel.y) return;
   releasedWheel = null;
   if (!onPad) {
-    wheelStartedOnPad = pointer?.source === 'swipe';
     releaseSwipe();
     return;
   }
-  wheelStartedOnPad = true;
   if (!drawQuickSwipes || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL ||
       (pointer && pointer.source !== 'swipe') || (!e.deltaX && !e.deltaY)) {
-    preventPan(e);
     return;
   }
   if (!pointer) {
@@ -579,19 +657,68 @@ paper.addEventListener('wheel', (e) => {
     releaseSwipe();
     return;
   }
-  preventPan(e);
   if (!frame) frame = requestAnimationFrame(paintWet);
   clearTimeout(swipeTimer);
   swipeTimer = setTimeout(endSwipe, swipeIdleMs);
 }, {passive: false});
 
-// Finish an outstanding swipe before the next control receives its normal tap.
+// Enable controls such as Undo as soon as the pointing device leaves the pad,
+// even if the display hasn't delivered the terminal drawing event yet.
+document.addEventListener('pointerover', e => {
+  if (!paper.contains(e.target)) releaseSwipe();
+}, true);
+
+function clearButtonPress() {
+  clearTimeout(buttonClickTimer);
+  buttonPress = null;
+}
+
 document.addEventListener('pointerdown', (e) => {
+  clearButtonPress();
   if (!e.isPrimary) return;
   releasedWheel = null;
   // Some hosts drop the terminal event. A new primary down always starts
   // a new contact, even when the browser reuses the last pointer ID.
-  if (pointer?.source === 'swipe' || pointer?.source === 'pointer') finishStroke();
+  if (pointer && (pointer.source !== 'touch' || !paper.contains(e.target))) finishStroke();
+  const button = e.target.closest?.('#workspace button, .studios button');
+  if (afterInk && button && !button.disabled && e.button === 0 &&
+      !e.ctrlKey && !e.metaKey && !e.altKey && !e.shiftKey) {
+    buttonPress = {button, id: e.pointerId, x: e.clientX, y: e.clientY, scroll: strip.scrollLeft};
+  }
+}, true);
+document.addEventListener('pointermove', e => {
+  if (buttonPress?.id === e.pointerId &&
+      Math.hypot(e.clientX - buttonPress.x, e.clientY - buttonPress.y) > 8) clearButtonPress();
+}, true);
+document.addEventListener('pointercancel', clearButtonPress, true);
+document.addEventListener('pointerup', e => {
+  const press = buttonPress;
+  if (!press || press.id !== e.pointerId) return;
+  if (Math.hypot(e.clientX - press.x, e.clientY - press.y) > 8 ||
+      !press.button.contains(document.elementFromPoint(e.clientX, e.clientY))) {
+    clearButtonPress();
+    return;
+  }
+  // Prefer the native click. Some touch hosts deliver the whole press/release
+  // after drawing but omit click. Recover just that completed stationary press.
+  buttonClickTimer = setTimeout(() => {
+    if (!press.button.isConnected || press.button.disabled ||
+        (strip.contains(press.button) && Math.abs(strip.scrollLeft - press.scroll) > 1)) return;
+    afterInk = false;
+    press.recovered = true;
+    press.button.click();
+  }, 40);
+}, true);
+document.addEventListener('click', e => {
+  if (!buttonPress || !buttonPress.button.contains(e.target)) return;
+  // A late native click from the recovered press mustn't advance Next twice.
+  // A fresh pointerdown always clears this guard, including rapid repeat taps.
+  if (buttonPress.recovered && e.detail > 0) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+  } else if (buttonPress.recovered) return;
+  afterInk = false;
+  clearButtonPress();
 }, true);
 window.addEventListener('pagehide', endSwipe);
 
@@ -701,6 +828,7 @@ window.addEventListener('keyup', (e) => {
   }
 });
 window.addEventListener('blur', () => {
+  clearButtonPress();
   hoverPoint = null;
   if (pointer?.source === 'space' || pointer?.source === 'swipe') finishStroke();
   else cancelPointer();
@@ -798,6 +926,7 @@ try {
 if (autoUpdates() && manualCount() >= MIN_SAMPLES) generated = generateSet(drawings);
 if (font.sentence === 'Aa Bb Cc') font.sentence = null;
 render();
+if (isFont()) revealCharacter(false);
 status();
 $('workspace').inert = false;
 document.querySelector('.studios').inert = false;
