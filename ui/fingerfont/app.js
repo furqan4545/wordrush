@@ -20,7 +20,8 @@ const font = {
   sentence: null,
 };
 const signature = {width: 5, smoothness: 55, transparent: true};
-const session = {studio: 'font', char: 'A', guides: true, swipeInk: false};
+const session = {studio: 'font', char: 'A', guides: true};
+let drawQuickSwipes = true;
 const dirty = new Set(),
   saving = new Map();
 let draft, pointer;
@@ -391,7 +392,7 @@ function render() {
   $('draw-label').textContent = fontOpen ? group() + (handDrawn(session.char) ? ' · Hand-drawn' : generated[session.char] ? ' · Generated' : '') : 'Signature Studio';
   $('draw-heading').textContent = fontOpen ? 'Draw ' + session.char : 'Draw your signature';
   $('guides').checked = session.guides;
-  $('swipe-ink').checked = session.swipeInk;
+  $('swipe-ink').checked = drawQuickSwipes;
   $('family').value = font.name;
   $('format').value = font.format;
   $('sentence').value = previewText();
@@ -448,8 +449,8 @@ $('prev').onclick = () => selectChar(CHARACTERS[CHARACTERS.indexOf(session.char)
 $('next').onclick = () => selectChar(CHARACTERS[CHARACTERS.indexOf(session.char) + 1]);
 $('swipe-ink').onchange = (e) => {
   endSwipe();
-  session.swipeInk = e.target.checked;
-  save('session', session);
+  drawQuickSwipes = e.target.checked;
+  save('quick-swipes', drawQuickSwipes);
 };
 $('guides').onchange = (e) => {
   session.guides = e.target.checked;
@@ -533,8 +534,8 @@ function releaseSwipe() {
   endSwipe();
 }
 
-// A web view may expose a quick display drag as pixel scrolling. This input
-// is opt-in because ordinary trackpad scrolling can have the same event shape.
+// Some displays deliver a finger swipe as pixel scrolling without a preceding
+// pointerdown. The first such event inside the pad can start a stroke.
 paper.addEventListener('wheel', (e) => {
   if (e.ctrlKey || e.metaKey) return;
   const now = performance.now();
@@ -548,7 +549,7 @@ paper.addEventListener('wheel', (e) => {
     releaseSwipe();
     return;
   }
-  if (!session.swipeInk || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL || e.momentum ||
+  if (!drawQuickSwipes || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL || e.momentum ||
       (pointer && pointer.source !== 'swipe') || (!e.deltaX && !e.deltaY)) {
     preventPan(e);
     if (e.momentum) releaseSwipe();
@@ -770,7 +771,12 @@ try {
     if (name.startsWith('ink/')) drawings[name.slice(4)] = value;
     else if (name === 'generated') generated = value;
     else if (name === 'font') Object.assign(font, value);
-    else if (name === 'session') Object.assign(session, value);
+    else if (name === 'session') {
+      // The previous session blob also stored an implicit false for swipe ink.
+      // Only a dedicated preference can distinguish an explicit opt-out.
+      for (const field of Object.keys(session)) if (field in value) session[field] = value[field];
+    }
+    else if (name === 'quick-swipes' && typeof value === 'boolean') drawQuickSwipes = value;
     else if (name === 'signature-settings') Object.assign(signature, value);
   }
 } catch {
