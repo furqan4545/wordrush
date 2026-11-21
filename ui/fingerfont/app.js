@@ -548,6 +548,7 @@ document.addEventListener('keydown', (e) => {
 
 const pad = $('pad');
 const paper = pad.closest('.paper-pad');
+if (new URLSearchParams(location.search).has('input-check')) import('./input-check.js');
 let hoverPoint = null;
 let frame = 0;
 let swipeTimer;
