@@ -470,7 +470,7 @@ function scheduleProof() {
   }, 100);
 }
 
-const narrowScreen = matchMedia('(max-width: 740px)');
+const narrowScreen = matchMedia('(max-width: 999px)');
 function positionProof() {
   const mobile = $('mobile-proof-slot'), block = $('proof-block');
   mobile.hidden = !narrowScreen.matches || !isFont();
@@ -482,11 +482,9 @@ narrowScreen.addEventListener('change', positionProof);
 function render() {
   positionProof();
   const fontOpen = isFont();
-  $('subtitle').textContent = fontOpen ? 'Draw two characters. Make a font in your own hand.'
-    : 'Draw your signature and save it for your documents.';
   $('font-mode').setAttribute('aria-pressed', fontOpen);
   $('signature-mode').setAttribute('aria-pressed', !fontOpen);
-  for (const id of ['glyph-step', 'proof-card', 'font-styles', 'font-details']) $(id).hidden = !fontOpen;
+  for (const id of ['glyph-step', 'proof-card', 'character-card', 'font-details']) $(id).hidden = !fontOpen;
   for (const id of ['sig-settings', 'signature-card']) $(id).hidden = fontOpen;
   $('draw-label').textContent = fontOpen ? group() + (handDrawn(session.char) ? ' · Hand-drawn' : generated[session.char] ? ' · Generated' : '') : 'Signature Studio';
   $('heading-subject').classList.toggle('sr-only', fontOpen);

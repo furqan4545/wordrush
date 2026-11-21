@@ -111,6 +111,7 @@ try {
   assert.equal(await count(), 2, 'an explicit opt-out should survive reload');
   // Native scrolling must still work outside the paper. A positive starting
   // offset catches leaks in both directions even when the pad is near the top.
+  await page.setViewport({width: 1100, height: 540});
   await read('scrollTo(0, 80)');
   const scrolled = await read('scrollY');
   assert(scrolled > 0);

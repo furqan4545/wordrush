@@ -27,6 +27,14 @@ function paintSample(svg, chars, sources, settings) {
 export function installStylePicker(font, glyphInk, onChange) {
   const get = id => document.getElementById(id);
   const section = get('font-styles');
+  // Phones open the same palette from the drawing board. Removing the
+  // popover attribute puts it back in the desktop sidebar on resize.
+  if ('popover' in section) {
+    const phone = matchMedia('(max-width: 740px)');
+    const positionPalette = () => { section.popover = phone.matches ? 'auto' : null; };
+    phone.addEventListener('change', positionPalette);
+    positionPalette();
+  }
   const samples = new Map();
   let current = 'A', visible = false, frame = 0, last;
   for (const [id, preset] of Object.entries(presets)) {

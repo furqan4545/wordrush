@@ -11,6 +11,16 @@ try {
   await page.setViewport({width: 1200, height: 950});
   await page.goto(process.argv[2] || 'http://127.0.0.1:4354/fingerfont/');
   await page.waitForSelector('#workspace:not([inert])');
+  await page.setViewport({width: 1280, height: 720});
+  const layout = await page.evaluate(() => {
+    const rect = id => document.getElementById(id).getBoundingClientRect();
+    return {
+      stylesOnLeft: rect('font-styles').right <= rect('editor').left,
+      proofOnRight: rect('proof-card').left >= rect('editor').right,
+      fitsScreen: document.documentElement.scrollHeight <= innerHeight,
+    };
+  });
+  assert.deepEqual(layout, {stylesOnLeft: true, proofOnRight: true, fitsScreen: true});
   const draw = async () => {
     const pad = await page.$('#pad');
     const {x, y, width, height} = await pad.boundingBox();
@@ -78,8 +88,13 @@ try {
   }
   await page.setViewport({width: 390, height: 844});
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+  await page.click('.style-trigger');
+  await page.waitForSelector('#font-styles:popover-open');
+  await page.click('#style-options button:first-child');
+  await page.click('.style-done');
+  assert.equal(await page.$eval('#font-styles', s => s.checkVisibility()), false);
   await page.click('#signature-mode');
-  assert.equal(await page.$eval('#font-styles', s => s.hidden), true);
+  assert.equal(await page.$eval('#font-styles', s => s.checkVisibility()), false);
   assert.equal(await page.$eval('#draw-heading', h => h.textContent), 'Draw your signature');
   assert.deepEqual(errors, []);
   console.log('Passed letter highlighting, style selection, draft persistence, both font downloads and mobile layout.');

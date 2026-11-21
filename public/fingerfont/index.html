@@ -8,7 +8,6 @@
   <meta name="description" content="Draw letters with a finger or pen and download your own handwriting font. Make a reusable signature in the same private workspace.">
   <link rel="canonical" href="https://wordrush.ing/fingerfont/">
   <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/feature-nav.css">
   <link rel="stylesheet" href="/fingerfont/style.css">
   <script type="module" src="/fingerfont/app.js"></script>
 </head>
@@ -22,94 +21,71 @@
     <symbol id="download-icon" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></symbol>
     <symbol id="edit-icon" viewBox="0 0 24 24"><path d="m4 16-1 5 5-1L21 7l-4-4zm10-10 4 4"/></symbol>
   </defs></svg>
-  <header class="site-header">
-    <a href="/" class="wordmark" aria-label="Wordrush home"><img src="/brand/wordrush-mark.svg" width="25" height="30" alt="">wordrush<span>.</span></a>
-    <nav class="site-nav" aria-label="Wordrush features"><a href="/">Fast cuts</a><a href="/words-in-motion/">Words in Motion</a><a href="/browser-typing/">Browser Typing</a><a href="/paper-trail/">Paper Trail</a><a href="/fingerfont/" aria-current="page">FingerFont</a></nav>
-    <details class="mobile-menu"><summary>FingerFont <span aria-hidden="true">⌄</span></summary><nav aria-label="Wordrush features"><a href="/">Fast cuts</a><a href="/words-in-motion/">Words in Motion</a><a href="/browser-typing/">Browser Typing</a><a href="/paper-trail/">Paper Trail</a><a href="/fingerfont/" aria-current="page">FingerFont</a></nav></details>
+  <header class="studio-header">
+    <div class="studio-brand">
+      <a href="/" class="wordmark" aria-label="Wordrush home"><img src="/brand/wordrush-mark.svg" width="25" height="30" alt="">wordrush<span>.</span></a>
+      <h1 id="title">Finger<i>Font</i><span>.</span></h1>
+    </div>
+    <div class="studios" inert role="group" aria-label="Choose a studio">
+      <button id="font-mode" aria-pressed="true"><svg><use href="#type"/></svg>Font Studio</button>
+      <button id="signature-mode" aria-pressed="false"><svg><use href="#pen"/></svg>Signature Studio</button>
+    </div>
+    <div class="header-tools">
+      <span id="save-state" class="save-state" role="status">Opening local draft…</span>
+      <details class="tools-menu"><summary>Tools <span aria-hidden="true">⌄</span></summary><nav aria-label="Wordrush features"><a href="/">Fast cuts</a><a href="/words-in-motion/">Words in Motion</a><a href="/browser-typing/">Browser Typing</a><a href="/paper-trail/">Paper Trail</a><a href="/fingerfont/" aria-current="page">FingerFont</a></nav></details>
+    </div>
   </header>
   <main>
-    <section class="masthead" aria-labelledby="title">
-      <div><h1 id="title">Finger<i>Font</i><span>.</span></h1>
-      <p id="subtitle">Draw two characters. Make a font in your own hand.</p></div>
-      <div class="studio-bar">
-      <div class="studios" inert role="group" aria-label="Choose a studio">
-        <button id="font-mode" aria-pressed="true"><svg><use href="#type"/></svg>Font Studio</button>
-        <button id="signature-mode" aria-pressed="false"><svg><use href="#pen"/></svg>Signature Studio</button>
-      </div>
-      <span id="save-state" class="save-state" role="status">Opening local draft…</span>
-    </div>
-    </section>
     <div id="workspace" inert>
-      <div class="work-grid">
-        <section class="card editor" id="editor" tabindex="-1" aria-labelledby="draw-heading">
-          <div class="card-head">
-            <div><div id="draw-label" class="kicker">Uppercase</div><h2 id="draw-heading">Draw<span id="heading-subject" class="sr-only"> A</span></h2></div>
-            <div class="history">
-              <button class="icon-btn" id="undo" title="Undo" aria-label="Undo"><svg><use href="#undo-icon"/></svg></button>
-              <button class="icon-btn" id="redo" title="Redo" aria-label="Redo"><svg class="flip"><use href="#undo-icon"/></svg></button>
-              <button class="clear" id="clear">Clear</button>
-            </div>
+      <section class="card editor" id="editor" tabindex="-1" aria-labelledby="draw-heading">
+        <div class="card-head">
+          <div><div id="draw-label" class="kicker">Uppercase</div><h2 id="draw-heading">Draw<span id="heading-subject" class="sr-only"> A</span></h2></div>
+          <div class="history">
+            <button type="button" class="style-trigger" popovertarget="font-styles">Styles</button>
+            <button class="icon-btn" id="undo" title="Undo" aria-label="Undo"><svg><use href="#undo-icon"/></svg></button>
+            <button class="icon-btn" id="redo" title="Redo" aria-label="Redo"><svg class="flip"><use href="#undo-icon"/></svg></button>
+            <button class="clear" id="clear">Clear</button>
           </div>
-          <div class="paper-pad">
-            <svg id="pad" aria-describedby="ink-hint" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" role="img" aria-label="Drawing pad for A">
-              <g class="rules" aria-hidden="true">
-                <path id="cap-rule" d="M0 48H480"/><path class="dashed" id="waist-rule" d="M0 96H480"/><path class="baseline" d="M0 180H480"/>
-                <text id="cap-label" x="9" y="43">Cap height</text><text x="9" y="175">Baseline</text>
-              </g>
-              <text id="trace" class="trace" x="240" y="180" text-anchor="middle">A</text>
-              <g id="generated-ink"></g><g id="ink"></g><path id="wet-ink"/>
-            </svg>
-          </div>
-          <div class="under-pad"><span id="ink-hint"><svg><use href="#edit-icon"/></svg><span><span id="pen-hint">Draw with one finger or a pen.</span><span class="trackpad-hint">On a trackpad, hold Space and move one finger.</span></span></span><div class="pad-options"><label title="Use swipe movement for ink when your display sends it as scrolling"><input type="checkbox" id="swipe-ink" checked>Draw quick swipes</label><label><input type="checkbox" id="guides" checked>Guides</label></div></div>
-          <div id="mobile-proof-slot" hidden></div>
-          <div id="glyph-step" class="step">
-            <div class="strip-heading"><h3>Up next</h3><span id="position"></span></div>
-            <div class="strip"><button id="prev" class="strip-arrow" aria-label="Previous character" title="Previous character"><svg class="flip"><use href="#arrow"/></svg></button><div id="upcoming" role="group" aria-label="Upcoming characters"></div><button id="next" class="strip-arrow" aria-label="Next character" title="Next character"><svg><use href="#arrow"/></svg></button></div>
-          </div>
-          <div id="sig-settings" class="range-pair" hidden>
-            <label>Ink thickness <output id="width-out"></output><input id="sig-width" type="range" min="2" max="16" step="0.5"></label>
-            <label>Smoothing <output id="smooth-out"></output><input id="sig-smooth" type="range" min="0" max="100"></label>
-          </div>
-        </section>
-        <aside id="proof-card" class="card proof-card" aria-label="Font workspace">
-          <div id="proof-block">
-          <div class="proof-head"><h2 id="preview-heading">Sentence preview</h2><button id="edit-sentence" class="text-btn" aria-expanded="false" aria-controls="sentence-editor"><svg><use href="#edit-icon"/></svg>Edit text</button></div>
-          <div id="sentence-editor" hidden><label class="sr-only" for="sentence">Preview text</label><input id="sentence" maxlength="240" type="text"><button class="text-btn" id="use-sample">Use sample</button></div>
-          <div class="proof-sheet"><p id="proof" class="proof" aria-label="Font preview"></p></div>
-          <p id="fallback-note" class="note"></p>
-          </div>
+        </div>
+        <div class="paper-pad">
+          <svg id="pad" aria-describedby="ink-hint" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" role="img" aria-label="Drawing pad for A">
+            <g class="rules" aria-hidden="true">
+              <path id="cap-rule" d="M0 48H480"/><path class="dashed" id="waist-rule" d="M0 96H480"/><path class="baseline" d="M0 180H480"/>
+              <text id="cap-label" x="9" y="43">Cap height</text><text x="9" y="175">Baseline</text>
+            </g>
+            <text id="trace" class="trace" x="240" y="180" text-anchor="middle">A</text>
+            <g id="generated-ink"></g><g id="ink"></g><path id="wet-ink"/>
+          </svg>
+        </div>
+        <div class="under-pad"><span id="ink-hint"><svg><use href="#edit-icon"/></svg><span><span id="pen-hint">Draw with one finger or a pen.</span><span class="trackpad-hint">On a trackpad, hold Space and move one finger.</span></span></span><div class="pad-options"><label title="Use swipe movement for ink when your display sends it as scrolling"><input type="checkbox" id="swipe-ink" checked>Draw quick swipes</label><label><input type="checkbox" id="guides" checked>Guides</label></div></div>
+        <div id="mobile-proof-slot" hidden></div>
+        <div id="glyph-step" class="step">
+          <div class="strip-heading"><h3>Up next</h3><span id="position"></span></div>
+          <div class="strip"><button id="prev" class="strip-arrow" aria-label="Previous character" title="Previous character"><svg class="flip"><use href="#arrow"/></svg></button><div id="upcoming" role="group" aria-label="Upcoming characters"></div><button id="next" class="strip-arrow" aria-label="Next character" title="Next character"><svg><use href="#arrow"/></svg></button></div>
           <div class="generate-area">
             <div class="generator-head"><h3>Complete your font</h3><div id="sample-progress" aria-hidden="true"><i></i><i></i></div></div>
             <p id="generate-note" class="note"></p>
             <button id="generate" class="primary" aria-describedby="generate-note">Generate character set<svg><use href="#arrow"/></svg></button>
             <div id="set-status" role="status" hidden><span class="set-indicator" aria-hidden="true"></span><span id="set-status-text">Character set auto-updated</span></div>
           </div>
-        </aside>
-        <aside id="signature-card" class="card signature-card" hidden>
-          <h2>Document preview</h2>
-          <div class="document"><span class="doc-heading">Letter of intent</span><div class="doc-lines"></div><div class="sig-proof" id="sig-proof"></div><small>Signature</small></div>
-          <label class="check"><input id="transparent" type="checkbox" checked>Transparent background</label>
-          <div class="download-row"><button id="svg-export" class="secondary">Download SVG</button><button id="png-export" class="primary">Download PNG</button></div>
-        </aside>
-      </div>
-      <section id="font-styles" class="card lower" aria-labelledby="styles-heading">
-        <div class="style-header">
-          <h2 id="styles-heading">Font styles</h2>
-          <div class="emphasis-controls" role="group" aria-label="Font formatting">
-            <button type="button" id="bold" aria-label="Bold" aria-pressed="false" title="Bold"><b>B</b></button>
-            <button type="button" id="italic" aria-label="Italic" aria-pressed="false" title="Italic"><i>I</i></button>
-          </div>
         </div>
-        <div id="style-options" role="group" aria-label="Suggested font styles"></div>
+        <div id="sig-settings" class="range-pair" hidden>
+          <label>Ink thickness <output id="width-out"></output><input id="sig-width" type="range" min="2" max="16" step="0.5"></label>
+          <label>Smoothing <output id="smooth-out"></output><input id="sig-smooth" type="range" min="0" max="100"></label>
+        </div>
       </section>
-      <div id="font-details" class="work-grid lower">
-        <aside id="character-card" class="card">
-          <div class="card-head"><div><h2>Character set</h2></div><span id="progress" class="count">0 / 94</span></div>
-          <progress id="progress-bar" aria-label="Characters ready" value="0" max="94"></progress>
-          <div class="group-row" role="group" aria-label="Character group"></div>
-          <div class="glyph-grid" id="glyphs" role="group" aria-label="Choose character"></div>
-          <p class="grid-key"><span class="drawn-dot"></span>Hand-drawn <span class="generated-dot"></span>Generated</p>
-        </aside>
+      <div id="font-details" class="tools-column">
+        <section id="font-styles" class="card" aria-labelledby="styles-heading">
+          <div class="style-header">
+            <h2 id="styles-heading">Font styles</h2>
+            <div class="emphasis-controls" role="group" aria-label="Font formatting">
+              <button type="button" id="bold" aria-label="Bold" aria-pressed="false" title="Bold"><b>B</b></button>
+              <button type="button" id="italic" aria-label="Italic" aria-pressed="false" title="Italic"><i>I</i></button>
+              <button type="button" class="style-done" popovertarget="font-styles" popovertargetaction="hide">Done</button>
+            </div>
+          </div>
+          <div id="style-options" role="group" aria-label="Suggested font styles"></div>
+        </section>
         <section class="card export-card"><h2>Export your font</h2>
           <label for="family">Font name</label><input type="text" id="family" maxlength="40" placeholder="My Handwriting" autocomplete="off">
           <label for="format">File format</label><select id="format"><option value="ttf">TrueType (.ttf)</option><option value="otf">OpenType (.otf)</option></select>
@@ -122,6 +98,29 @@
           <p id="alternates-note" class="note" hidden>Apps that support contextual alternates can cycle through these forms as you type.</p>
           </details>
         </section>
+      </div>
+      <div class="review-column">
+        <aside id="proof-card" class="card proof-card" aria-label="Font workspace">
+          <div id="proof-block">
+          <div class="proof-head"><h2 id="preview-heading">Sentence preview</h2><button id="edit-sentence" class="text-btn" aria-expanded="false" aria-controls="sentence-editor"><svg><use href="#edit-icon"/></svg>Edit text</button></div>
+          <div id="sentence-editor" hidden><label class="sr-only" for="sentence">Preview text</label><input id="sentence" maxlength="240" type="text"><button class="text-btn" id="use-sample">Use sample</button></div>
+          <div class="proof-sheet"><p id="proof" class="proof" aria-label="Font preview"></p></div>
+          <p id="fallback-note" class="note"></p>
+          </div>
+        </aside>
+        <aside id="character-card" class="card">
+          <div class="card-head"><div><h2>Character set</h2></div><span id="progress" class="count">0 / 94</span></div>
+          <progress id="progress-bar" aria-label="Characters ready" value="0" max="94"></progress>
+          <div class="group-row" role="group" aria-label="Character group"></div>
+          <div class="glyph-grid" id="glyphs" role="group" aria-label="Choose character"></div>
+          <p class="grid-key"><span class="drawn-dot"></span>Hand-drawn <span class="generated-dot"></span>Generated</p>
+        </aside>
+        <aside id="signature-card" class="card signature-card" hidden>
+          <h2>Document preview</h2>
+          <div class="document"><span class="doc-heading">Letter of intent</span><div class="doc-lines"></div><div class="sig-proof" id="sig-proof"></div><small>Signature</small></div>
+          <label class="check"><input id="transparent" type="checkbox" checked>Transparent background</label>
+          <div class="download-row"><button id="svg-export" class="secondary">Download SVG</button><button id="png-export" class="primary">Download PNG</button></div>
+        </aside>
       </div>
       <p class="feedback" id="feedback" role="status"></p>
     </div>
