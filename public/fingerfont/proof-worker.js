@@ -1,0 +1,1 @@
+self.onmessage=async({data:{version:e,glyphs:s,settings:o}})=>{try{let{buildFont:a}=await import("./engine-font.js"),t=a(s,o,"otf",!0);self.postMessage({version:e,bytes:t},[t])}catch{self.postMessage({version:e,error:"Could not build the sentence preview."})}};

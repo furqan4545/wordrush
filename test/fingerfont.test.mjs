@@ -88,10 +88,10 @@ test('signature exports crop to ink and make the paper background optional', () 
   assert.throws(() => signatureSVG([], settings), /signature/);
 });
 
-test('three distinct drawn characters generate a complete installable set while preserving the samples', () => {
-  const samples = {a: [stroke], '7': [bar], '?': [stroke, bar]};
+test('two distinct drawn characters generate a complete installable set while preserving the samples', () => {
+  const samples = {a: [stroke], '7': [bar]};
   const snapshot = structuredClone(samples);
-  assert.throws(() => generateSet({a: [stroke, bar], '7': [bar], signature: [stroke]}), /three/);
+  assert.throws(() => generateSet({a: [stroke, bar], signature: [stroke]}), /two/);
   const generated = generateSet(samples);
   assert.deepEqual(samples, snapshot);
   assert.deepEqual(Object.keys(generated).sort(), [...CHARACTERS].sort());

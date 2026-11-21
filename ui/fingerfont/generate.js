@@ -139,9 +139,11 @@ function lean(lines) {
   return weight ? sum / weight : 0;
 }
 
+export const MIN_SAMPLES = 2;
+
 export function generateSet(drawings) {
   const samples = [...CHARACTERS].filter(c => drawings[c]?.length);
-  if (samples.length < 3) throw new Error('Draw three distinct characters first.');
+  if (samples.length < MIN_SAMPLES) throw new Error('Draw two distinct characters first.');
   const widths = [], heights = [], leans = [], offsets = [], pressures = [];
   for (const c of samples) {
     const lines = drawings[c].map(stroke => stroke.points);

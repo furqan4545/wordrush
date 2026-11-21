@@ -30,7 +30,7 @@
   <main>
     <section class="masthead" aria-labelledby="title">
       <div><h1 id="title">Finger<i>Font</i><span>.</span></h1>
-      <p id="subtitle">Draw three characters. Make a font in your own hand.</p></div>
+      <p id="subtitle">Draw two characters. Make a font in your own hand.</p></div>
       <div class="studio-bar">
       <div class="studios" inert role="group" aria-label="Choose a studio">
         <button id="font-mode" aria-pressed="true"><svg><use href="#type"/></svg>Font Studio</button>
@@ -43,7 +43,7 @@
       <div class="work-grid">
         <section class="card editor" id="editor" tabindex="-1" aria-labelledby="draw-heading">
           <div class="card-head">
-            <div><div id="draw-label" class="kicker">Uppercase</div><h2 id="draw-heading">Draw the letter A</h2></div>
+            <div><div id="draw-label" class="kicker">Uppercase</div><h2 id="draw-heading">Draw A</h2></div>
             <div class="history">
               <button class="icon-btn" id="undo" title="Undo" aria-label="Undo"><svg><use href="#undo-icon"/></svg></button>
               <button class="icon-btn" id="redo" title="Redo" aria-label="Redo"><svg class="flip"><use href="#undo-icon"/></svg></button>
@@ -74,14 +74,15 @@
         <aside id="proof-card" class="card proof-card" aria-label="Font workspace">
           <div id="proof-block">
           <div class="proof-head"><h2 id="preview-heading">Sentence preview</h2><button id="edit-sentence" class="text-btn" aria-expanded="false" aria-controls="sentence-editor"><svg><use href="#edit-icon"/></svg>Edit text</button></div>
-          <div id="sentence-editor" hidden><label class="sr-only" for="sentence">Preview text</label><input id="sentence" maxlength="240" type="text"><button class="text-btn" id="use-sample">Use sample sentence</button></div>
+          <div id="sentence-editor" hidden><label class="sr-only" for="sentence">Preview text</label><input id="sentence" maxlength="240" type="text"><button class="text-btn" id="use-sample">Use sample</button></div>
           <div class="proof-sheet"><p id="proof" class="proof" aria-label="Font preview"></p></div>
           <p id="fallback-note" class="note"></p>
           </div>
           <div class="generate-area">
-            <div class="generator-head"><h3>Complete your font</h3><div id="sample-progress" aria-hidden="true"><i></i><i></i><i></i></div></div>
+            <div class="generator-head"><h3>Complete your font</h3><div id="sample-progress" aria-hidden="true"><i></i><i></i></div></div>
             <p id="generate-note" class="note"></p>
             <button id="generate" class="primary" aria-describedby="generate-note">Generate character set<svg><use href="#arrow"/></svg></button>
+            <div id="set-status" role="status" hidden><span class="set-indicator" aria-hidden="true"></span><span id="set-status-text">Character set auto-updated</span></div>
           </div>
         </aside>
         <aside id="signature-card" class="card signature-card" hidden>
@@ -104,7 +105,7 @@
           <label for="format">File format</label><select id="format"><option value="ttf">TrueType (.ttf)</option><option value="otf">OpenType (.otf)</option></select>
           <button id="font-export" class="primary" aria-describedby="export-note"><svg><use href="#download-icon"/></svg>Download font</button>
           <p id="export-note" class="note"></p>
-          <details class="variation-settings"><summary>Handwriting variation</summary>
+          <details class="variation-settings" id="variation-settings"><summary>Handwriting variation</summary>
           <div class="variation-head"><label for="strength">Variation strength</label><output id="strength-out"></output></div>
           <input type="range" id="strength" min="0" max="100">
           <div id="variants" class="variants" aria-label="Current character variations"></div>

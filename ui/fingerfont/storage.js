@@ -22,10 +22,11 @@ export async function openDraft() {
   });
   return {
     records,
-    save(key, value) {
+    save(entries) {
       return new Promise((resolve, reject) => {
         const tx = db.transaction('draft', 'readwrite');
-        tx.objectStore('draft').put(value, key);
+        const store = tx.objectStore('draft');
+        for (const [key, value] of entries) store.put(value, key);
         tx.oncomplete = resolve;
         tx.onabort = () => reject(tx.error);
       });

@@ -122,7 +122,7 @@ input[type=checkbox], input[type=range], progress { accent-color: var(--purple);
 .drawn::after, .drawn-dot { background: var(--accent); }
 .generated::after, .generated-dot { border: 1px solid var(--accent); }
 .proof-card { display: flex; flex-direction: column; background: #fffafaf5; }
-#proof-block { display: flex; flex: 1; flex-direction: column; }
+#proof-block { position: relative; display: flex; flex: 1; flex-direction: column; }
 .text-btn { border-radius: 7px; font-size: 12px; min-height: 34px; padding: 4px 7px; color: var(--accent); }
 .text-btn svg { width: 14px; height: 14px; }
 .proof-sheet {
@@ -154,13 +154,18 @@ input[type=checkbox], input[type=range], progress { accent-color: var(--purple);
 .secondary:not(:disabled):hover { background: var(--tint); }
 #generate, #font-export { width: 100%; }
 #generate { justify-content: space-between; }
-#sentence-editor { margin: 12px 0 0; }
+#sentence-editor {
+  position: absolute; inset: 0 62px auto 0; display: flex; align-items: center; gap: 5px;
+  height: 34px;
+}
+#proof-block:has(#sentence-editor:not([hidden])) .proof-head h2 { visibility: hidden; }
+#sentence-editor .text-btn { flex: none; padding-inline: 4px; }
 label, .variation-settings summary { font-size: 12px; }
 input[type=text], select {
   display: block; width: 100%; border: 1px solid #d7cedb; border-radius: 8px; color: var(--ink);
   background: #fffdfc; padding: 9px 11px; font-size: 15px; margin: 4px 0 11px;
 }
-#sentence-editor input { margin-bottom: 0; }
+#sentence-editor input { min-width: 0; height: 32px; margin: 0; }
 progress { display: block; width: 100%; height: 4px; border: 0; border-radius: 6px; overflow: hidden; appearance: none; margin: 15px 0; background: #e7e0e8; }
 progress::-webkit-progress-bar { background: #e7e0e8; }
 progress::-webkit-progress-value { background: var(--purple); }
@@ -232,4 +237,30 @@ input[type=range] { width: 100%; margin: 4px 0; }
   .strip, #upcoming { gap: 4px; }
   #upcoming button { height: 38px; }
   .paper-pad { margin-top: 12px; }
+}
+
+/* A finished stroke may change every letter in the specimen. Keep its metrics
+   independent of the grid and give long custom sentences their own scroll. */
+#pad * { pointer-events: none; }
+.proof-sheet { flex-direction: column; align-items: stretch; contain: size; min-block-size: 0; overflow: auto; }
+.proof { margin-block: auto; flex: none; }
+#fallback-note, #generate-note, #export-note { min-block-size: 3em; }
+#character-card { container-type: inline-size; }
+.glyph-grid { grid-template-columns: repeat(8,minmax(0,1fr)); grid-template-rows: repeat(4,38px); }
+@container (min-width: 480px) {
+  .glyph-grid { grid-template-columns: repeat(11,minmax(0,1fr)); grid-template-rows: repeat(3,38px); }
+}
+.variants, .variants:empty { display: flex; min-height: 76px; }
+#alternates-note[hidden] { display: block !important; visibility: hidden; }
+#generate, #set-status { block-size: 40px; }
+#set-status { display: flex; gap: 9px; align-items: center; justify-content: center; border-radius: 10px; color: #57447d; background: var(--tint); font-size: 13px; font-weight: 600; }
+.set-indicator { display: grid; place-items: center; width: 16px; height: 16px; border: 2px solid #9580b6; border-radius: 50%; }
+.set-indicator::after { content: ''; width: 6px; height: 3px; margin-top: -2px; border: solid var(--accent); border-width: 0 0 1.5px 1.5px; transform: rotate(-45deg); }
+.updating .set-indicator { border-color: #cdbde1; border-top-color: var(--accent); animation: set-spin .6s linear infinite; }
+.updating .set-indicator::after { visibility: hidden; }
+@keyframes set-spin { to { transform: rotate(1turn); } }
+@media (prefers-reduced-motion: reduce) { .updating .set-indicator { animation: none; } }
+@media (max-width: 740px) {
+  #mobile-proof-slot .proof-sheet { flex: none; block-size: 116px; min-height: 0; }
+  #mobile-proof-slot #fallback-note { min-block-size: 1.5em; }
 }

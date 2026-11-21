@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 const root = new URL('../', import.meta.url);
 await build({
   absWorkingDir: fileURLToPath(root),
-  entryPoints: ['ui/fingerfont/app.js'],
+  entryPoints: ['ui/fingerfont/app.js', 'ui/fingerfont/proof-worker.js'],
   outdir: 'public/fingerfont',
   chunkNames: 'engine-[name]',
   splitting: true,

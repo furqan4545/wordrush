@@ -1,5 +1,5 @@
 import {bounds, CHARACTERS, GROUPS, outline, PAPER, svgPath, variation} from './ink.js';
-import {generateSet} from './generate.js';
+import {generateSet, MIN_SAMPLES} from './generate.js';
 import {signatureBlob, signatureSVG} from './signature.js';
 import {openDraft} from './storage.js';
 
@@ -7,6 +7,9 @@ const $ = (id) => document.getElementById(id);
 const ns = 'http://www.w3.org/2000/svg';
 const drawings = Object.create(null);
 let generated = {};
+const autoUpdates = () => Boolean(generated.A);
+const manualCount = () => [...CHARACTERS].filter(handDrawn).length;
+let updateTimer;
 const history = new Map();
 const font = {
   width: 6,
@@ -65,24 +68,32 @@ function status() {
         ? 'Unsaved changes on this device'
         : 'Saved on this device';
 }
-function save(record, value) {
+function save(record, value, related = []) {
   if (!draft) return;
-  const write = draft.save(record, value);
-  saving.set(record, write);
+  const entries = [[record, value], ...related];
+  const write = draft.save(entries);
+  for (const [name] of entries) saving.set(name, write);
   status();
-  write
-    .then(
-      () => {
-        if (saving.get(record) === write) dirty.delete(record);
-      },
-      () => {
-        if (saving.get(record) === write) dirty.add(record);
-      },
-    )
-    .finally(() => {
-      if (saving.get(record) === write) saving.delete(record);
-      status();
-    });
+  function settled(success) {
+    for (const [name] of entries) {
+      if (saving.get(name) !== write) continue;
+      saving.delete(name);
+      if (success) dirty.delete(name);
+      else dirty.add(name);
+    }
+    status();
+  }
+  write.then(() => settled(true), () => settled(false));
+}
+function showSetUpdate() {
+  const status = $('set-status');
+  status.classList.add('updating');
+  $('set-status-text').textContent = 'Updating character set…';
+  clearTimeout(updateTimer);
+  updateTimer = setTimeout(() => {
+    status.classList.remove('updating');
+    $('set-status-text').textContent = 'Character set auto-updated';
+  }, 320);
 }
 function undoStack() {
   if (!history.has(key())) history.set(key(), {past: [], future: []});
@@ -90,7 +101,15 @@ function undoStack() {
 }
 function apply(strokesToKeep) {
   drawings[key()] = strokesToKeep;
-  save('ink/' + key(), strokesToKeep);
+  const related = [];
+  if (isFont() && autoUpdates()) {
+    if (manualCount() >= MIN_SAMPLES) {
+      generated = generateSet(drawings);
+    }
+    related.push(['generated', generated]);
+    showSetUpdate();
+  }
+  save('ink/' + key(), strokesToKeep, related);
   $('feedback').textContent = '';
   render();
 }
@@ -125,6 +144,7 @@ function refreshPad() {
   $('redo').disabled = !undoStack().future.length;
   $('clear').disabled = !manual.length;
   if (isFont()) {
+    if (!$('variation-settings').open) return;
     $('variants').replaceChildren();
     $('alternates-note').hidden = !font.variation || !paths.length;
     if (!paths.length) return;
@@ -163,11 +183,7 @@ for (const [name, chars] of Object.entries(GROUPS)) {
   for (const char of chars) {
     const cell = document.createElement('button');
     cell.textContent = char;
-    cell.onclick = () => {
-      selectChar(char);
-      const rect = $('pad').getBoundingClientRect();
-      if (rect.bottom < 100 || rect.top >= innerHeight) $('editor').scrollIntoView({block: 'start'});
-    };
+    cell.onclick = () => selectChar(char);
     gridButtons.set(char, cell);
     $('glyphs').append(cell);
   }
@@ -176,15 +192,41 @@ for (const [name, chars] of Object.entries(GROUPS)) {
 // its miniature until its character or source strokes change.
 const miniatures = new Map();
 const tileSources = new WeakMap();
+const pendingTiles = new Map();
+let tileFrame = 0;
+function requestTiles() {
+  if (!tileFrame && pendingTiles.size) tileFrame = requestAnimationFrame(paintTiles);
+}
+function paintTiles() {
+  tileFrame = 0;
+  if (pointer) return;
+  const deadline = performance.now() + 4;
+  for (const [button, char] of pendingTiles) {
+    pendingTiles.delete(button);
+    const source = glyphInk(char);
+    if (!button.hidden && source?.length) {
+      paintGlyph(button, char, source);
+      tileSources.set(button, {char, source});
+    }
+    if (performance.now() >= deadline) break;
+  }
+  requestTiles();
+}
 function showGlyph(button, char) {
   const source = glyphInk(char);
   const previous = tileSources.get(button);
+  pendingTiles.delete(button);
   if (previous?.char === char && previous.source === source) return;
-  tileSources.set(button, {char, source});
-  if (!source?.length) {
+  if (!source?.length || previous?.char !== char) {
     button.textContent = char;
-    return;
+    tileSources.set(button, {char, source: null});
   }
+  if (source?.length) {
+    pendingTiles.set(button, char);
+    requestTiles();
+  }
+}
+function paintGlyph(button, char, source) {
   let cached = miniatures.get(char);
   if (cached?.source !== source) {
     const paths = source.map(stroke => outline(stroke, font));
@@ -220,16 +262,17 @@ function refreshGrid() {
   $('export-note').textContent = complete
     ? 'Ready to install. Includes uppercase, lowercase, numbers and punctuation.'
     : 'Generate the remaining characters or draw them yourself to download.';
-  $('generate').disabled = manual < 3 || manual === chars.length;
-  $('generate').firstChild.textContent = count > manual ? 'Regenerate character set' : 'Generate character set';
+  $('generate').hidden = autoUpdates();
+  $('generate').disabled = manual < MIN_SAMPLES || manual === chars.length;
+  $('set-status').hidden = !autoUpdates();
   for (const [i, bar] of [...$('sample-progress').children].entries())
     bar.classList.toggle('filled', i < manual);
-  const remaining = Math.max(0, 3 - manual);
+  const remaining = MIN_SAMPLES - manual;
   $('generate-note').textContent = complete
-    ? manual + ' hand-drawn · ' + (count - manual) + ' generated. Select any character to redraw it.'
-    : remaining
-      ? 'Draw ' + (manual ? remaining + ' more' : 'any 3') + (remaining === 1 ? ' character' : ' characters') + ' to generate the rest in your style.'
-      : 'Use your ' + manual + ' hand-drawn samples to fill in the rest. Your drawings are kept.';
+    ? manual + ' hand-drawn · ' + (count - manual) + ' generated.'
+    : remaining > 0
+      ? 'Draw ' + (manual ? '1 more character' : 'any 2 characters') + ' to generate your font.'
+      : 'Ready to fill in the remaining characters from your handwriting.';
   const index = CHARACTERS.indexOf(session.char);
   $('position').textContent = (index + 1) + ' of ' + chars.length;
   $('prev').disabled = index === 0;
@@ -256,10 +299,36 @@ function refreshGrid() {
   }
 }
 
+let proofWorker;
+const proofRequests = new Map();
+function buildProof(glyphs, version) {
+  if (!proofWorker) {
+    proofWorker = new Worker(new URL('./proof-worker.js', import.meta.url), {type: 'module'});
+    proofWorker.onmessage = ({data}) => {
+      const request = proofRequests.get(data.version);
+      if (!request) return;
+      proofRequests.delete(data.version);
+      if (data.error) request.reject(new Error(data.error));
+      else request.resolve(data.bytes);
+    };
+    proofWorker.onerror = () => {
+      for (const request of proofRequests.values()) request.reject(new Error('Preview worker unavailable.'));
+      proofRequests.clear();
+      proofWorker.terminate();
+      proofWorker = null;
+    };
+  }
+  return new Promise((resolve, reject) => {
+    proofRequests.set(version, {resolve, reject});
+    proofWorker.postMessage({version, glyphs, settings: font});
+  });
+}
+
 function scheduleProof() {
   const version = ++previewVersion;
   clearTimeout(previewTimer);
   previewTimer = setTimeout(async () => {
+    if (pointer || !isFont()) return;
     const available = Object.create(null),
       missing = new Set(),
       parts = [];
@@ -274,12 +343,12 @@ function scheduleProof() {
     let face;
     try {
       if (Object.keys(available).length) {
-        const {buildFont} = await import('./font.js');
-        if (version !== previewVersion) return;
-        face = new FontFace('FingerFontProof' + version, buildFont(available, font, 'otf', true));
+        const bytes = await buildProof(available, version);
+        if (version !== previewVersion || pointer || !isFont()) return;
+        face = new FontFace('FingerFontProof' + version, bytes);
         await face.load();
       }
-      if (version !== previewVersion) return;
+      if (version !== previewVersion || pointer || !isFont()) return;
       if (face) document.fonts.add(face);
       if (previewFace) document.fonts.delete(previewFace);
       previewFace = face;
@@ -293,7 +362,7 @@ function scheduleProof() {
         }),
       );
       $('fallback-note').textContent = !sentence ? 'Type a sentence to preview your handwriting.'
-        : missing.size ? 'Gray letters are placeholders. Your ink appears in purple.'
+        : missing.size ? 'Gray letters are placeholders.'
         : 'This sentence is set in your font.';
     } catch {
       if (version === previewVersion) $('fallback-note').textContent = 'Could not load this font preview.';
@@ -313,17 +382,14 @@ narrowScreen.addEventListener('change', positionProof);
 function render() {
   positionProof();
   const fontOpen = isFont();
-  $('subtitle').textContent = fontOpen ? 'Draw three characters. Make a font in your own hand.'
+  $('subtitle').textContent = fontOpen ? 'Draw two characters. Make a font in your own hand.'
     : 'Draw your signature and save it for your documents.';
   $('font-mode').setAttribute('aria-pressed', fontOpen);
   $('signature-mode').setAttribute('aria-pressed', !fontOpen);
   for (const id of ['glyph-step', 'proof-card', 'font-details']) $(id).hidden = !fontOpen;
   for (const id of ['sig-settings', 'signature-card']) $(id).hidden = fontOpen;
   $('draw-label').textContent = fontOpen ? group() + (handDrawn(session.char) ? ' · Hand-drawn' : generated[session.char] ? ' · Generated' : '') : 'Signature Studio';
-  const noun = group() === 'Numbers' ? 'number' : group() === 'Symbols' ? 'symbol' : 'letter';
-  $('draw-heading').textContent = fontOpen ? 'Draw the ' + noun + ' ' + session.char : 'Draw your signature';
-  $('pen-hint').textContent = fontOpen && !strokes().length && generated[session.char]
-    ? 'Draw here to replace the generated character.' : 'Draw with one finger or a pen.';
+  $('draw-heading').textContent = fontOpen ? 'Draw ' + session.char : 'Draw your signature';
   $('guides').checked = session.guides;
   $('swipe-ink').checked = session.swipeInk;
   $('family').value = font.name;
@@ -360,6 +426,7 @@ function openStudio(mode) {
 $('generate').onclick = () => {
   generated = generateSet(drawings);
   save('generated', generated);
+  showSetUpdate();
   render();
 };
 $('edit-sentence').onclick = () => {
@@ -409,7 +476,7 @@ let hoverPoint = null;
 let frame = 0;
 let swipeTimer;
 const swipeIdleMs = 150;
-let ignoreSwipeUntil = 0;
+let releasedWheel = null;
 
 function insidePad(x, y, rect = pad.getBoundingClientRect()) {
   return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
@@ -431,7 +498,7 @@ function paintWet() {
 }
 
 function beginStroke(source, id, contact, timeStamp) {
-  pointer = {source, id, stroke: {points: [], pen: contact.pointerType === 'pen'}};
+  pointer = {source, id, type: contact.pointerType, stroke: {points: [], pen: contact.pointerType === 'pen'}};
   sample(contact, timeStamp);
   paintWet();
 }
@@ -439,6 +506,7 @@ function beginStroke(source, id, contact, timeStamp) {
 function cancelPointer() {
   clearTimeout(swipeTimer);
   pointer = null;
+  requestTiles();
   cancelAnimationFrame(frame);
   frame = 0;
   $('wet-ink').removeAttribute('d');
@@ -460,9 +528,9 @@ function endSwipe() {
 
 function releaseSwipe() {
   if (pointer?.source !== 'swipe') return;
+  const {startX, startY} = pointer.swipe;
+  releasedWheel = {x: startX, y: startY, until: performance.now() + swipeIdleMs};
   endSwipe();
-  // Ignore the rest of a wheel transaction still targeted at the original pad.
-  ignoreSwipeUntil = performance.now() + swipeIdleMs;
 }
 
 // A web view may expose a quick display drag as pixel scrolling. This input
@@ -470,10 +538,11 @@ function releaseSwipe() {
 paper.addEventListener('wheel', (e) => {
   if (e.ctrlKey || e.metaKey) return;
   const now = performance.now();
-  if (now < ignoreSwipeUntil) {
-    ignoreSwipeUntil = now + swipeIdleMs;
-    return;
-  }
+  // A wheel-only display may latch its event target and coordinates for a
+  // whole gesture. A fresh contact or a new start location can draw immediately.
+  if (releasedWheel && now < releasedWheel.until &&
+      e.clientX === releasedWheel.x && e.clientY === releasedWheel.y) return;
+  releasedWheel = null;
   const rect = pad.getBoundingClientRect();
   if (!insidePad(e.clientX, e.clientY, rect)) {
     releaseSwipe();
@@ -505,14 +574,23 @@ paper.addEventListener('wheel', (e) => {
 }, {passive: false});
 
 // Finish an outstanding swipe before the next control receives its normal tap.
-document.addEventListener('pointerdown', endSwipe, true);
+document.addEventListener('pointerdown', (e) => {
+  if (!e.isPrimary) return;
+  releasedWheel = null;
+  // Some hosts drop the terminal event. A new primary down always starts
+  // a new contact, even when the browser reuses the last pointer ID.
+  if (pointer?.source === 'swipe' || pointer?.source === 'pointer') finishStroke();
+}, true);
 window.addEventListener('pagehide', endSwipe);
 
 // Some touch displays emit touch events even when the host has PointerEvent.
 // The first input stream owns the stroke so dual delivery never doubles the ink.
 paper.addEventListener('touchstart', (e) => {
   preventPan(e);
-  if (pointer || e.touches.length !== 1) return;
+  if (e.touches.length !== 1) return;
+  releasedWheel = null;
+  if (pointer?.source === 'swipe' || pointer?.source === 'touch') finishStroke();
+  if (pointer) return;
   const touch = e.changedTouches[0];
   beginStroke('touch', touch.identifier, touch, e.timeStamp);
 }, {passive: false});
@@ -530,7 +608,15 @@ paper.addEventListener('touchmove', (e) => {
   if (!frame) frame = requestAnimationFrame(paintWet);
 }, {passive: false});
 window.addEventListener('touchend', (e) => {
-  if (!e.touches.length) releaseSwipe();
+  if (!e.touches.length) {
+    endSwipe();
+    releasedWheel = null;
+    if (pointer?.source === 'pointer' && pointer.type === 'touch') {
+      if (e.changedTouches.length === 1) sample(e.changedTouches[0], e.timeStamp);
+      finishStroke();
+      return;
+    }
+  }
   if (pointer?.source !== 'touch') return;
   const touch = Array.from(e.changedTouches).find(t => t.identifier === pointer.id);
   if (touch) {
@@ -558,14 +644,23 @@ pad.onpointermove = (e) => {
   sample(e);
   if (!frame) frame = requestAnimationFrame(paintWet);
 };
+window.addEventListener('pointermove', (e) => {
+  if (!pointer || insidePad(e.clientX, e.clientY)) return;
+  if (pointer.source === 'swipe') { releaseSwipe(); return; }
+  if (pointer.id === e.pointerId && (pointer.source === 'pointer' || pointer.source === 'space')) {
+    hoverPoint = null;
+    sample(e);
+    finishStroke();
+  }
+}, true);
 window.addEventListener('pointerup', (e) => {
-  if (e.isPrimary) releaseSwipe();
+  if (e.isPrimary) { endSwipe(); releasedWheel = null; }
   if (pointer?.source !== 'pointer' || pointer.id !== e.pointerId) return;
   sample(e);
   finishStroke();
 }, true);
 window.addEventListener('pointercancel', (e) => {
-  if (pointer?.source === 'pointer' && pointer.id === e.pointerId) cancelPointer();
+  if (pointer?.source === 'pointer' && pointer.id === e.pointerId) { cancelPointer(); if (isFont()) scheduleProof(); }
 }, true);
 pad.onpointerleave = (e) => {
   if (e.pointerType === 'mouse') hoverPoint = null;
@@ -608,6 +703,7 @@ $('format').onchange = (e) => {
   font.format = e.target.value;
   save('font', font);
 };
+$('variation-settings').ontoggle = () => { if ($('variation-settings').open) refreshPad(); };
 $('strength').oninput = (e) => {
   font.variation = Number(e.target.value);
   $('strength-out').textContent = font.variation + '%';
@@ -677,6 +773,8 @@ try {
 } catch {
   /* Drawing and downloads also work with browser storage disabled. */
 }
+// Older drafts may contain drawings added after the last manual generation.
+if (autoUpdates() && manualCount() >= MIN_SAMPLES) generated = generateSet(drawings);
 if (font.sentence === 'Aa Bb Cc') font.sentence = null;
 render();
 status();
