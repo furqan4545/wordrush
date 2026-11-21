@@ -294,6 +294,12 @@ const paper = pad.closest('.paper-pad');
 let hoverPoint = null;
 let frame = 0;
 let swipeTimer;
+const swipeIdleMs = 150;
+let ignoreSwipeUntil = 0;
+
+function insidePad(x, y, rect = pad.getBoundingClientRect()) {
+  return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
+}
 
 function sample(contact, timeStamp = contact.timeStamp) {
   const point = new DOMPoint(contact.clientX, contact.clientY).matrixTransform(pad.getScreenCTM().inverse());
@@ -318,9 +324,7 @@ function beginStroke(source, id, contact, timeStamp) {
 
 function cancelPointer() {
   clearTimeout(swipeTimer);
-  const previous = pointer;
   pointer = null;
-  if (previous?.source === 'pointer' && pad.hasPointerCapture(previous.id)) pad.releasePointerCapture(previous.id);
   cancelAnimationFrame(frame);
   frame = 0;
   $('wet-ink').removeAttribute('d');
@@ -340,39 +344,53 @@ function endSwipe() {
   if (pointer?.source === 'swipe') finishStroke();
 }
 
+function releaseSwipe() {
+  if (pointer?.source !== 'swipe') return;
+  endSwipe();
+  // Ignore the rest of a wheel transaction still targeted at the original pad.
+  ignoreSwipeUntil = performance.now() + swipeIdleMs;
+}
+
 // A web view may expose a quick display drag as pixel scrolling. This input
 // is opt-in because ordinary trackpad scrolling can have the same event shape.
 paper.addEventListener('wheel', (e) => {
   if (e.ctrlKey || e.metaKey) return;
-  preventPan(e);
-  if (!session.swipeInk || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL || e.momentum) return;
-  if (pointer && pointer.source !== 'swipe') return;
-  if (!e.deltaX && !e.deltaY) return;
-
+  const now = performance.now();
+  if (now < ignoreSwipeUntil) {
+    ignoreSwipeUntil = now + swipeIdleMs;
+    return;
+  }
   const rect = pad.getBoundingClientRect();
+  if (!insidePad(e.clientX, e.clientY, rect)) {
+    releaseSwipe();
+    return;
+  }
+  if (!session.swipeInk || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL || e.momentum ||
+      (pointer && pointer.source !== 'swipe') || (!e.deltaX && !e.deltaY)) {
+    preventPan(e);
+    if (e.momentum) releaseSwipe();
+    return;
+  }
   if (!pointer) {
-    if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
     beginStroke('swipe', null, e);
     pointer.swipe = {startX: e.clientX, startY: e.clientY, x: e.clientX, y: e.clientY, absolute: false};
   }
   const pos = pointer.swipe;
-  // Prefer the actual contact position whenever the browser reports it.
-  // Some hosts pin that position at gesture start and send only deltas.
   if (e.clientX !== pos.startX || e.clientY !== pos.startY) pos.absolute = true;
-  if (pos.absolute) {
-    pos.x = e.clientX;
-    pos.y = e.clientY;
-  } else {
-    pos.x = Math.max(rect.left, Math.min(rect.right, pos.x - e.deltaX));
-    pos.y = Math.max(rect.top, Math.min(rect.bottom, pos.y - e.deltaY));
-  }
+  pos.x = pos.absolute ? e.clientX : pos.x - e.deltaX;
+  pos.y = pos.absolute ? e.clientY : pos.y - e.deltaY;
   sample({clientX: pos.x, clientY: pos.y}, e.timeStamp);
+  if (!insidePad(pos.x, pos.y, rect)) {
+    releaseSwipe();
+    return;
+  }
+  preventPan(e);
   if (!frame) frame = requestAnimationFrame(paintWet);
-  // WheelEvent has no portable finger-up event. Only committing is delayed.
   clearTimeout(swipeTimer);
-  swipeTimer = setTimeout(endSwipe, 150);
+  swipeTimer = setTimeout(endSwipe, swipeIdleMs);
 }, {passive: false});
 
+// Finish an outstanding swipe before the next control receives its normal tap.
 document.addEventListener('pointerdown', endSwipe, true);
 window.addEventListener('pagehide', endSwipe);
 
@@ -385,14 +403,20 @@ paper.addEventListener('touchstart', (e) => {
   beginStroke('touch', touch.identifier, touch, e.timeStamp);
 }, {passive: false});
 paper.addEventListener('touchmove', (e) => {
-  preventPan(e);
-  if (pointer?.source !== 'touch') return;
+  if (!pointer) return;
+  if (pointer.source !== 'touch') {
+    if (Array.from(e.changedTouches).some(t => insidePad(t.clientX, t.clientY))) preventPan(e);
+    return;
+  }
   const touch = Array.from(e.changedTouches).find(t => t.identifier === pointer.id);
   if (!touch) return;
   sample(touch, e.timeStamp);
+  if (!insidePad(touch.clientX, touch.clientY)) { finishStroke(); return; }
+  preventPan(e);
   if (!frame) frame = requestAnimationFrame(paintWet);
 }, {passive: false});
-paper.addEventListener('touchend', (e) => {
+window.addEventListener('touchend', (e) => {
+  if (!e.touches.length) releaseSwipe();
   if (pointer?.source !== 'touch') return;
   const touch = Array.from(e.changedTouches).find(t => t.identifier === pointer.id);
   if (touch) {
@@ -406,30 +430,35 @@ paper.addEventListener('touchcancel', (e) => {
 
 pad.onpointerdown = (e) => {
   if (pointer || !e.isPrimary || e.button !== 0) return;
-  e.preventDefault();
-  pad.setPointerCapture(e.pointerId);
+  // Native touch and pen may capture implicitly. Let normal hit testing take
+  // over as soon as the contact leaves the drawable area.
+  if (e.target.hasPointerCapture(e.pointerId)) e.target.releasePointerCapture(e.pointerId);
   beginStroke('pointer', e.pointerId, e);
 };
 pad.onpointerenter = (e) => { if (e.pointerType === 'mouse') hoverPoint = e; };
 pad.onpointermove = (e) => {
   if (e.pointerType === 'mouse') hoverPoint = e;
-  if (!pointer || pointer.source === 'touch' || pointer.id !== e.pointerId) return;
+  if (!pointer || pointer.id !== e.pointerId || !['pointer', 'space'].includes(pointer.source)) return;
+  if (pointer.source === 'pointer' && e.pointerType === 'mouse' && !(e.buttons & 1)) { finishStroke(); return; }
   for (const item of e.getCoalescedEvents?.() ?? []) sample(item);
   sample(e);
   if (!frame) frame = requestAnimationFrame(paintWet);
 };
-pad.onpointerup = (e) => {
+window.addEventListener('pointerup', (e) => {
+  if (e.isPrimary) releaseSwipe();
   if (pointer?.source !== 'pointer' || pointer.id !== e.pointerId) return;
   sample(e);
   finishStroke();
-};
-pad.onpointercancel = pad.onlostpointercapture = (e) => {
+}, true);
+window.addEventListener('pointercancel', (e) => {
   if (pointer?.source === 'pointer' && pointer.id === e.pointerId) cancelPointer();
-};
+}, true);
 pad.onpointerleave = (e) => {
-  if (e.pointerType !== 'mouse') return;
-  hoverPoint = null;
-  if (pointer?.source === 'space') finishStroke();
+  if (e.pointerType === 'mouse') hoverPoint = null;
+  releaseSwipe();
+  if (pointer?.id !== e.pointerId || !['space', 'pointer'].includes(pointer.source)) return;
+  sample(e);
+  finishStroke();
 };
 
 window.addEventListener('keydown', (e) => {
