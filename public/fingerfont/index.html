@@ -43,7 +43,7 @@
       <div class="work-grid">
         <section class="card editor" id="editor" tabindex="-1" aria-labelledby="draw-heading">
           <div class="card-head">
-            <div><div id="draw-label" class="kicker">Uppercase</div><h2 id="draw-heading">Draw A</h2></div>
+            <div><div id="draw-label" class="kicker">Uppercase</div><h2 id="draw-heading">Draw<span id="heading-subject" class="sr-only"> A</span></h2></div>
             <div class="history">
               <button class="icon-btn" id="undo" title="Undo" aria-label="Undo"><svg><use href="#undo-icon"/></svg></button>
               <button class="icon-btn" id="redo" title="Redo" aria-label="Redo"><svg class="flip"><use href="#undo-icon"/></svg></button>
@@ -92,6 +92,18 @@
           <div class="download-row"><button id="svg-export" class="secondary">Download SVG</button><button id="png-export" class="primary">Download PNG</button></div>
         </aside>
       </div>
+      <section id="font-styles" class="card lower" aria-labelledby="styles-heading">
+        <div class="style-header">
+          <h2 id="styles-heading">Font styles</h2>
+          <div class="emphasis-controls" role="group" aria-label="Letter formatting">
+            <select id="style-scope" aria-label="Apply formatting to"><option value="font">Whole font</option><option value="letter" id="scope-letter">This letter</option></select>
+            <button type="button" id="bold" aria-label="Bold" aria-pressed="false" title="Bold"><b>B</b></button>
+            <button type="button" id="italic" aria-label="Italic" aria-pressed="false" title="Italic"><i>I</i></button>
+            <button type="button" id="reset-letter" class="icon-btn" aria-label="Use whole-font formatting for this letter" title="Use whole-font formatting for this letter" hidden><svg><use href="#undo-icon"/></svg></button>
+          </div>
+        </div>
+        <div id="style-options" role="group" aria-label="Suggested font styles"></div>
+      </section>
       <div id="font-details" class="work-grid lower">
         <aside id="character-card" class="card">
           <div class="card-head"><div><h2>Character set</h2></div><span id="progress" class="count">0 / 94</span></div>

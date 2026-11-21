@@ -1,7 +1,8 @@
 import {Font, Glyph, Path} from 'opentype.js';
 import otfReaderModule from 'fonteditor-core/lib/ttf/otf2ttfobject';
 import writerModule from 'fonteditor-core/lib/ttf/ttfwriter';
-import {bounds, CHARACTERS, outline, PAPER, variation} from './ink.js';
+import {bounds, CHARACTERS, PAPER, variation} from './ink.js';
+import {fontContours, fontNames} from './styles.js';
 
 const convertContours = otfReaderModule.default ?? otfReaderModule;
 const TrueTypeWriter = writerModule.default ?? writerModule;
@@ -77,11 +78,17 @@ function checksum(bytes) {
   return sum;
 }
 
-// The contour converter retains glyph order but drops layout tables. Restore
-// the exact GSUB used by the OTF and rebuild the sfnt directory and checksums.
-function addLayout(ttf, layout) {
-  const entries = tables(ttf);
-  entries.set('GSUB', layout);
+// Both formats need consistent style flags. The TrueType converter also drops
+// layout tables, so restore GSUB when supplied and recompute the checksums.
+function writeTables(buffer, {layout, bold, italic}) {
+  const entries = tables(buffer);
+  if (layout) entries.set('GSUB', layout);
+  const tableView = tag => {
+    const entry = entries.get(tag);
+    return new DataView(entry.buffer, entry.byteOffset, entry.byteLength);
+  };
+  tableView('head').setUint16(44, (bold ? 1 : 0) | (italic ? 2 : 0));
+  tableView('post').setInt32(4, italic ? -12 * 65536 : 0);
   const tags = [...entries.keys()].sort();
   const paddedSize = (length) => Math.ceil(length / 4) * 4;
   let offset = 12 + 16 * tags.length;
@@ -90,7 +97,7 @@ function addLayout(ttf, layout) {
   );
   const view = new DataView(bytes.buffer);
   const exponent = Math.floor(Math.log2(tags.length));
-  view.setUint32(0, 0x10000);
+  view.setUint32(0, new DataView(buffer).getUint32(0));
   view.setUint16(4, tags.length);
   view.setUint16(6, 16 * 2 ** exponent);
   view.setUint16(8, exponent);
@@ -133,32 +140,34 @@ export function buildFont(drawings, settings, format, preview = false) {
     new Glyph({name: '.notdef', advanceWidth: 345, path: missing}),
     new Glyph({name: 'space', unicode: 32, advanceWidth: 290, path: new Path()}),
   ];
-  const outlines = chars.map((char) => drawings[char].map((stroke) => outline(stroke, settings)));
+  const outlines = chars.map((char) => fontContours(drawings[char], char, settings));
   for (let alt = 0; alt < (settings.variation ? 3 : 1); alt++) {
     chars.forEach((char, i) =>
       glyphs.push(makeGlyph(char, variation(outlines[i], char, alt, settings.variation), alt)),
     );
   }
-  const family = settings.name.trim() || 'My Handwriting';
+  const {family, style} = fontNames(settings);
   const postScriptName =
     (family
       .normalize('NFKD')
       .replace(/[^a-zA-Z0-9-]/g, '')
-      .slice(0, 50) || 'FingerFont') + '-Regular';
+      .slice(0, 50) || 'FingerFont') + '-' + style.replace(/ /g, '');
   const font = new Font({
     familyName: family,
-    styleName: 'Regular',
+    styleName: style,
     postScriptName,
     version: 'Version 1.000',
     unitsPerEm: 1000,
     ascender: 790,
     descender: -290,
     glyphs,
-    weightClass: 400,
+    weightClass: settings.bold ? 700 : 400,
+    fsSelection: (settings.bold ? 32 : 0) | (settings.italic ? 1 : 0) || 64,
   });
   if (settings.variation) font.tables.gsub = contextualAlternates(chars.length);
   const otf = font.toArrayBuffer();
-  if (format === 'otf') return otf;
+  if (format === 'otf') return settings.bold || settings.italic ? writeTables(otf, settings) : otf;
   const ttf = new TrueTypeWriter().write(convertContours(otf));
-  return settings.variation ? addLayout(ttf, tables(otf).get('GSUB')) : ttf;
+  if (!settings.variation && !settings.bold && !settings.italic) return ttf;
+  return writeTables(ttf, {...settings, layout: settings.variation && tables(otf).get('GSUB')});
 }

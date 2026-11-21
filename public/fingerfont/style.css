@@ -273,3 +273,27 @@ input[type=range] { width: 100%; margin: 4px 0; }
   #mobile-proof-slot .proof-sheet { flex: none; block-size: 116px; min-height: 0; }
   #mobile-proof-slot #fallback-note { min-block-size: 1.5em; }
 }
+
+/* Highlight paint adds no width to the glyphs or their lines. */
+::highlight(fingerfont-letter) { color: #4c2d72; background: #e6d4fc; text-decoration: underline; }
+.proof mark, .letter-swatch { color: #4c2d72; background: #e6d4fc; border-radius: 3px; }
+.proof mark { text-decoration: underline; }
+.letter-swatch { font-size: 1.45em; line-height: 1; padding-inline: .18em; }
+.style-header, .emphasis-controls { display: flex; align-items: center; gap: 8px; }
+.style-header { justify-content: space-between; flex-wrap: wrap; margin-bottom: 14px; }
+.emphasis-controls { gap: 4px; }
+.emphasis-controls select { width: auto; min-height: 34px; font-size: 12px; margin: 0 3px 0 0; padding: 5px 7px; }
+.emphasis-controls button { width: 35px; height: 34px; border: 1px solid var(--line); border-radius: 7px; font: 19px Georgia, serif; }
+.emphasis-controls button[aria-pressed=true] { background: var(--tint); border-color: var(--purple); color: var(--accent); }
+#style-options { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 9px; }
+#style-options button { position: relative; text-align: left; display: grid; gap: 1px; padding: 12px 15px; border: 1px solid var(--line); border-radius: 11px; background: #fffdf9; }
+#style-options button:hover { border-color: #af9bc3; }
+#style-options button[aria-pressed=true] { border-color: var(--purple); background: #f3eefb; color: #513976; }
+#style-options button[aria-pressed=true]::after { content: '✓'; position: absolute; right: 10px; top: 7px; color: var(--accent); }
+#style-options svg { width: 100%; height: 45px; margin-bottom: 6px; fill: currentColor; stroke: none; }
+#style-options strong { font-size: 13px; }
+#style-options small { color: var(--muted); font-size: 11px; }
+@media (max-width: 640px) {
+  #style-options { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+  #style-options button { padding: 9px 12px; }
+}

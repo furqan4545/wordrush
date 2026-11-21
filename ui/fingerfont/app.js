@@ -2,6 +2,9 @@ import {bounds, CHARACTERS, GROUPS, outline, PAPER, svgPath, variation} from './
 import {generateSet, MIN_SAMPLES} from './generate.js';
 import {signatureBlob, signatureSVG} from './signature.js';
 import {openDraft} from './storage.js';
+import {fontContours, fontNames} from './styles.js';
+import {highlightLetter} from './specimen.js';
+import {installStylePicker} from './style-picker.js';
 
 const $ = (id) => document.getElementById(id);
 const ns = 'http://www.w3.org/2000/svg';
@@ -16,6 +19,10 @@ const font = {
   smoothness: 55,
   variation: 55,
   name: 'My Handwriting',
+  preset: 'original',
+  bold: false,
+  italic: false,
+  letters: {},
   format: 'ttf',
   sentence: null,
 };
@@ -51,6 +58,7 @@ function previewText() {
   if (font.sentence !== null) return font.sentence;
   const char = session.char;
   if (/^[A-Z]$/.test(char)) return sampleSentences[char.charCodeAt(0) - 65];
+  if (char === 't') return 'Take the path through the trees.';
   if (/^[a-z]$/.test(char)) return 'The quick brown fox jumps over a lazy dog.';
   if (/^[0-9]$/.test(char)) return 'Meet me at ' + char + ' by the old oak tree.';
   return 'I wrote ' + char + ' in the margin of my notebook.';
@@ -149,9 +157,10 @@ function refreshPad() {
     $('variants').replaceChildren();
     $('alternates-note').hidden = !font.variation || !paths.length;
     if (!paths.length) return;
+    const styled = fontContours(suggested ? generated[session.char] : manual, session.char, font);
     const versions = font.variation ? [0, 1, 2] : [0];
     versions.forEach((i) => {
-      const contours = variation(paths, session.char, i, font.variation);
+      const contours = variation(styled, session.char, i, font.variation);
       const box = bounds(contours);
       const figure = document.createElement('figure');
       const drawing = svg('svg', {
@@ -192,7 +201,13 @@ for (const [name, chars] of Object.entries(GROUPS)) {
 // Both pickers show the same outline as the exported font. Each tile keeps
 // its miniature until its character or source strokes change.
 const miniatures = new Map();
-const tileSources = new WeakMap();
+let tileSources = new WeakMap();
+const refreshStyles = installStylePicker(font, glyphInk, () => {
+  miniatures.clear();
+  tileSources = new WeakMap();
+  save('font', font);
+  render();
+});
 const pendingTiles = new Map();
 let tileFrame = 0;
 function requestTiles() {
@@ -230,7 +245,7 @@ function showGlyph(button, char) {
 function paintGlyph(button, char, source) {
   let cached = miniatures.get(char);
   if (cached?.source !== source) {
-    const paths = source.map(stroke => outline(stroke, font));
+    const paths = fontContours(source, char, font);
     const box = bounds(paths);
     const viewBox = [box.left - 5, 12, box.right - box.left + 10, 216].join(' ');
     const miniature = svg('svg', {viewBox, 'aria-hidden': true, class: 'glyph-miniature'});
@@ -373,7 +388,7 @@ function refreshGrid() {
   for (const tile of visibleTiles) showGlyph(tile, tile.dataset.char);
 }
 
-let proofWorker;
+let proofWorker, lastProof;
 const proofRequests = new Map();
 function buildProof(glyphs, version) {
   if (!proofWorker) {
@@ -414,6 +429,8 @@ function scheduleProof() {
       if (!parts.length || parts.at(-1).drawn !== drawn) parts.push({drawn, text: ''});
       parts.at(-1).text += char;
     }
+    const char = session.char, activeInk = glyphInk(char);
+    if (activeInk?.length) available[char] = activeInk;
     let face;
     try {
       if (Object.keys(available).length) {
@@ -435,7 +452,17 @@ function scheduleProof() {
           return span;
         }),
       );
-      $('fallback-note').textContent = !sentence ? 'Type a sentence to preview your handwriting.'
+      const reveal = lastProof?.char !== char || lastProof?.ink !== activeInk || lastProof?.sentence !== sentence;
+      lastProof = {char, ink: activeInk, sentence};
+      highlightLetter($('proof'), activeInk?.length ? char : null, reveal);
+      const note = $('fallback-note');
+      if (face && activeInk?.length && !sentence.includes(char)) {
+        const swatch = document.createElement('span');
+        swatch.className = 'letter-swatch';
+        swatch.style.fontFamily = face.family;
+        swatch.textContent = char;
+        note.replaceChildren(swatch, ' · This character is outside your preview text.');
+      } else note.textContent = !sentence ? 'Type a sentence to preview your handwriting.'
         : missing.size ? 'Gray letters are placeholders.'
         : 'This sentence is set in your font.';
     } catch {
@@ -460,10 +487,11 @@ function render() {
     : 'Draw your signature and save it for your documents.';
   $('font-mode').setAttribute('aria-pressed', fontOpen);
   $('signature-mode').setAttribute('aria-pressed', !fontOpen);
-  for (const id of ['glyph-step', 'proof-card', 'font-details']) $(id).hidden = !fontOpen;
+  for (const id of ['glyph-step', 'proof-card', 'font-styles', 'font-details']) $(id).hidden = !fontOpen;
   for (const id of ['sig-settings', 'signature-card']) $(id).hidden = fontOpen;
   $('draw-label').textContent = fontOpen ? group() + (handDrawn(session.char) ? ' · Hand-drawn' : generated[session.char] ? ' · Generated' : '') : 'Signature Studio';
-  $('draw-heading').textContent = fontOpen ? 'Draw ' + session.char : 'Draw your signature';
+  $('heading-subject').classList.toggle('sr-only', fontOpen);
+  $('heading-subject').textContent = fontOpen ? ' ' + session.char : ' your signature';
   $('guides').checked = session.guides;
   $('swipe-ink').checked = drawQuickSwipes;
   $('family').value = font.name;
@@ -479,6 +507,7 @@ function render() {
   refreshPad();
   if (fontOpen) {
     refreshGrid();
+    refreshStyles(session.char);
     scheduleProof();
   }
 }
@@ -1035,7 +1064,7 @@ async function exportFile(button, format) {
       const glyphs = Object.fromEntries([...CHARACTERS].map(c => [c, glyphInk(c)]));
       const bytes = buildFont(glyphs, font, format);
       const filename =
-        (font.name.trim().replace(/[^\p{L}\p{N} _-]+/gu, '') || 'My Handwriting') + '.' + format;
+        (fontNames(font).filename.replace(/[^\p{L}\p{N} _-]+/gu, '') || 'My Handwriting') + '.' + format;
       download(new Blob([bytes], {type: 'font/' + format}), filename);
     } else {
       download(await signatureBlob(strokes(), signature, format), 'Signature.' + format);

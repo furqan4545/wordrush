@@ -121,3 +121,27 @@ test('generated forms follow sample proportions and reuse corresponding handwrit
   assert.deepEqual(normal.c.map(s => s.points.length), samples.C.map(s => s.points.length));
   assert.deepEqual(normal.c.map(s => s.points.map(p => p[2])), samples.C.map(s => s.points.map(p => p[2])));
 });
+
+for (const format of ['ttf', 'otf']) {
+  test(format + ' preserves emphasis, alternate styles and per-letter overrides in the exported outlines', () => {
+    const source = {A: [stroke], B: [stroke]};
+    const original = structuredClone(source);
+    const build = extra => parse(buildFont(source, {...settings, ...extra}, format, true));
+    const normal = build({});
+    const distinct = new Set(['original', 'fine', 'marker', 'print'].map(preset =>
+      JSON.stringify(build({preset}).charToGlyph('A').path.commands)));
+    assert.equal(distinct.size, 4);
+    for (const [bold, italic] of [[true, false], [false, true], [true, true]]) {
+      const face = build({bold, italic, letters: {B: {bold: false, italic: false}}});
+      assert.notDeepEqual(face.charToGlyph('A').path.commands, normal.charToGlyph('A').path.commands);
+      assert.deepEqual(face.charToGlyph('B').path.commands, normal.charToGlyph('B').path.commands);
+      assert.equal(face.tables.os2.usWeightClass, bold ? 700 : 400);
+      assert.equal(face.tables.os2.fsSelection, (bold ? 32 : 0) | (italic ? 1 : 0));
+      assert.equal(face.tables.head.macStyle, (bold ? 1 : 0) | (italic ? 2 : 0));
+      assert.equal(face.tables.post.italicAngle, italic ? -12 : 0);
+      assert.equal(face.names.fontSubfamily.en, [bold && 'Bold', italic && 'Italic'].filter(Boolean).join(' '));
+    }
+    assert.equal(build({preset: 'print'}).names.fontFamily.en, settings.name + ' Studio print');
+    assert.deepEqual(source, original);
+  });
+}

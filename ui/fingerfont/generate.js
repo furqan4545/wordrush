@@ -196,3 +196,19 @@ export function generateSet(drawings) {
     return [c, strokes];
   }));
 }
+
+// The print specimen uses the same letterforms as the alphabet generator.
+const printSamples = new Map();
+export function printSample(char) {
+  if (!printSamples.has(char)) {
+    const lines = base[char];
+    const box = bounds(lines);
+    const center = (box.left + box.right) / 2;
+    const unit = (PAPER.baseline - PAPER.cap) / 10;
+    printSamples.set(char, lines.map(line => ({
+      pen: true,
+      points: line.map(([x, y]) => [PAPER.width / 2 + (x - center) * unit, PAPER.cap + y * unit, .5]),
+    })));
+  }
+  return printSamples.get(char);
+}
