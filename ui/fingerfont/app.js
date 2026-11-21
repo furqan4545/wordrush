@@ -1,10 +1,12 @@
 import {bounds, CHARACTERS, GROUPS, outline, PAPER, svgPath, variation} from './ink.js';
+import {generateSet} from './generate.js';
 import {signatureBlob, signatureSVG} from './signature.js';
 import {openDraft} from './storage.js';
 
 const $ = (id) => document.getElementById(id);
 const ns = 'http://www.w3.org/2000/svg';
 const drawings = Object.create(null);
+let generated = {};
 const history = new Map();
 const font = {
   width: 6,
@@ -12,7 +14,7 @@ const font = {
   variation: 55,
   name: 'My Handwriting',
   format: 'ttf',
-  sentence: 'Aa Bb Cc',
+  sentence: null,
 };
 const signature = {width: 5, smoothness: 55, transparent: true};
 const session = {studio: 'font', char: 'A', guides: true, swipeInk: false};
@@ -28,7 +30,27 @@ const key = () => (isFont() ? session.char : 'signature');
 const strokes = () => drawings[key()] ?? [];
 const settings = () => (isFont() ? font : signature);
 const group = () => Object.keys(GROUPS).find((name) => GROUPS[name].includes(session.char));
-const completed = () => [...CHARACTERS].filter((char) => drawings[char]?.length).length;
+const handDrawn = (char) => Boolean(drawings[char]?.length);
+const glyphInk = (char) => handDrawn(char) ? drawings[char] : generated[char];
+const sampleSentences = [
+  'A little ink goes a long way.', 'Between the lines, a story begins.', 'Coffee tastes better with company.',
+  'Draw something worth keeping.', 'Every letter has a little rhythm.', 'Fold the paper into a tiny boat.',
+  'Good ideas start in the margins.', 'Here is a note for tomorrow.', 'I kept your letter in my pocket.',
+  'Just leave a note on the table.', 'Keep a pencil by the window.', 'Leave a little room for wonder.',
+  'Meet me where the wildflowers grow.', 'Nothing beats a handwritten note.', 'One more page before bed.',
+  'Paper planes drift across the room.', 'Quiet mornings belong to dreamers.', 'Rain taps softly on the window.',
+  'Some words are worth keeping.', 'Take the long way home.', 'Under the stars, we wrote our names.',
+  'Violets grow beside the garden gate.', 'Write me when you get there.', 'X marks the spot on my map.',
+  'Your postcard made my day.', 'Zinnias bloom outside my window.',
+];
+function previewText() {
+  if (font.sentence !== null) return font.sentence;
+  const char = session.char;
+  if (/^[A-Z]$/.test(char)) return sampleSentences[char.charCodeAt(0) - 65];
+  if (/^[a-z]$/.test(char)) return 'The quick brown fox jumps over a lazy dog.';
+  if (/^[0-9]$/.test(char)) return 'Meet me at ' + char + ' by the old oak tree.';
+  return 'I wrote ' + char + ' in the margin of my notebook.';
+}
 function svg(tag, attributes) {
   const node = document.createElementNS(ns, tag);
   for (const [name, value] of Object.entries(attributes)) node.setAttribute(name, value);
@@ -86,13 +108,14 @@ function restore(from, to) {
   stack[to].push(strokes());
   apply(stack[from].pop());
 }
-function currentContours() {
-  return strokes().map((stroke) => outline(stroke, settings()));
-}
 
 function refreshPad() {
-  const paths = currentContours();
-  $('ink').replaceChildren(...paths.map((points) => svg('path', {d: svgPath(points)})));
+  const manual = strokes();
+  const suggested = isFont() && !manual.length && generated[session.char]?.length;
+  const paths = (suggested ? generated[session.char] : manual).map(stroke => outline(stroke, settings()));
+  const ink = paths.map(points => svg('path', {d: svgPath(points)}));
+  $('generated-ink').replaceChildren(...(suggested ? ink : []));
+  $('ink').replaceChildren(...(suggested ? [] : ink));
   $('trace').textContent = session.char;
   $('trace').style.display = isFont() && session.guides && !paths.length ? '' : 'none';
   document.querySelector('.rules').style.display = session.guides ? '' : 'none';
@@ -100,7 +123,7 @@ function refreshPad() {
   $('pad').setAttribute('aria-label', isFont() ? 'Drawing pad for ' + session.char : 'Signature drawing pad');
   $('undo').disabled = !undoStack().past.length;
   $('redo').disabled = !undoStack().future.length;
-  $('clear').disabled = !paths.length;
+  $('clear').disabled = !manual.length;
   if (isFont()) {
     $('variants').replaceChildren();
     $('alternates-note').hidden = !font.variation || !paths.length;
@@ -114,7 +137,7 @@ function refreshPad() {
         viewBox: [box.left - 8, -6, box.right - box.left + 16, 252].join(' '),
         'aria-hidden': true,
       });
-      drawing.append(...contours.map((points) => svg('path', {d: svgPath(points), fill: '#232322'})));
+      drawing.append(...contours.map((points) => svg('path', {d: svgPath(points), fill: 'currentColor'})));
       const caption = document.createElement('figcaption');
       caption.className = 'variant-caption';
       caption.textContent = ['Original', 'Alternate 1', 'Alternate 2'][i];
@@ -140,10 +163,39 @@ for (const [name, chars] of Object.entries(GROUPS)) {
   for (const char of chars) {
     const cell = document.createElement('button');
     cell.textContent = char;
-    cell.onclick = () => selectChar(char);
+    cell.onclick = () => {
+      selectChar(char);
+      const rect = $('pad').getBoundingClientRect();
+      if (rect.bottom < 100 || rect.top >= innerHeight) $('editor').scrollIntoView({block: 'start'});
+    };
     gridButtons.set(char, cell);
     $('glyphs').append(cell);
   }
+}
+// Both pickers show the same outline as the exported font. Each tile keeps
+// its miniature until its character or source strokes change.
+const miniatures = new Map();
+const tileSources = new WeakMap();
+function showGlyph(button, char) {
+  const source = glyphInk(char);
+  const previous = tileSources.get(button);
+  if (previous?.char === char && previous.source === source) return;
+  tileSources.set(button, {char, source});
+  if (!source?.length) {
+    button.textContent = char;
+    return;
+  }
+  let cached = miniatures.get(char);
+  if (cached?.source !== source) {
+    const paths = source.map(stroke => outline(stroke, font));
+    const box = bounds(paths);
+    const viewBox = [box.left - 5, 12, box.right - box.left + 10, 216].join(' ');
+    const miniature = svg('svg', {viewBox, 'aria-hidden': true, class: 'glyph-miniature'});
+    miniature.append(...paths.map(points => svg('path', {d: svgPath(points)})));
+    cached = {source, miniature};
+    miniatures.set(char, cached);
+  }
+  button.replaceChildren(cached.miniature.cloneNode(true));
 }
 function refreshGrid() {
   const activeGroup = group();
@@ -151,26 +203,57 @@ function refreshGrid() {
     b.setAttribute('aria-pressed', b.textContent === activeGroup);
   for (const [char, cell] of gridButtons) {
     cell.hidden = !GROUPS[activeGroup].includes(char);
+    if (!cell.hidden) showGlyph(cell, char);
     cell.setAttribute('aria-pressed', char === session.char);
-    const done = Boolean(drawings[char]?.length);
-    cell.classList.toggle('drawn', done);
-    cell.setAttribute('aria-label', char + (done ? ', drawn' : ', to draw'));
+    const state = handDrawn(char) ? 'drawn' : generated[char] ? 'generated' : 'to draw';
+    cell.classList.toggle('drawn', state === 'drawn');
+    cell.classList.toggle('generated', state === 'generated');
+    cell.setAttribute('aria-label', char + ', ' + state);
   }
-  const count = completed();
-  $('progress').textContent = count + ' / ' + CHARACTERS.length;
+  const chars = [...CHARACTERS];
+  const manual = chars.filter(handDrawn).length;
+  const count = chars.filter(c => glyphInk(c)?.length).length;
+  const complete = count === chars.length;
+  $('progress').textContent = count + ' / ' + chars.length;
   $('progress-bar').value = count;
-  $('font-export').disabled = count !== CHARACTERS.length;
-  $('export-note').textContent =
-    count === CHARACTERS.length
-      ? 'Ready to install. Spacing and handwriting alternates are included.'
-      : 'Draw ' +
-        (CHARACTERS.length - count) +
-        ' more character' +
-        (count === CHARACTERS.length - 1 ? '' : 's') +
-        ' to unlock export. Space is included automatically.';
+  $('font-export').disabled = !complete;
+  $('export-note').textContent = complete
+    ? 'Ready to install. Includes uppercase, lowercase, numbers and punctuation.'
+    : 'Generate the remaining characters or draw them yourself to download.';
+  $('generate').disabled = manual < 3 || manual === chars.length;
+  $('generate').firstChild.textContent = count > manual ? 'Regenerate character set' : 'Generate character set';
+  for (const [i, bar] of [...$('sample-progress').children].entries())
+    bar.classList.toggle('filled', i < manual);
+  const remaining = Math.max(0, 3 - manual);
+  $('generate-note').textContent = complete
+    ? manual + ' hand-drawn · ' + (count - manual) + ' generated. Select any character to redraw it.'
+    : remaining
+      ? 'Draw ' + (manual ? remaining + ' more' : 'any 3') + (remaining === 1 ? ' character' : ' characters') + ' to generate the rest in your style.'
+      : 'Use your ' + manual + ' hand-drawn samples to fill in the rest. Your drawings are kept.';
   const index = CHARACTERS.indexOf(session.char);
+  $('position').textContent = (index + 1) + ' of ' + chars.length;
   $('prev').disabled = index === 0;
-  $('next').disabled = index === CHARACTERS.length - 1;
+  $('next').disabled = index === chars.length - 1;
+  const first = Math.min(index, chars.length - 6);
+  // Reuse buttons across strokes so keyboard focus stays on the selected tile.
+  for (let i = 0; i < 6; i++) {
+    let tile = $('upcoming').children[i];
+    if (!tile) {
+      tile = document.createElement('button');
+      tile.onclick = () => {
+        selectChar(tile.dataset.char);
+        $('upcoming').querySelector('[aria-pressed="true"]').focus({preventScroll: true});
+      };
+      $('upcoming').append(tile);
+    }
+    const c = chars[first + i];
+    tile.dataset.char = c;
+    showGlyph(tile, c);
+    tile.setAttribute('aria-label', 'Draw ' + c);
+    tile.setAttribute('aria-pressed', c === session.char);
+    tile.classList.toggle('drawn', handDrawn(c));
+    tile.classList.toggle('generated', !handDrawn(c) && Boolean(generated[c]));
+  }
 }
 
 function scheduleProof() {
@@ -180,9 +263,10 @@ function scheduleProof() {
     const available = Object.create(null),
       missing = new Set(),
       parts = [];
-    for (const char of font.sentence) {
-      const drawn = char === ' ' || Boolean(drawings[char]?.length);
-      if (drawn && char !== ' ') available[char] = drawings[char];
+    const sentence = previewText();
+    for (const char of sentence) {
+      const drawn = char === ' ' || Boolean(glyphInk(char)?.length);
+      if (drawn && char !== ' ') available[char] = glyphInk(char);
       if (!drawn) missing.add(char);
       if (!parts.length || parts.at(-1).drawn !== drawn) parts.push({drawn, text: ''});
       parts.at(-1).text += char;
@@ -208,31 +292,43 @@ function scheduleProof() {
           return span;
         }),
       );
-      $('fallback-note').textContent = missing.size
-        ? 'Gray characters use a fallback: ' + [...missing].join(' ')
-        : font.sentence
-          ? 'All characters in this preview are available.'
-          : 'Type a sentence to preview your handwriting.';
+      $('fallback-note').textContent = !sentence ? 'Type a sentence to preview your handwriting.'
+        : missing.size ? 'Gray letters are placeholders. Your ink appears in purple.'
+        : 'This sentence is set in your font.';
     } catch {
       if (version === previewVersion) $('fallback-note').textContent = 'Could not load this font preview.';
     }
   }, 100);
 }
 
+const narrowScreen = matchMedia('(max-width: 740px)');
+function positionProof() {
+  const mobile = $('mobile-proof-slot'), block = $('proof-block');
+  mobile.hidden = !narrowScreen.matches || !isFont();
+  const parent = narrowScreen.matches ? mobile : $('proof-card');
+  if (block.parentElement !== parent) parent.prepend(block);
+}
+narrowScreen.addEventListener('change', positionProof);
+
 function render() {
+  positionProof();
   const fontOpen = isFont();
+  $('subtitle').textContent = fontOpen ? 'Draw three characters. Make a font in your own hand.'
+    : 'Draw your signature and save it for your documents.';
   $('font-mode').setAttribute('aria-pressed', fontOpen);
   $('signature-mode').setAttribute('aria-pressed', !fontOpen);
-  for (const id of ['glyph-step', 'character-card', 'font-details']) $(id).hidden = !fontOpen;
+  for (const id of ['glyph-step', 'proof-card', 'font-details']) $(id).hidden = !fontOpen;
   for (const id of ['sig-settings', 'signature-card']) $(id).hidden = fontOpen;
-  $('draw-label').textContent = fontOpen ? group() : 'Signature Studio';
+  $('draw-label').textContent = fontOpen ? group() + (handDrawn(session.char) ? ' · Hand-drawn' : generated[session.char] ? ' · Generated' : '') : 'Signature Studio';
   const noun = group() === 'Numbers' ? 'number' : group() === 'Symbols' ? 'symbol' : 'letter';
   $('draw-heading').textContent = fontOpen ? 'Draw the ' + noun + ' ' + session.char : 'Draw your signature';
+  $('pen-hint').textContent = fontOpen && !strokes().length && generated[session.char]
+    ? 'Draw here to replace the generated character.' : 'Draw with one finger or a pen.';
   $('guides').checked = session.guides;
   $('swipe-ink').checked = session.swipeInk;
   $('family').value = font.name;
   $('format').value = font.format;
-  $('sentence').value = font.sentence;
+  $('sentence').value = previewText();
   $('strength').value = font.variation;
   $('strength-out').textContent = font.variation + '%';
   $('sig-width').value = signature.width;
@@ -261,6 +357,24 @@ function openStudio(mode) {
   $('feedback').textContent = '';
   render();
 }
+$('generate').onclick = () => {
+  generated = generateSet(drawings);
+  save('generated', generated);
+  render();
+};
+$('edit-sentence').onclick = () => {
+  const editor = $('sentence-editor');
+  editor.hidden = !editor.hidden;
+  $('edit-sentence').setAttribute('aria-expanded', !editor.hidden);
+  $('edit-sentence').lastChild.textContent = editor.hidden ? 'Edit text' : 'Done';
+  if (!editor.hidden) $('sentence').focus();
+};
+$('use-sample').onclick = () => {
+  font.sentence = null;
+  save('font', font);
+  $('sentence').value = previewText();
+  scheduleProof();
+};
 $('font-mode').onclick = () => openStudio('font');
 $('signature-mode').onclick = () => openStudio('signature');
 $('prev').onclick = () => selectChar(CHARACTERS[CHARACTERS.indexOf(session.char) - 1]);
@@ -532,7 +646,8 @@ async function exportFile(button, format) {
   try {
     if (isFont()) {
       const {buildFont} = await import('./font.js');
-      const bytes = buildFont(drawings, font, format);
+      const glyphs = Object.fromEntries([...CHARACTERS].map(c => [c, glyphInk(c)]));
+      const bytes = buildFont(glyphs, font, format);
       const filename =
         (font.name.trim().replace(/[^\p{L}\p{N} _-]+/gu, '') || 'My Handwriting') + '.' + format;
       download(new Blob([bytes], {type: 'font/' + format}), filename);
@@ -554,6 +669,7 @@ try {
   draft = await openDraft();
   for (const [name, value] of draft.records) {
     if (name.startsWith('ink/')) drawings[name.slice(4)] = value;
+    else if (name === 'generated') generated = value;
     else if (name === 'font') Object.assign(font, value);
     else if (name === 'session') Object.assign(session, value);
     else if (name === 'signature-settings') Object.assign(signature, value);
@@ -561,6 +677,7 @@ try {
 } catch {
   /* Drawing and downloads also work with browser storage disabled. */
 }
+if (font.sentence === 'Aa Bb Cc') font.sentence = null;
 render();
 status();
 $('workspace').inert = false;
