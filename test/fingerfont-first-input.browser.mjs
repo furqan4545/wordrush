@@ -50,6 +50,33 @@ try {
   assert.equal(await read('scrollY'), top);
   assert(await page.$eval('#ink path', path => path.getBBox().height > 8));
 
+  // Replay the momentum flag reported by macOS. CDP's wheel command has no
+  // momentum parameter, so set it explicitly for this part of the test.
+  const tail = await page.$eval('#pad', pad => {
+    const r = pad.getBoundingClientRect();
+    const wheel = momentum => {
+      const event = new WheelEvent('wheel', {
+        clientX: r.left + r.width / 2, clientY: r.top + r.height / 2,
+        deltaX: -4, deltaY: -6, bubbles: true, cancelable: true,
+      });
+      Object.defineProperty(event, 'momentum', {value: momentum});
+      pad.dispatchEvent(event);
+      return event.defaultPrevented;
+    };
+    wheel(false);
+    return [wheel(true), wheel(true), wheel(true)];
+  });
+  assert.deepEqual(tail, [true, true, true], 'every inertial event from the pad should be canceled');
+  assert.equal(await count(), 2);
+  const next = await page.$eval('#next', button => {
+    const r = button.getBoundingClientRect();
+    return {x: r.left + r.width / 2, y: r.top + r.height / 2};
+  });
+  await cdp.send('Emulation.setTouchEmulationEnabled', {enabled: true, maxTouchPoints: 1});
+  await cdp.send('Input.dispatchTouchEvent', {type: 'touchStart', touchPoints: [next]});
+  await cdp.send('Input.dispatchTouchEvent', {type: 'touchEnd', touchPoints: []});
+  assert.equal(await page.$eval('#draw-heading', heading => heading.textContent), 'Draw B');
+
   // The previous version wrote a false default into the session whenever
   // somebody changed characters, even if they never touched the checkbox.
   await page.evaluate(() => new Promise((resolve, reject) => {
@@ -70,7 +97,7 @@ try {
   await quickSwipe();
   await waitForCount(1);
   await page.click('#prev');
-  assert.equal(await count(), 1, 'existing handwritten A should survive migration');
+  assert.equal(await count(), 2, 'existing handwritten A should survive migration');
 
   await page.click('#swipe-ink');
   await page.waitForFunction(() => document.querySelector('#save-state').textContent === 'Saved on this device');
@@ -79,7 +106,7 @@ try {
   assert.equal(await page.$eval('#swipe-ink', el => el.checked), false);
   await quickSwipe();
   await new Promise(resolve => setTimeout(resolve, 250));
-  assert.equal(await count(), 1, 'an explicit opt-out should survive reload');
+  assert.equal(await count(), 2, 'an explicit opt-out should survive reload');
   assert.deepEqual(errors, []);
   console.log('Passed first swipe without activation, legacy draft migration, and explicit opt-out.');
 } finally {

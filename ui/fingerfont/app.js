@@ -478,6 +478,7 @@ let frame = 0;
 let swipeTimer;
 const swipeIdleMs = 150;
 let releasedWheel = null;
+let wheelStartedOnPad = false;
 
 function insidePad(x, y, rect = pad.getBoundingClientRect()) {
   return x >= rect.left && x < rect.right && y >= rect.top && y < rect.bottom;
@@ -538,21 +539,31 @@ function releaseSwipe() {
 // pointerdown. The first such event inside the pad can start a stroke.
 paper.addEventListener('wheel', (e) => {
   if (e.ctrlKey || e.metaKey) return;
+  const rect = pad.getBoundingClientRect();
+  const onPad = insidePad(e.clientX, e.clientY, rect);
+  // macOS can send a long train of inertial events after finger-up. Finish
+  // the ink on the first one, but keep the entire tail out of native scrolling.
+  if (e.momentum) {
+    if (wheelStartedOnPad || onPad) preventPan(e);
+    endSwipe();
+    releasedWheel = null;
+    return;
+  }
   const now = performance.now();
   // A wheel-only display may latch its event target and coordinates for a
   // whole gesture. A fresh contact or a new start location can draw immediately.
   if (releasedWheel && now < releasedWheel.until &&
       e.clientX === releasedWheel.x && e.clientY === releasedWheel.y) return;
   releasedWheel = null;
-  const rect = pad.getBoundingClientRect();
-  if (!insidePad(e.clientX, e.clientY, rect)) {
+  if (!onPad) {
+    wheelStartedOnPad = pointer?.source === 'swipe';
     releaseSwipe();
     return;
   }
-  if (!drawQuickSwipes || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL || e.momentum ||
+  wheelStartedOnPad = true;
+  if (!drawQuickSwipes || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL ||
       (pointer && pointer.source !== 'swipe') || (!e.deltaX && !e.deltaY)) {
     preventPan(e);
-    if (e.momentum) releaseSwipe();
     return;
   }
   if (!pointer) {
@@ -587,12 +598,13 @@ window.addEventListener('pagehide', endSwipe);
 // Some touch displays emit touch events even when the host has PointerEvent.
 // The first input stream owns the stroke so dual delivery never doubles the ink.
 paper.addEventListener('touchstart', (e) => {
+  const touch = e.changedTouches[0];
+  if (!touch || !insidePad(touch.clientX, touch.clientY)) return;
   preventPan(e);
   if (e.touches.length !== 1) return;
   releasedWheel = null;
   if (pointer?.source === 'swipe' || pointer?.source === 'touch') finishStroke();
   if (pointer) return;
-  const touch = e.changedTouches[0];
   beginStroke('touch', touch.identifier, touch, e.timeStamp);
 }, {passive: false});
 paper.addEventListener('touchmove', (e) => {
@@ -631,7 +643,7 @@ paper.addEventListener('touchcancel', (e) => {
 
 paper.addEventListener('contextmenu', preventPan);
 pad.onpointerdown = (e) => {
-  if (pointer || !e.isPrimary || e.button !== 0) return;
+  if (pointer || !e.isPrimary || e.button !== 0 || !insidePad(e.clientX, e.clientY)) return;
   // Keep compatibility mouse events from moving focus as a contact ends.
   preventPan(e);
   // Native touch and pen may capture implicitly. Let normal hit testing take
