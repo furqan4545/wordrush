@@ -12,14 +12,9 @@ export function presetFor(settings) {
   return Object.hasOwn(presets, settings.preset) ? presets[settings.preset] : presets.original;
 }
 
-export function emphasis(settings, char) {
-  const local = settings.letters?.[char];
-  return {bold: local?.bold ?? Boolean(settings.bold), italic: local?.italic ?? Boolean(settings.italic)};
-}
-
 export function fontContours(strokes, char, settings) {
   const preset = presetFor(settings);
-  const {bold, italic} = emphasis(settings, char);
+  const {bold, italic} = settings;
   if (preset === presets.original && !bold && !italic) return strokes.map(stroke => outline(stroke, settings));
   const pen = {...settings, width: settings.width * preset.width * (bold ? 1.85 : 1)};
   let spread = preset.spread;

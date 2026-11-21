@@ -123,7 +123,7 @@ test('generated forms follow sample proportions and reuse corresponding handwrit
 });
 
 for (const format of ['ttf', 'otf']) {
-  test(format + ' preserves emphasis, alternate styles and per-letter overrides in the exported outlines', () => {
+  test(format + ' applies whole-font emphasis even to glyphs with legacy overrides', () => {
     const source = {A: [stroke], B: [stroke]};
     const original = structuredClone(source);
     const build = extra => parse(buildFont(source, {...settings, ...extra}, format, true));
@@ -134,7 +134,7 @@ for (const format of ['ttf', 'otf']) {
     for (const [bold, italic] of [[true, false], [false, true], [true, true]]) {
       const face = build({bold, italic, letters: {B: {bold: false, italic: false}}});
       assert.notDeepEqual(face.charToGlyph('A').path.commands, normal.charToGlyph('A').path.commands);
-      assert.deepEqual(face.charToGlyph('B').path.commands, normal.charToGlyph('B').path.commands);
+      assert.deepEqual(face.charToGlyph('B').path.commands, face.charToGlyph('A').path.commands);
       assert.equal(face.tables.os2.usWeightClass, bold ? 700 : 400);
       assert.equal(face.tables.os2.fsSelection, (bold ? 32 : 0) | (italic ? 1 : 0));
       assert.equal(face.tables.head.macStyle, (bold ? 1 : 0) | (italic ? 2 : 0));

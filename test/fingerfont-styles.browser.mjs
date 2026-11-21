@@ -42,19 +42,19 @@ try {
     return ranges.length === 4 && ranges.every(r => r.toString() === 'k');
   });
   await page.click('#style-options button:last-child');
-  await page.select('#style-scope', 'letter');
   await page.click('#bold');
   await page.click('#italic');
   assert.equal(await page.$eval('#ink', el => el.innerHTML), ink, 'the editor retains the original ink');
-  await page.select('#style-scope', 'font');
-  assert.equal(await page.$eval('#bold', b => b.getAttribute('aria-pressed')), 'false');
-  await page.click('#italic');
+  assert.equal(await page.$('#font-styles select'), null);
+  await page.click('#next');
+  assert.equal(await page.$eval('#bold', b => b.getAttribute('aria-pressed')), 'true');
+  assert.equal(await page.$eval('#italic', b => b.getAttribute('aria-pressed')), 'true');
+  await page.click('#prev');
   await page.waitForFunction(() => document.querySelector('#save-state').textContent === 'Saved on this device');
   await page.reload();
   await page.waitForSelector('#workspace:not([inert])');
   assert.equal(await page.$eval('#italic', b => b.getAttribute('aria-pressed')), 'true');
   assert.equal(await page.$eval('#style-options button[aria-pressed=true] strong', el => el.textContent), 'Studio print');
-  await page.select('#style-scope', 'letter');
   assert.equal(await page.$eval('#bold', b => b.getAttribute('aria-pressed')), 'true');
   await page.click('#edit-sentence');
   await page.$eval('#sentence', el => { el.value = 'No match.'; el.dispatchEvent(new Event('input')); });
@@ -73,7 +73,7 @@ try {
     const bytes = await page.evaluate(async () => Array.from(new Uint8Array(await window.testDownload.arrayBuffer())));
     const face = parse(Uint8Array.from(bytes).buffer);
     assert.equal(face.names.fontFamily.en, 'My Handwriting Studio print');
-    assert.equal(face.names.fontSubfamily.en, 'Italic');
+    assert.equal(face.names.fontSubfamily.en, 'Bold Italic');
     assert(face.charToGlyph('k').path.commands.length > 0);
   }
   await page.setViewport({width: 390, height: 844});

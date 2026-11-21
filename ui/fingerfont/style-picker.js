@@ -1,6 +1,6 @@
 import {bounds, PAPER, svgPath} from './ink.js';
 import {printSample} from './generate.js';
-import {emphasis, fontContours, presets} from './styles.js';
+import {fontContours, presets} from './styles.js';
 
 const ns = 'http://www.w3.org/2000/svg';
 
@@ -27,7 +27,6 @@ function paintSample(svg, chars, sources, settings) {
 export function installStylePicker(font, glyphInk, onChange) {
   const get = id => document.getElementById(id);
   const section = get('font-styles');
-  const scope = get('style-scope');
   const samples = new Map();
   let current = 'A', visible = false, frame = 0, last;
   for (const [id, preset] of Object.entries(presets)) {
@@ -52,9 +51,9 @@ export function installStylePicker(font, glyphInk, onChange) {
     if (!visible || section.hidden) return;
     const chars = /[a-z]/i.test(current) ? [current.toUpperCase(), current.toLowerCase()] : [current];
     const sources = chars.map(char => glyphInk(char) ?? printSample(char));
-    const key = JSON.stringify(chars.map(char => [char, emphasis(font, char)]));
-    if (last?.key === key && sources.every((s, i) => last.sources[i] === s)) return;
-    last = {key, sources};
+    if (last?.current === current && last.bold === font.bold && last.italic === font.italic &&
+        sources.every((source, i) => source === last.sources[i])) return;
+    last = {current, bold: font.bold, italic: font.italic, sources};
     for (const [preset, {svg}] of samples) paintSample(svg, chars, sources, {...font, preset});
   }
   function schedule() { if (visible && !frame) frame = requestAnimationFrame(paint); }
@@ -62,28 +61,13 @@ export function installStylePicker(font, glyphInk, onChange) {
 
   function refresh(char) {
     current = char;
-    const letter = scope.value === 'letter';
-    const values = letter ? emphasis(font, char) : font;
-    for (const flag of ['bold', 'italic']) get(flag).setAttribute('aria-pressed', Boolean(values[flag]));
+    for (const flag of ['bold', 'italic']) get(flag).setAttribute('aria-pressed', Boolean(font[flag]));
     for (const [id, {button}] of samples) button.setAttribute('aria-pressed', id === font.preset);
-    get('scope-letter').textContent = 'Letter “' + char + '”';
-    get('reset-letter').hidden = !letter;
-    get('reset-letter').disabled = !font.letters[char];
     schedule();
   }
-  scope.onchange = () => refresh(current);
-  get('reset-letter').onclick = () => { delete font.letters[current]; onChange(); };
   for (const flag of ['bold', 'italic']) {
     get(flag).onclick = () => {
-      if (scope.value === 'font') font[flag] = !font[flag];
-      else {
-        const local = {...font.letters[current]};
-        const next = !emphasis(font, current)[flag];
-        if (next === font[flag]) delete local[flag];
-        else local[flag] = next;
-        if (Object.keys(local).length) font.letters[current] = local;
-        else delete font.letters[current];
-      }
+      font[flag] = !font[flag];
       onChange();
     };
   }

@@ -22,7 +22,6 @@ const font = {
   preset: 'original',
   bold: false,
   italic: false,
-  letters: {},
   format: 'ttf',
   sentence: null,
 };
@@ -1085,7 +1084,9 @@ try {
   for (const [name, value] of draft.records) {
     if (name.startsWith('ink/')) drawings[name.slice(4)] = value;
     else if (name === 'generated') generated = value;
-    else if (name === 'font') Object.assign(font, value);
+    else if (name === 'font') {
+      for (const field of Object.keys(font)) if (field in value) font[field] = value[field];
+    }
     else if (name === 'session') {
       // The previous session blob also stored an implicit false for swipe ink.
       // Only a dedicated preference can distinguish an explicit opt-out.
