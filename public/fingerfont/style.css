@@ -275,9 +275,8 @@ input[type=range] { width: 100%; margin: 4px 0; }
 }
 
 /* Highlight paint adds no width to the glyphs or their lines. */
-::highlight(fingerfont-letter) { color: #4c2d72; background: #e6d4fc; text-decoration: underline; }
+::highlight(fingerfont-letter) { color: #4c2d72; background: #e6d4fc; }
 .proof mark, .letter-swatch { color: #4c2d72; background: #e6d4fc; border-radius: 3px; }
-.proof mark { text-decoration: underline; }
 .letter-swatch { font-size: 1.45em; line-height: 1; padding-inline: .18em; }
 .style-header, .emphasis-controls { display: flex; align-items: center; gap: 8px; }
 .style-header { justify-content: space-between; flex-wrap: wrap; margin-bottom: 14px; }
