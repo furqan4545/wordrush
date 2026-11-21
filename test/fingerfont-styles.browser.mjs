@@ -60,7 +60,7 @@ try {
   assert.equal(await page.$eval('#bold', b => b.getAttribute('aria-pressed')), 'true');
   assert.equal(await page.$eval('#italic', b => b.getAttribute('aria-pressed')), 'true');
   await page.click('#prev');
-  await page.waitForFunction(() => document.querySelector('#save-state').textContent === 'Saved on this device');
+  await page.waitForSelector('#save-error[aria-busy="false"]');
   await page.reload();
   await page.waitForSelector('#workspace:not([inert])');
   assert.equal(await page.$eval('#italic', b => b.getAttribute('aria-pressed')), 'true');

@@ -102,7 +102,7 @@ try {
   assert.equal(await count(), 2, 'existing handwritten A should survive migration');
 
   await page.click('#swipe-ink');
-  await page.waitForFunction(() => document.querySelector('#save-state').textContent === 'Saved on this device');
+  await page.waitForSelector('#save-error[aria-busy="false"]');
   await page.reload();
   await ready();
   assert.equal(await page.$eval('#swipe-ink', el => el.checked), false);

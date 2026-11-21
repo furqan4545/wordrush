@@ -67,21 +67,19 @@ function svg(tag, attributes) {
   for (const [name, value] of Object.entries(attributes)) node.setAttribute(name, value);
   return node;
 }
-function status() {
-  $('save-state').textContent = !draft
-    ? 'Local saving unavailable'
-    : saving.size
-      ? 'Saving on this device…'
-      : dirty.size
-        ? 'Unsaved changes on this device'
-        : 'Saved on this device';
+function updateSaveStatus() {
+  const message = !draft ? 'Local saving unavailable'
+    : dirty.size ? 'Unsaved changes on this device' : '';
+  const note = $('save-error');
+  note.setAttribute('aria-busy', String(saving.size > 0));
+  if (note.textContent !== message) note.textContent = message;
 }
 function save(record, value, related = []) {
   if (!draft) return;
   const entries = [[record, value], ...related];
   const write = draft.save(entries);
   for (const [name] of entries) saving.set(name, write);
-  status();
+  updateSaveStatus();
   function settled(success) {
     for (const [name] of entries) {
       if (saving.get(name) !== write) continue;
@@ -89,7 +87,7 @@ function save(record, value, related = []) {
       if (success) dirty.delete(name);
       else dirty.add(name);
     }
-    status();
+    updateSaveStatus();
   }
   write.then(() => settled(true), () => settled(false));
 }
@@ -1101,6 +1099,6 @@ if (autoUpdates() && manualCount() >= MIN_SAMPLES) generated = generateSet(drawi
 if (font.sentence === 'Aa Bb Cc') font.sentence = null;
 render();
 if (isFont()) revealCharacter(false);
-status();
+updateSaveStatus();
 $('workspace').inert = false;
 document.querySelector('.studios').inert = false;

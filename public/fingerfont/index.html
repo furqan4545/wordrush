@@ -30,10 +30,12 @@
       <button id="font-mode" aria-pressed="true"><svg><use href="#type"/></svg>Font Studio</button>
       <button id="signature-mode" aria-pressed="false"><svg><use href="#pen"/></svg>Signature Studio</button>
     </div>
-    <div class="header-tools">
-      <span id="save-state" class="save-state" role="status">Opening local draft…</span>
-      <details class="tools-menu"><summary>Tools <span aria-hidden="true">⌄</span></summary><nav aria-label="Wordrush features"><a href="/">Fast cuts</a><a href="/words-in-motion/">Words in Motion</a><a href="/browser-typing/">Browser Typing</a><a href="/paper-trail/">Paper Trail</a><a href="/fingerfont/" aria-current="page">FingerFont</a></nav></details>
-    </div>
+    <details class="tools-menu">
+      <summary>Tools<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m4 6 4 4 4-4"/></svg></summary>
+      <nav aria-label="Wordrush features">
+        <a href="/">Fast cuts</a><a href="/words-in-motion/">Words in Motion</a><a href="/browser-typing/">Browser Typing</a><a href="/paper-trail/">Paper Trail</a><a href="/fingerfont/" aria-current="page">FingerFont</a>
+      </nav>
+    </details>
   </header>
   <main>
     <div id="workspace" inert>
@@ -124,6 +126,7 @@
       </div>
       <p class="feedback" id="feedback" role="status"></p>
     </div>
+    <p class="feedback" id="save-error" role="status"></p>
     <noscript>Enable JavaScript to draw and export your handwriting.</noscript>
   </main>
 </body>
