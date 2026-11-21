@@ -62,12 +62,7 @@ button:not(:disabled):hover {
   outline-offset: 3px;
 }
 button svg,
-.trackpad-hint { display: none; }
-@media (any-pointer: fine) {
-  .trackpad-hint { display: block; }
-}
 .under-pad svg {
-  flex: none;
   width: 18px;
   height: 18px;
   fill: none;
@@ -369,6 +364,13 @@ h2 {
   color: var(--muted);
   margin: 10px 0 18px;
 }
+.pad-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+}
+.pad-options label { white-space: nowrap; }
+.under-pad { flex-wrap: wrap; }
 .under-pad > span,
 .under-pad label,
 .check {

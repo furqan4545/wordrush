@@ -15,7 +15,7 @@ const font = {
   sentence: 'Aa Bb Cc',
 };
 const signature = {width: 5, smoothness: 55, transparent: true};
-const session = {studio: 'font', char: 'A', guides: true};
+const session = {studio: 'font', char: 'A', guides: true, swipeInk: false};
 const dirty = new Set(),
   saving = new Map();
 let draft, pointer;
@@ -229,6 +229,7 @@ function render() {
   const noun = group() === 'Numbers' ? 'number' : group() === 'Symbols' ? 'symbol' : 'letter';
   $('draw-heading').textContent = fontOpen ? 'Draw the ' + noun + ' ' + session.char : 'Draw your signature';
   $('guides').checked = session.guides;
+  $('swipe-ink').checked = session.swipeInk;
   $('family').value = font.name;
   $('format').value = font.format;
   $('sentence').value = font.sentence;
@@ -264,6 +265,11 @@ $('font-mode').onclick = () => openStudio('font');
 $('signature-mode').onclick = () => openStudio('signature');
 $('prev').onclick = () => selectChar(CHARACTERS[CHARACTERS.indexOf(session.char) - 1]);
 $('next').onclick = () => selectChar(CHARACTERS[CHARACTERS.indexOf(session.char) + 1]);
+$('swipe-ink').onchange = (e) => {
+  endSwipe();
+  session.swipeInk = e.target.checked;
+  save('session', session);
+};
 $('guides').onchange = (e) => {
   session.guides = e.target.checked;
   save('session', session);
@@ -287,6 +293,7 @@ const pad = $('pad');
 const paper = pad.closest('.paper-pad');
 let hoverPoint = null;
 let frame = 0;
+let swipeTimer;
 
 function sample(contact, timeStamp = contact.timeStamp) {
   const point = new DOMPoint(contact.clientX, contact.clientY).matrixTransform(pad.getScreenCTM().inverse());
@@ -310,6 +317,7 @@ function beginStroke(source, id, contact, timeStamp) {
 }
 
 function cancelPointer() {
+  clearTimeout(swipeTimer);
   const previous = pointer;
   pointer = null;
   if (previous?.source === 'pointer' && pad.hasPointerCapture(previous.id)) pad.releasePointerCapture(previous.id);
@@ -328,10 +336,45 @@ function preventPan(e) {
   if (e.cancelable) e.preventDefault();
 }
 
-// A trackpad scroll is a wheel event, independent of CSS touch-action.
+function endSwipe() {
+  if (pointer?.source === 'swipe') finishStroke();
+}
+
+// A web view may expose a quick display drag as pixel scrolling. This input
+// is opt-in because ordinary trackpad scrolling can have the same event shape.
 paper.addEventListener('wheel', (e) => {
-  if (!e.ctrlKey && !e.metaKey) preventPan(e);
+  if (e.ctrlKey || e.metaKey) return;
+  preventPan(e);
+  if (!session.swipeInk || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL || e.momentum) return;
+  if (pointer && pointer.source !== 'swipe') return;
+  if (!e.deltaX && !e.deltaY) return;
+
+  const rect = pad.getBoundingClientRect();
+  if (!pointer) {
+    if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) return;
+    beginStroke('swipe', null, e);
+    pointer.swipe = {startX: e.clientX, startY: e.clientY, x: e.clientX, y: e.clientY, absolute: false};
+  }
+  const pos = pointer.swipe;
+  // Prefer the actual contact position whenever the browser reports it.
+  // Some hosts pin that position at gesture start and send only deltas.
+  if (e.clientX !== pos.startX || e.clientY !== pos.startY) pos.absolute = true;
+  if (pos.absolute) {
+    pos.x = e.clientX;
+    pos.y = e.clientY;
+  } else {
+    pos.x = Math.max(rect.left, Math.min(rect.right, pos.x - e.deltaX));
+    pos.y = Math.max(rect.top, Math.min(rect.bottom, pos.y - e.deltaY));
+  }
+  sample({clientX: pos.x, clientY: pos.y}, e.timeStamp);
+  if (!frame) frame = requestAnimationFrame(paintWet);
+  // WheelEvent has no portable finger-up event. Only committing is delayed.
+  clearTimeout(swipeTimer);
+  swipeTimer = setTimeout(endSwipe, 150);
 }, {passive: false});
+
+document.addEventListener('pointerdown', endSwipe, true);
+window.addEventListener('pagehide', endSwipe);
 
 // Some touch displays emit touch events even when the host has PointerEvent.
 // The first input stream owns the stroke so dual delivery never doubles the ink.
@@ -405,7 +448,7 @@ window.addEventListener('keyup', (e) => {
 });
 window.addEventListener('blur', () => {
   hoverPoint = null;
-  if (pointer?.source === 'space') finishStroke();
+  if (pointer?.source === 'space' || pointer?.source === 'swipe') finishStroke();
   else cancelPointer();
 });
 
