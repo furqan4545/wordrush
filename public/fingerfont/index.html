@@ -52,7 +52,7 @@
             </div>
           </div>
           <div class="paper-pad">
-            <svg id="pad" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" role="img" aria-label="Drawing pad for A">
+            <svg id="pad" aria-describedby="ink-hint" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 240" role="img" aria-label="Drawing pad for A">
               <g class="rules" aria-hidden="true">
                 <path id="cap-rule" d="M0 48H480"/><path class="dashed" id="waist-rule" d="M0 96H480"/><path class="baseline" d="M0 180H480"/>
                 <text id="cap-label" x="9" y="43">Cap height</text><text x="9" y="175">Baseline</text>
@@ -61,7 +61,7 @@
               <g id="ink"></g><path id="wet-ink"/>
             </svg>
           </div>
-          <div class="under-pad"><span><svg><use href="#edit-icon"/></svg>Use your finger, pen or mouse</span><label><input type="checkbox" id="guides" checked>Guides</label></div>
+          <div class="under-pad"><span id="ink-hint"><svg><use href="#edit-icon"/></svg><span>Draw with one finger or a pen.<span class="trackpad-hint">On a trackpad, hold Space and move one finger.</span></span></span><label><input type="checkbox" id="guides" checked>Guides</label></div>
           <div id="glyph-step" class="step"><button id="prev" class="secondary"><svg class="flip"><use href="#arrow"/></svg>Previous</button><button id="next" class="primary">Next character<svg><use href="#arrow"/></svg></button></div>
           <div id="sig-settings" class="range-pair" hidden>
             <label>Ink thickness <output id="width-out"></output><input id="sig-width" type="range" min="2" max="16" step="0.5"></label>

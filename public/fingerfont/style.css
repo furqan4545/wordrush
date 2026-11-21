@@ -62,7 +62,12 @@ button:not(:disabled):hover {
   outline-offset: 3px;
 }
 button svg,
+.trackpad-hint { display: none; }
+@media (any-pointer: fine) {
+  .trackpad-hint { display: block; }
+}
 .under-pad svg {
+  flex: none;
   width: 18px;
   height: 18px;
   fill: none;
@@ -310,6 +315,10 @@ h2 {
   font-size: 12px;
 }
 .paper-pad {
+  touch-action: none;
+  overscroll-behavior: contain;
+  -webkit-user-select: none;
+  user-select: none;
   margin-top: 20px;
   overflow: hidden;
   border: 1px solid #ced5df;
@@ -360,14 +369,19 @@ h2 {
   color: var(--muted);
   margin: 10px 0 18px;
 }
-.under-pad span,
+.under-pad > span,
 .under-pad label,
 .check {
   display: flex;
   align-items: center;
   gap: 6px;
 }
+.trackpad-hint { display: none; }
+@media (any-pointer: fine) {
+  .trackpad-hint { display: block; }
+}
 .under-pad svg {
+  flex: none;
   width: 14px;
   height: 14px;
 }

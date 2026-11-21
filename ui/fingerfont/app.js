@@ -284,53 +284,130 @@ document.addEventListener('keydown', (e) => {
 });
 
 const pad = $('pad');
+const paper = pad.closest('.paper-pad');
+let hoverPoint = null;
 let frame = 0;
-function sample(e) {
-  const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(pad.getScreenCTM().inverse());
-  const x = Math.max(0, Math.min(PAPER.width, point.x)),
-    y = Math.max(0, Math.min(PAPER.height, point.y));
+
+function sample(contact, timeStamp = contact.timeStamp) {
+  const point = new DOMPoint(contact.clientX, contact.clientY).matrixTransform(pad.getScreenCTM().inverse());
+  const x = Math.max(0, Math.min(PAPER.width, point.x));
+  const y = Math.max(0, Math.min(PAPER.height, point.y));
   const points = pointer.stroke.points;
   const last = points.at(-1);
   if (last && Math.hypot(x - last[0], y - last[1]) < 0.5) return;
-  points.push([x, y, e.pressure || last?.[2] || 0.5, e.timeStamp]);
+  points.push([x, y, contact.pressure || contact.force || last?.[2] || 0.5, timeStamp]);
 }
+
 function paintWet() {
   frame = 0;
   if (pointer) $('wet-ink').setAttribute('d', svgPath(outline(pointer.stroke, settings())));
 }
+
+function beginStroke(source, id, contact, timeStamp) {
+  pointer = {source, id, stroke: {points: [], pen: contact.pointerType === 'pen'}};
+  sample(contact, timeStamp);
+  paintWet();
+}
+
 function cancelPointer() {
   const previous = pointer;
   pointer = null;
-  if (previous && pad.hasPointerCapture(previous.id)) pad.releasePointerCapture(previous.id);
+  if (previous?.source === 'pointer' && pad.hasPointerCapture(previous.id)) pad.releasePointerCapture(previous.id);
   cancelAnimationFrame(frame);
   frame = 0;
   $('wet-ink').removeAttribute('d');
 }
+
+function finishStroke() {
+  const stroke = pointer.stroke;
+  cancelPointer();
+  edit([...strokes(), stroke]);
+}
+
+function preventPan(e) {
+  if (e.cancelable) e.preventDefault();
+}
+
+// A trackpad scroll is a wheel event, independent of CSS touch-action.
+paper.addEventListener('wheel', (e) => {
+  if (!e.ctrlKey && !e.metaKey) preventPan(e);
+}, {passive: false});
+
+// Some touch displays emit touch events even when the host has PointerEvent.
+// The first input stream owns the stroke so dual delivery never doubles the ink.
+paper.addEventListener('touchstart', (e) => {
+  preventPan(e);
+  if (pointer || e.touches.length !== 1) return;
+  const touch = e.changedTouches[0];
+  beginStroke('touch', touch.identifier, touch, e.timeStamp);
+}, {passive: false});
+paper.addEventListener('touchmove', (e) => {
+  preventPan(e);
+  if (pointer?.source !== 'touch') return;
+  const touch = Array.from(e.changedTouches).find(t => t.identifier === pointer.id);
+  if (!touch) return;
+  sample(touch, e.timeStamp);
+  if (!frame) frame = requestAnimationFrame(paintWet);
+}, {passive: false});
+paper.addEventListener('touchend', (e) => {
+  if (pointer?.source !== 'touch') return;
+  const touch = Array.from(e.changedTouches).find(t => t.identifier === pointer.id);
+  if (touch) {
+    sample(touch, e.timeStamp);
+    finishStroke();
+  }
+});
+paper.addEventListener('touchcancel', (e) => {
+  if (pointer?.source === 'touch' && Array.from(e.changedTouches).some(t => t.identifier === pointer.id)) cancelPointer();
+});
+
 pad.onpointerdown = (e) => {
   if (pointer || !e.isPrimary || e.button !== 0) return;
   e.preventDefault();
   pad.setPointerCapture(e.pointerId);
-  pointer = {id: e.pointerId, stroke: {points: [], pen: e.pointerType === 'pen'}};
-  sample(e);
-  paintWet();
+  beginStroke('pointer', e.pointerId, e);
 };
+pad.onpointerenter = (e) => { if (e.pointerType === 'mouse') hoverPoint = e; };
 pad.onpointermove = (e) => {
-  if (pointer?.id !== e.pointerId) return;
-  const events = e.getCoalescedEvents?.() ?? [];
-  for (const item of events) sample(item);
+  if (e.pointerType === 'mouse') hoverPoint = e;
+  if (!pointer || pointer.source === 'touch' || pointer.id !== e.pointerId) return;
+  for (const item of e.getCoalescedEvents?.() ?? []) sample(item);
   sample(e);
   if (!frame) frame = requestAnimationFrame(paintWet);
 };
 pad.onpointerup = (e) => {
-  if (pointer?.id !== e.pointerId) return;
+  if (pointer?.source !== 'pointer' || pointer.id !== e.pointerId) return;
   sample(e);
-  const stroke = pointer.stroke;
-  cancelPointer();
-  edit([...strokes(), stroke]);
+  finishStroke();
 };
 pad.onpointercancel = pad.onlostpointercapture = (e) => {
-  if (pointer?.id === e.pointerId) cancelPointer();
+  if (pointer?.source === 'pointer' && pointer.id === e.pointerId) cancelPointer();
 };
+pad.onpointerleave = (e) => {
+  if (e.pointerType !== 'mouse') return;
+  hoverPoint = null;
+  if (pointer?.source === 'space') finishStroke();
+};
+
+window.addEventListener('keydown', (e) => {
+  if (e.code !== 'Space' || e.altKey || e.metaKey || e.ctrlKey || !hoverPoint ||
+      $('workspace').inert || e.target.closest?.('input,textarea,select,[contenteditable="true"]')) return;
+  if (pointer?.source === 'space') { e.preventDefault(); return; }
+  if (pointer || e.repeat) return;
+  e.preventDefault();
+  beginStroke('space', hoverPoint.pointerId, hoverPoint, e.timeStamp);
+});
+window.addEventListener('keyup', (e) => {
+  if (e.code === 'Space' && pointer?.source === 'space') {
+    e.preventDefault();
+    finishStroke();
+  }
+});
+window.addEventListener('blur', () => {
+  hoverPoint = null;
+  if (pointer?.source === 'space') finishStroke();
+  else cancelPointer();
+});
 
 $('sentence').oninput = (e) => {
   font.sentence = e.target.value;
